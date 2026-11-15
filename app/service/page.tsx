@@ -1,120 +1,149 @@
 "use client";
-
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
-export default function ServicePage() {
-  const [submitted, setSubmitted] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+export default function ClientServicePage() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("helmet_cart") || "[]");
-      const totalQty = saved.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0);
-      setCartCount(totalQty);
-    } catch {
-      setCartCount(0);
-    }
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
-  };
+    setStatus("loading");
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/contact@helmethautecouture.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          _subject: "Nouveau message Client Service — HELMET",
+          _template: "table",
+        }),
+      });
+
+      if (response.ok) {
+        setStatus("success");
+        e.currentTarget.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 md:px-20 font-sans pt-6">
-      
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md flex justify-between items-center py-6 mb-12 border-b border-neutral-200">
-        <Link href="/" className="text-xs tracking-[0.25em] text-neutral-600 hover:text-black transition-colors w-40">
-          ← Back To Home
-        </Link>
-        <Link href="/" className="font-cancellaresca text-4xl md:text-5xl tracking-[0.08em] text-center text-black hover:opacity-80 transition-opacity">
-          Helmet Client Service
-        </Link>
-        <div className="w-40 flex justify-end">
-          <Link href="/cart" className="text-sm tracking-widest text-neutral-800 hover:text-black transition-colors flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg>
-            <span className="font-semibold">[{cartCount}]</span>
+    <div className="min-h-screen bg-white text-black px-6 md:px-20 py-12 font-sans">
+      <div className="max-w-xl mx-auto">
+        <div className="flex justify-between items-center mb-12 border-b border-neutral-200 pb-4">
+          <Link href="/" className="text-xs uppercase tracking-[0.25em] hover:opacity-60 transition">
+            ← Back to Helmet
           </Link>
-        </div>
-      </header>
-
-      <div className="max-w-3xl mx-auto py-6">
-        <div className="font-cancellaresca text-2xl tracking-[0.08em] text-neutral-700 mb-8">
-          Contact Online
+          <span className="text-xs uppercase tracking-[0.25em] text-neutral-400">
+            Client Service
+          </span>
         </div>
 
-        {submitted ? (
-          <div className="py-20 text-center text-xs tracking-[0.25em] text-neutral-700 border border-neutral-200 p-8 bg-neutral-50">
-            Thank You. Your Message Has Been Sent.
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input
-                type="text"
-                placeholder="First Name"
-                required
-                className="bg-transparent border border-neutral-300 p-4 text-xs tracking-widest text-black placeholder-neutral-400 focus:border-black outline-none transition-colors"
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                required
-                className="bg-transparent border border-neutral-300 p-4 text-xs tracking-widest text-black placeholder-neutral-400 focus:border-black outline-none transition-colors"
-              />
-            </div>
+        <h1 className="text-2xl uppercase tracking-[0.25em] mb-4 font-light">
+          Client Service
+        </h1>
+        <p className="text-xs text-neutral-500 uppercase tracking-widest mb-10 leading-relaxed">
+          For any inquiries regarding your order, sizing, or general information, please fill out the form below. All sales are final.
+        </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input
-                type="email"
-                placeholder="Your Email"
-                required
-                className="bg-transparent border border-neutral-300 p-4 text-xs tracking-widest text-black placeholder-neutral-400 focus:border-black outline-none transition-colors"
-              />
-              <input
-                type="text"
-                placeholder="Order Number"
-                className="bg-transparent border border-neutral-300 p-4 text-xs tracking-widest text-black placeholder-neutral-400 focus:border-black outline-none transition-colors"
-              />
-            </div>
-
-            <div className="relative">
-              <select 
-                className="w-full bg-transparent border border-neutral-300 p-4 text-xs tracking-widest text-neutral-700 focus:border-black outline-none transition-colors appearance-none cursor-pointer"
-              >
-                <option value="status" className="bg-white text-black">Online Order Status Request</option>
-                <option value="shipping" className="bg-white text-black">Shipping Inquiry</option>
-                <option value="return" className="bg-white text-black">Returns & Exchanges</option>
-                <option value="general" className="bg-white text-black">General Question</option>
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-500 text-xs">
-                ▼
-              </div>
-            </div>
-
-            <textarea
-              placeholder="Message"
-              rows={6}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-[11px] uppercase tracking-[0.2em] mb-2 text-neutral-600">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="Name"
               required
-              className="bg-transparent border border-neutral-300 p-4 text-xs tracking-widest text-black placeholder-neutral-400 focus:border-black outline-none transition-colors resize-none"
+              placeholder="ENTER YOUR NAME"
+              className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
             />
+          </div>
 
-            <div>
-              <button
-                type="submit"
-                className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs tracking-[0.25em] px-8 py-3 transition-colors cursor-pointer"
-              >
-                Send
-              </button>
+          <div>
+            <label className="block text-[11px] uppercase tracking-[0.2em] mb-2 text-neutral-600">
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="Email"
+              required
+              placeholder="ENTER YOUR EMAIL"
+              className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] uppercase tracking-[0.2em] mb-2 text-neutral-600">
+              Order Number (Optional)
+            </label>
+            <input
+              type="text"
+              name="Order_Number"
+              placeholder="#HELMET-001"
+              className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] uppercase tracking-[0.2em] mb-2 text-neutral-600">
+              Subject
+            </label>
+            <select
+              name="Subject"
+              required
+              className="w-full bg-white border border-neutral-300 p-3.5 text-xs uppercase tracking-wider focus:border-black outline-none transition"
+            >
+              <option value="Order Status & Shipping">Order Status & Shipping</option>
+              <option value="Product & Sizing Inquiry">Product & Sizing Inquiry</option>
+              <option value="Press & Archive Inquiry">Press & Archive Inquiry</option>
+              <option value="General Inquiry">General Inquiry</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-[11px] uppercase tracking-[0.2em] mb-2 text-neutral-600">
+              Message
+            </label>
+            <textarea
+              name="Message"
+              rows={5}
+              required
+              placeholder="HOW CAN WE ASSIST YOU?"
+              className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
+          >
+            {status === "loading" ? "Sending..." : "Send Message"}
+          </button>
+
+          {status === "success" && (
+            <div className="p-4 border border-black bg-neutral-50 text-[11px] uppercase tracking-[0.15em] text-center">
+              Your message has been sent to HELMET Client Service.
             </div>
+          )}
 
-          </form>
-        )}
+          {status === "error" && (
+            <div className="p-4 border border-red-600 text-red-600 text-[11px] uppercase tracking-[0.15em] text-center">
+              Unable to send message. Please verify your email activation.
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );
