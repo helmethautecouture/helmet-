@@ -1,34 +1,26 @@
 ﻿@import "tailwindcss";
 
 @font-face {
-  font-family: "1610-cancellaresca-lim";
-  src: url("/fonts/1610-cancellaresca.ttf") format("truetype"),
-       url("/1610-cancellaresca-lim.ttf") format("truetype"),
-       local("1610 Cancellaresca"),
-       local("1610-cancellaresca-lim");
+  font-family: "HelmetScript1610";
+  src: url("/fonts/1610-cancellaresca.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
-  font-family: "1589-humane-bordeaux-regular";
-  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
-       url("/1589-humane-bordeaux-regular.ttf") format("truetype"),
-       url("/fonts/1589-humane-bordeaux-regular.otf") format("opentype"),
-       local("1589 Humane Bordeaux Regular"),
-       local("1589-humane-bordeaux-regular"),
-       local("1589 Humane Bordeaux");
-  font-weight: 400 700;
+  font-family: "HelmetBordeaux1589";
+  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype");
+  font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --font-helmet-script: "1610-cancellaresca-lim", Georgia, serif;
-  --font-primary: "1589-humane-bordeaux-regular", Georgia, serif;
+  --font-helmet-script: "HelmetScript1610", Georgia, serif;
+  --font-primary: "HelmetBordeaux1589", Georgia, serif;
 }
 
 *,
@@ -49,24 +41,21 @@ body {
   overflow-x: hidden;
   background-color: #ffffff;
   color: #000000;
-  font-family: var(--font-primary) !important;
-  font-weight: 500 !important;
-  /* Épaissit légèrement la police (+1.5 cran) tout en gardant sa finesse */
-  -webkit-text-stroke: 0.22px currentColor;
+  font-family: "HelmetBordeaux1589", Georgia, serif !important;
+  font-weight: 600 !important;
+  -webkit-text-stroke: 0.25px currentColor;
   -webkit-text-size-adjust: 100%;
 }
 
-/* Force 1589-humane-bordeaux-regular sur TOUTES les lettres et TOUS les chiffres (même sur .font-sans) */
-body, p, span, a, div, li, ul, h1, h2, h3, h4, h5, h6, input, textarea, select, button, label, .font-sans {
-  font-family: var(--font-primary) !important;
+/* Force 1589-humane-bordeaux-regular partout (lettres, chiffres, Haute Couture, inputs, boutons, meme si font-sans est present) */
+body, div, span, p, a, li, ul, h1, h2, h3, h4, h5, h6, button, input, select, textarea, label, .font-sans, .font-bordeaux {
+  font-family: "HelmetBordeaux1589", Georgia, serif !important;
 }
 
-/* Le logo et les titres calligraphiques gardent strictement 1610-cancellaresca-lim sans épaississement */
+/* Exception unique : Le logo "Helmet" et les titres en 1610-cancellaresca */
 .font-cancellaresca,
-.font-helmet,
-.font-cancellaresca *,
-.font-helmet * {
-  font-family: var(--font-helmet-script) !important;
+.font-helmet {
+  font-family: "HelmetScript1610", Georgia, serif !important;
   font-weight: 400 !important;
   font-style: normal !important;
   -webkit-text-stroke: 0px transparent !important;
@@ -90,23 +79,18 @@ svg {
   flex-shrink: 0;
 }
 
-/* ANIMATIONS DE ZOOM ULTRA SMOOTH AU CURSEUR */
+/* ZOOM ULTRA-SMOOTH AU PASSAGE DE LA SOURIS */
 .helmet-zoom-link {
   display: inline-flex;
   align-items: center;
-  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease !important;
-  transform-origin: center center;
+  cursor: pointer;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease !important;
   will-change: transform;
 }
 
 .helmet-zoom-link:hover {
-  transform: scale(1.11) !important;
-  opacity: 0.72;
-}
-
-.helmet-zoom-card {
-  overflow: hidden;
-  position: relative;
+  transform: scale(1.12) !important;
+  opacity: 0.7;
 }
 
 .helmet-zoom-img {
@@ -114,12 +98,13 @@ svg {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
   will-change: transform;
 }
 
-.helmet-zoom-card:hover .helmet-zoom-img,
-.group:hover .helmet-zoom-img {
+.helmet-zoom-img:hover,
+a:hover .helmet-zoom-img,
+div:hover > .helmet-zoom-img {
   transform: scale(1.065) !important;
 }
 
@@ -210,7 +195,7 @@ svg {
   font-size: 13px;
   letter-spacing: 0.12em;
   outline: none;
-  transition: border-color 0.25s ease;
+  transition: border-color 0.2s ease;
 }
 
 .helmet-input:focus {
@@ -229,17 +214,12 @@ svg {
   letter-spacing: 0.25em;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
 .helmet-btn-black:hover {
   opacity: 0.86;
   transform: scale(1.015);
-}
-
-.helmet-btn-black:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 input,
