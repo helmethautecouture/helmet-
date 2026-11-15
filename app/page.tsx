@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -12,21 +12,19 @@ const AUDIO_PATHS = [
   "/ambiance.mp3.mp3",
 ];
 
-let globalIntroShown = false;
+let introPlayedInSession = false;
 
 export default function Home() {
-  const [loading, setLoading] = useState(!globalIntroShown);
+  const [loading, setLoading] = useState(!introPlayedInSession);
   const [isPlaying, setIsPlaying] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
   const isMutedByUserRef = useRef(false);
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    // 1. Lecture synchro du panier
     try {
       const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
       const saved = JSON.parse(raw);
@@ -38,20 +36,16 @@ export default function Home() {
       setCartCount(0);
     }
 
-    // 2. Intro uniquement au tout premier lancement (retour au menu instantane)
     let timer: NodeJS.Timeout;
-    if (globalIntroShown || sessionStorage.getItem("helmet_intro_done") === "true") {
-      globalIntroShown = true;
+    if (introPlayedInSession) {
       setLoading(false);
     } else {
       timer = setTimeout(() => {
-        globalIntroShown = true;
-        sessionStorage.setItem("helmet_intro_done", "true");
+        introPlayedInSession = true;
         setLoading(false);
-      }, 1800);
+      }, 2000);
     }
 
-    // 3. WEB AUDIO API : Ne declenche JAMAIS le lecteur Spotify/Lockscreen sur iPhone !
     let isMounted = true;
 
     const initWebAudio = async () => {
@@ -85,7 +79,6 @@ export default function Home() {
 
         const gainNode = ctx.createGain();
         gainNode.gain.value = 0.7;
-        gainNodeRef.current = gainNode;
 
         source.connect(gainNode);
         gainNode.connect(ctx.destination);
@@ -117,7 +110,6 @@ export default function Home() {
     window.addEventListener("click", unlockOnInteraction, { once: true });
     window.addEventListener("touchstart", unlockOnInteraction, { once: true });
 
-    // 4. Coupe instantanement le son des qu'on verrouille l'iPhone ou qu'on ferme l'onglet
     const handleVisibility = () => {
       const ctx = audioCtxRef.current;
       if (!ctx) return;
@@ -182,7 +174,7 @@ export default function Home() {
     {
       index: "02",
       title: "Helmet Gallery",
-      subtitle: "Visual Archive — Paris",
+      subtitle: "Visual Archive \u2014 Paris",
       href: "/helmet",
       preview: "/product2.jpg",
     },
@@ -204,7 +196,7 @@ export default function Home() {
 
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden bg-white text-black font-sans select-none flex flex-col justify-between">
-      {/* APERCU FANTOME EN ARRIERE-PLAN AU SURVOL DU MENU */}
+      {/* APERCU EN ARRIERE-PLAN AU SURVOL DU MENU */}
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
@@ -224,25 +216,25 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* INTRO CINEMATOGRAPHIQUE (Bien cadree sur iPhone, 240px sur PC) */}
+      {/* INTRO CINEMATOGRAPHIQUE */}
       <AnimatePresence>
         {loading && (
           <motion.div
             key="loader"
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
             className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center pointer-events-none px-4"
           >
             <motion.div
-              initial={{ scale: 1.08, opacity: 0, y: 10 }}
+              initial={{ scale: 1.15, opacity: 0, y: 14 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1] }}
               className="text-center flex flex-col items-center max-w-full"
             >
-              <span className="font-cancellaresca text-[64px] sm:text-[130px] md:text-[240px] tracking-[0.03em] text-black block leading-[1.15] py-4 whitespace-nowrap">
+              <span className="font-cancellaresca text-[78px] sm:text-[140px] md:text-[240px] tracking-[0.03em] text-black block leading-[1.15] py-4 whitespace-nowrap">
                 Helmet
               </span>
-              <span className="block text-[9px] sm:text-xs md:text-sm tracking-[0.45em] md:tracking-[0.5em] text-neutral-700 mt-1 md:mt-2 font-normal font-sans uppercase">
+              <span className="block text-[10px] sm:text-xs md:text-sm tracking-[0.45em] md:tracking-[0.5em] text-neutral-700 mt-1 md:mt-2 font-normal font-sans uppercase">
                 Haute Couture
               </span>
             </motion.div>
@@ -250,10 +242,10 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER ARCHITECTURAL (3 colonnes symetriques pour un centrage parfait sur iPhone & PC) */}
+      {/* HEADER ARCHITECTURAL 3 COLONNES SYMETRIQUES */}
       <header className="relative z-20 grid grid-cols-3 items-start px-5 pt-6 sm:px-8 md:px-14 md:pt-14 bg-transparent">
         <div className="pt-2 md:pt-3 flex flex-col gap-1 text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.18em] md:tracking-[0.35em] text-neutral-800 font-normal justify-self-start">
-          <span className="whitespace-nowrap">Paris — Atelier</span>
+          <span className="whitespace-nowrap">{"Paris \u2014 Atelier"}</span>
           <span className="text-[7px] sm:text-[9px] md:text-[10px] tracking-[0.16em] md:tracking-[0.3em] text-neutral-600 whitespace-nowrap">
             Edition -01
           </span>
@@ -277,6 +269,8 @@ export default function Home() {
           >
             <span className="hidden sm:inline">Cart</span>
             <svg
+              width="16"
+              height="16"
               className="w-4 h-4 text-neutral-900 group-hover:text-black transition-colors shrink-0"
               fill="none"
               stroke="currentColor"
@@ -294,7 +288,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* MENU : SOMMAIRE D'ATELIER EDITORIAL (Toujours visible, ne disparait jamais au retour) */}
+      {/* MENU CENTRAL */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 md:px-14">
         <nav className="w-full max-w-xl mx-auto">
           <div className="flex justify-between items-center pb-2.5 md:pb-3 border-b border-neutral-300 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.45em] text-neutral-600 font-normal">
@@ -327,7 +321,7 @@ export default function Home() {
                     {item.subtitle}
                   </span>
                   <span className="text-xs text-neutral-700 group-hover:text-black group-hover:translate-x-1 transition-all duration-300 font-normal">
-                    →
+                    {"\u2192"}
                   </span>
                 </div>
               </Link>
@@ -358,15 +352,16 @@ export default function Home() {
           </a>
         </div>
 
-        {/* ICONE CASQUE AUDIO AU CENTRE */}
         <div className="justify-self-center">
           <button
             type="button"
             onClick={toggleAudio}
-            className="relative flex items-center justify-center p-2 text-neutral-900 hover:text-black hover:scale-105 transition-all group cursor-pointer"
+            className="relative flex items-center justify-center p-2 text-neutral-900 hover:text-black hover:scale-105 transition-all group cursor-pointer bg-transparent border-0"
             title={isPlaying ? "Sound On (70%)" : "Sound Off"}
           >
             <svg
+              width="24"
+              height="24"
               className="w-6 h-6 md:w-7 md:h-7"
               viewBox="0 0 24 24"
               fill="none"
@@ -386,8 +381,8 @@ export default function Home() {
         </div>
 
         <div className="text-right justify-self-end whitespace-nowrap">
-          <span className="hidden sm:inline">© Helmet All Rights Reserved</span>
-          <span className="sm:hidden">© Helmet</span>
+          <span className="hidden sm:inline">{"\u00A9 Helmet All Rights Reserved"}</span>
+          <span className="sm:hidden">{"\u00A9 Helmet"}</span>
         </div>
       </footer>
     </main>

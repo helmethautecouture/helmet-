@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -34,6 +34,11 @@ function CartContent() {
     country: "France",
   });
 
+  const parsePrice = (p: number | string) => {
+    const num = typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, ""));
+    return num > 0 ? num : 180;
+  };
+
   useEffect(() => {
     const possibleKeys = ["cart", "helmet_cart", "helmetCart", "shopping-cart", "bag"];
     let found: CartItem[] = [];
@@ -44,7 +49,12 @@ function CartContent() {
         try {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            found = parsed;
+            found = parsed.map((item: CartItem) => ({
+              ...item,
+              name: "Article -01 \u2014 Helmet",
+              price: parsePrice(item.price),
+              image: "/product1.jpg",
+            }));
             break;
           }
         } catch {}
@@ -61,15 +71,15 @@ function CartContent() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: "NOUVELLE COMMANDE PAYÃ‰E â€” HELMET -01",
+          _subject: "NOUVELLE COMMANDE PAYEE - HELMET -01",
           _template: "table",
-          Statut: "PAIEMENT VALIDÃ‰ PAR STRIPE",
+          Statut: "PAIEMENT VALIDE PAR STRIPE",
           Client: `${customerData.firstName || ""} ${customerData.lastName || ""}`,
           Email: customerData.email || "Voir compte Stripe",
           Telephone: customerData.phone || "Voir compte Stripe",
           Adresse_Livraison: `${customerData.address || ""}, ${customerData.postalCode || ""} ${customerData.city || ""}, ${customerData.country || ""}`,
           Articles: found
-            .map((i) => `${i.name || i.title} (Size: ${i.size || "TU"}) x${i.quantity || 1} - $${i.price}`)
+            .map((i) => `${i.name || i.title} (Size: ${i.size || "2"}) x${i.quantity || 1} - $${parsePrice(i.price)}`)
             .join(" | "),
         }),
       }).catch(() => {});
@@ -79,12 +89,6 @@ function CartContent() {
       setCart([]);
     }
   }, [isSuccess]);
-
-  const parsePrice = (p: number | string) => {
-    if (typeof p === "number") return p;
-    const cleaned = String(p).replace(/[^0-9.]/g, "");
-    return Number(cleaned) || 0;
-  };
 
   const syncStorage = (updated: CartItem[]) => {
     setCart(updated);
@@ -148,21 +152,20 @@ function CartContent() {
 
   return (
     <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
-      {/* HEADER 3 COLONNES IDENTIQUE PC & IPHONE */}
       <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-10 md:mb-14">
         <div className="justify-self-start">
           <Link
             href="/shop"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            â† Back To Shop
+            {"\u2190 Back To Shop"}
           </Link>
         </div>
 
         <div className="justify-self-center text-center">
           <Link
             href="/"
-            className="font-helmet text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+            className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
           >
             Helmet
           </Link>
@@ -170,8 +173,10 @@ function CartContent() {
 
         <div className="justify-self-end">
           <span className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 whitespace-nowrap">
-            <span>ðŸ›</span>
-            <span>[{totalCount}]</span>
+            <svg width="16" height="16" className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            <span className="font-semibold">[{totalCount}]</span>
           </span>
         </div>
       </header>
@@ -180,9 +185,9 @@ function CartContent() {
         {isSuccess ? (
           <div className="max-w-lg mx-auto border border-black p-8 md:p-10 text-center space-y-6 my-12">
             <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400">
-              Paris Atelier â€” Edition -01
+              {"Paris Atelier \u2014 Edition -01"}
             </p>
-            <h1 className="font-helmet text-3xl md:text-4xl font-normal">
+            <h1 className="font-cancellaresca text-3xl md:text-4xl font-normal">
               Order Confirmed
             </h1>
             <p className="text-xs text-neutral-600 uppercase tracking-widest leading-relaxed">
@@ -225,23 +230,21 @@ function CartContent() {
               <form onSubmit={handleRealCheckout} className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
                 <div className="lg:col-span-7 space-y-10 md:space-y-12">
                   <div>
-                    <h2 className="font-helmet text-2xl md:text-3xl mb-4 border-b border-neutral-200 pb-3">
+                    <h2 className="font-cancellaresca text-2xl md:text-3xl mb-4 border-b border-neutral-200 pb-3">
                       Selected Pieces
                     </h2>
                     <div className="divide-y divide-neutral-200">
                       {cart.map((item, idx) => (
                         <div key={idx} className="py-5 flex justify-between items-center gap-3">
                           <div className="flex items-center gap-3 md:gap-4">
-                            {item.image && (
-                              <img
-                                src={item.image}
-                                alt={item.name || "HELMET"}
-                                className="w-14 h-20 md:w-16 md:h-20 object-cover border border-neutral-200 shrink-0"
-                              />
-                            )}
+                            <img
+                              src={item.image || "/product1.jpg"}
+                              alt={item.name || "HELMET"}
+                              className="w-14 h-20 md:w-16 md:h-20 object-cover border border-neutral-200 shrink-0"
+                            />
                             <div className="space-y-1">
-                              <h3 className="font-helmet text-xl md:text-2xl font-normal">
-                                {item.name || item.title || "Article -01 â€” Helmet"}
+                              <h3 className="font-cancellaresca text-xl md:text-2xl font-normal">
+                                {"Article -01 \u2014 Helmet"}
                               </h3>
                               {item.size && (
                                 <p className="text-[11px] text-neutral-500 uppercase tracking-widest">
@@ -251,7 +254,7 @@ function CartContent() {
                               <button
                                 type="button"
                                 onClick={() => removeItem(idx)}
-                                className="text-[10px] uppercase tracking-widest text-neutral-400 underline pt-1 block hover:text-black"
+                                className="text-[10px] uppercase tracking-widest text-neutral-400 underline pt-1 block hover:text-black bg-transparent border-0 p-0"
                               >
                                 Remove
                               </button>
@@ -263,7 +266,7 @@ function CartContent() {
                               <button
                                 type="button"
                                 onClick={() => updateQuantity(idx, -1)}
-                                className="px-2.5 py-1 text-xs hover:bg-neutral-100"
+                                className="px-2.5 py-1 text-xs hover:bg-neutral-100 bg-white border-0"
                               >
                                 -
                               </button>
@@ -271,7 +274,7 @@ function CartContent() {
                               <button
                                 type="button"
                                 onClick={() => updateQuantity(idx, 1)}
-                                className="px-2.5 py-1 text-xs hover:bg-neutral-100"
+                                className="px-2.5 py-1 text-xs hover:bg-neutral-100 bg-white border-0"
                               >
                                 +
                               </button>
@@ -286,7 +289,7 @@ function CartContent() {
                   </div>
 
                   <div>
-                    <h2 className="font-helmet text-2xl md:text-3xl mb-4 border-b border-neutral-200 pb-3">
+                    <h2 className="font-cancellaresca text-2xl md:text-3xl mb-4 border-b border-neutral-200 pb-3">
                       Shipping Information
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -352,7 +355,7 @@ function CartContent() {
 
                 <div className="lg:col-span-5">
                   <div className="border border-neutral-200 p-6 md:p-8 space-y-6 md:space-y-8 lg:sticky lg:top-8">
-                    <h2 className="font-helmet text-2xl md:text-3xl border-b border-neutral-200 pb-3">
+                    <h2 className="font-cancellaresca text-2xl md:text-3xl border-b border-neutral-200 pb-3">
                       Payment Method
                     </h2>
 
@@ -363,7 +366,7 @@ function CartContent() {
                         className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
                           paymentMethod === "card"
                             ? "border-black bg-black text-white"
-                            : "border-neutral-300 text-neutral-600 hover:border-black"
+                            : "border-neutral-300 bg-white text-neutral-600 hover:border-black"
                         }`}
                       >
                         Card
@@ -374,7 +377,7 @@ function CartContent() {
                         className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
                           paymentMethod === "apple_pay"
                             ? "border-black bg-black text-white"
-                            : "border-neutral-300 text-neutral-600 hover:border-black"
+                            : "border-neutral-300 bg-white text-neutral-600 hover:border-black"
                         }`}
                       >
                         Apple Pay
@@ -385,7 +388,7 @@ function CartContent() {
                         className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
                           paymentMethod === "paypal"
                             ? "border-black bg-black text-white"
-                            : "border-neutral-300 text-neutral-600 hover:border-black"
+                            : "border-neutral-300 bg-white text-neutral-600 hover:border-black"
                         }`}
                       >
                         PayPal
@@ -414,7 +417,7 @@ function CartContent() {
                     >
                       {loading
                         ? "Redirecting..."
-                        : `Checkout â€” $${subtotal}`}
+                        : `Checkout \u2014 $${subtotal}`}
                     </button>
                   </div>
                 </div>

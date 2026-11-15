@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ export default function ClientServicePage() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    formData.append("_subject", "Nouveau message Client Service â€” HELMET -01");
+    formData.append("_subject", "Nouveau message Client Service - HELMET -01");
     formData.append("_captcha", "false");
     formData.append("_template", "table");
 
@@ -46,7 +46,8 @@ export default function ClientServicePage() {
         const topic = formData.get("Subject");
         const msg = formData.get("Message");
         window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
-          `[HELMET -01] ${topic}` )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
+          `[HELMET -01] ${topic}`
+        )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
         setStatus("success");
       }
     } catch {
@@ -56,21 +57,20 @@ export default function ClientServicePage() {
 
   return (
     <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
-      {/* HEADER 3 COLONNES IDENTIQUE PC & IPHONE */}
       <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-10 md:mb-16">
         <div className="justify-self-start">
           <Link
             href="/"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            â† Back To Home
+            {"\u2190 Back To Home"}
           </Link>
         </div>
 
         <div className="justify-self-center text-center">
           <Link
             href="/"
-            className="font-helmet text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+            className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
           >
             Helmet
           </Link>
@@ -81,20 +81,21 @@ export default function ClientServicePage() {
             href="/cart"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
           >
-            <span>ðŸ›</span>
-            <span>[{cartCount}]</span>
+            <svg width="16" height="16" className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            <span className="font-semibold">[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      {/* CONTENU CLIENT SERVICE */}
       <div className="max-w-2xl mx-auto">
         <div className="mb-8 md:mb-12 text-left">
-          <h1 className="font-helmet text-3xl sm:text-4xl md:text-5xl font-normal mb-3">
-            Client Service â€” Edition -01
+          <h1 className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl font-normal mb-3">
+            {"Client Service \u2014 Edition -01"}
           </h1>
           <p className="text-[10px] md:text-[11px] text-neutral-500 uppercase tracking-[0.18em] md:tracking-[0.2em] leading-relaxed">
-            Paris Atelier â€” Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
+            {"Paris Atelier \u2014 Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final."}
           </p>
         </div>
 
