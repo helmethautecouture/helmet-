@@ -181,15 +181,13 @@ function CartContent() {
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link
             href="/"
-            className="font-cancellaresca"
+            className="font-cancellaresca helmet-title-frame"
             style={{
               fontSize: "clamp(34px, 5vw, 52px)",
               lineHeight: 1,
               display: "block",
             }}
-          >
-            Helmet
-          </Link>
+          >Helmet Cart</Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>

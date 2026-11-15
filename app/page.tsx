@@ -219,14 +219,15 @@ export default function Home() {
 
   return (
     <main className="helmet-home-shell">
+      {/* APERÇU PHOTO PLUS NET (Moins flou, meilleur contraste) */}
       <AnimatePresence>
         {hoveredItem && !infoOpen && (
           <motion.div
             key={hoveredItem}
-            initial={{ opacity: 0, scale: 1.12 }}
-            animate={{ opacity: 0.13, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 0.22, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
               inset: 0,
@@ -244,13 +245,14 @@ export default function Home() {
                 width: "clamp(260px, 30vw, 400px)",
                 height: "clamp(340px, 38vw, 500px)",
                 objectFit: "cover",
-                filter: "grayscale(100%)",
+                filter: "grayscale(100%) contrast(1.08)",
               }}
             />
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* FENÊTRE INFO / FAQ */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
@@ -258,7 +260,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 14 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="helmet-faq-overlay"
           >
             <div style={{ maxWidth: "780px", margin: "0 auto" }}>
@@ -284,14 +286,13 @@ export default function Home() {
 
                 <div style={{ justifySelf: "center", textAlign: "center" }}>
                   <span
-                    className="font-cancellaresca"
+                    className="font-cancellaresca helmet-title-frame"
                     style={{
-                      fontSize: "clamp(36px, 5vw, 54px)",
+                      fontSize: "clamp(30px, 4.5vw, 48px)",
                       lineHeight: 1,
-                      display: "block",
                     }}
                   >
-                    Helmet
+                    Helmet Info
                   </span>
                 </div>
 
@@ -393,6 +394,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      {/* INTRO CINÉMATOGRAPHIQUE */}
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -454,6 +456,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      {/* HEADER HAUT : Paris — Atelier (sans cadre) | Info (ENCADRÉ) | Cart [0] (ENCADRÉ) */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -473,31 +476,30 @@ export default function Home() {
           </span>
         </div>
 
+        {/* INFO ENCADRÉ AU MILIEU EN HAUT */}
         <div style={{ justifySelf: "center" }}>
           <button
             type="button"
             onClick={() => setInfoOpen(true)}
-            className="helmet-zoom-link"
+            className="helmet-frame helmet-zoom-link"
             style={{
-              background: "transparent",
-              border: "none",
-              fontSize: "12px",
-              letterSpacing: "0.36em",
+              fontSize: "11px",
+              letterSpacing: "0.34em",
               color: "#000000",
               textTransform: "uppercase",
-              padding: "6px 14px",
             }}
           >
             Info
           </button>
         </div>
 
+        {/* CART [0] ENCADRÉ EN HAUT À DROITE */}
         <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
-            className="helmet-zoom-link"
+            className="helmet-frame helmet-zoom-link"
             style={{
-              fontSize: "12px",
+              fontSize: "11px",
               letterSpacing: "0.24em",
               color: "#000000",
               display: "inline-flex",
@@ -507,45 +509,38 @@ export default function Home() {
             }}
           >
             <svg
-              width="17"
-              height="17"
-              style={{ width: "17px", height: "17px", minWidth: "17px", color: "#000000" }}
+              width="15"
+              height="15"
+              style={{ width: "15px", height: "15px", minWidth: "15px", color: "#000000" }}
               fill="none"
               stroke="currentColor"
               strokeWidth="1.6"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 8h12l1 12H5L6 8z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 8V6a3 3 0 0 1 6 0v2"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
             </svg>
             <span>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
+      {/* MENU CENTRAL AVEC LES 4 BOUTONS ENCADRÉS AUTOUR DU LOGO HELMET */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-sketch-nav">
+          {/* GAUCHE : Shop (Encadré) & Helmet Gallery (Encadré) */}
           <div className="helmet-sketch-left">
             <Link
               href="/shop"
               onMouseEnter={() => setHoveredItem("/product1.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
-              className="helmet-zoom-link"
+              className="helmet-frame helmet-zoom-link"
               style={{
-                fontSize: "clamp(13px, 1.35vw, 16px)",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.2vw, 14px)",
+                letterSpacing: "0.28em",
                 textTransform: "uppercase",
                 color: "#000000",
                 whiteSpace: "nowrap",
-                padding: "6px 4px",
               }}
             >
               Shop
@@ -555,20 +550,20 @@ export default function Home() {
               href="/helmet"
               onMouseEnter={() => setHoveredItem("/product2.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
-              className="helmet-zoom-link"
+              className="helmet-frame helmet-zoom-link"
               style={{
-                fontSize: "clamp(13px, 1.35vw, 16px)",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.2vw, 14px)",
+                letterSpacing: "0.28em",
                 textTransform: "uppercase",
                 color: "#000000",
                 whiteSpace: "nowrap",
-                padding: "6px 4px",
               }}
             >
               Helmet Gallery
             </Link>
           </div>
 
+          {/* CENTRE : Logo Helmet Haute Couture (Sans cadre) */}
           <div className="helmet-sketch-center">
             <Link href="/helmet" className="helmet-logo-zoom">
               <span
@@ -599,17 +594,17 @@ export default function Home() {
             </Link>
           </div>
 
+          {/* DROITE : Client Service (Encadré) & Cart (Encadré) */}
           <div className="helmet-sketch-right">
             <Link
               href="/service"
-              className="helmet-zoom-link"
+              className="helmet-frame helmet-zoom-link"
               style={{
-                fontSize: "clamp(13px, 1.35vw, 16px)",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.2vw, 14px)",
+                letterSpacing: "0.28em",
                 textTransform: "uppercase",
                 color: "#000000",
                 whiteSpace: "nowrap",
-                padding: "6px 4px",
               }}
             >
               Client Service
@@ -617,17 +612,16 @@ export default function Home() {
 
             <Link
               href="/cart"
-              className="helmet-zoom-link"
+              className="helmet-frame helmet-zoom-link"
               style={{
-                fontSize: "clamp(13px, 1.35vw, 16px)",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.2vw, 14px)",
+                letterSpacing: "0.28em",
                 textTransform: "uppercase",
                 color: "#000000",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "8px",
                 whiteSpace: "nowrap",
-                padding: "6px 4px",
               }}
             >
               <span>Cart</span>
@@ -637,6 +631,7 @@ export default function Home() {
         </nav>
       </div>
 
+      {/* FOOTER BAS (Laissé tel quel, sans cadre) */}
       <footer className="helmet-home-footer">
         <div
           style={{

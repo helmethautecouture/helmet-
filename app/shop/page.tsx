@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -46,15 +46,13 @@ export default function Shop() {
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link
             href="/"
-            className="font-cancellaresca helmet-logo-zoom"
+            className="font-cancellaresca helmet-title-frame"
             style={{
               fontSize: "clamp(36px, 5vw, 54px)",
               lineHeight: 1,
               display: "block",
             }}
-          >
-            Helmet
-          </Link>
+          >Helmet Shop</Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>

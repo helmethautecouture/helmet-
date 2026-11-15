@@ -1,7 +1,7 @@
 ﻿@import "tailwindcss";
 
 /* ==========================================================================
-   1. TYPOGRAPHIE HAUTE COUTURE — DÉCLARATIONS @FONT-FACE MULTI-SOURCES
+   1. TYPOGRAPHIE HAUTE COUTURE — DÉCLARATIONS @FONT-FACE
    ========================================================================== */
 
 @font-face {
@@ -24,54 +24,14 @@
        local("1589 Humane Bordeaux Regular"),
        local("1589-humane-bordeaux-regular"),
        local("1589 Humane Bordeaux");
-  font-weight: 400;
+  font-weight: 400 700;
   font-style: normal;
   font-display: block;
 }
-
-@font-face {
-  font-family: "HelmetBordeaux1589";
-  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
-       url("/1589-humane-bordeaux-regular.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: block;
-}
-
-@font-face {
-  font-family: "HelmetBordeaux1589";
-  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
-       url("/1589-humane-bordeaux-regular.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: block;
-}
-
-@font-face {
-  font-family: "HelmetBordeaux1589";
-  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
-       url("/1589-humane-bordeaux-regular.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: block;
-}
-
-/* ==========================================================================
-   2. VARIABLES GLOBALES & RESET D'INGÉNIERIE
-   ========================================================================== */
 
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --neutral-100: #f5f5f5;
-  --neutral-200: #e5e5e5;
-  --neutral-300: #d4d4d4;
-  --neutral-400: #a3a3a3;
-  --neutral-500: #737373;
-  --neutral-600: #525252;
-  --neutral-700: #404040;
-  --neutral-800: #262626;
-  --neutral-900: #171717;
   --font-helmet-script: var(--font-script-1610), "HelmetScript1610", Georgia, serif;
   --font-primary: var(--font-bordeaux-1589), "HelmetBordeaux1589", Georgia, serif;
   --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
@@ -83,7 +43,7 @@
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
 }
 
 html,
@@ -98,13 +58,12 @@ body {
   color: #000000 !important;
   font-family: var(--font-primary) !important;
   font-weight: 600 !important;
-  -webkit-text-stroke: 0.26px currentColor;
-  font-variant-numeric: proportional-nums;
+  -webkit-text-stroke: 0.22px currentColor;
   -webkit-text-size-adjust: 100%;
 }
 
 /* ==========================================================================
-   3. APPLICATION STRICTE DES POLICES (LETTRES, CHIFFRES & LOGO)
+   2. APPLICATION STRICTE DES POLICES
    ========================================================================== */
 
 body,
@@ -126,26 +85,23 @@ input,
 select,
 textarea,
 label,
-th,
-td,
 .font-sans,
 .font-bordeaux {
   font-family: var(--font-primary) !important;
   font-weight: 600 !important;
-  -webkit-text-stroke: 0.26px currentColor;
+  -webkit-text-stroke: 0.22px currentColor;
 }
 
-/* Placeholders dans la même police 1589 */
 input::placeholder,
 textarea::placeholder {
   font-family: var(--font-primary) !important;
   font-weight: 500 !important;
-  -webkit-text-stroke: 0.15px currentColor;
+  -webkit-text-stroke: 0.12px currentColor;
   color: #737373;
   opacity: 1;
 }
 
-/* EXCEPTION STRICTE : Le Logo "Helmet" et les titres en 1610 Cancellaresca */
+/* Exception : Police 1610 Cancellaresca pour les grands titres Helmet */
 .font-cancellaresca,
 .font-helmet,
 .font-cancellaresca *,
@@ -157,10 +113,6 @@ textarea::placeholder {
   font-synthesis: none !important;
   letter-spacing: 0.03em;
 }
-
-/* ==========================================================================
-   4. SÉCURITÉ DES LIENS & ICÔNES VECTORIELLES SVG
-   ========================================================================== */
 
 a,
 a:link,
@@ -180,10 +132,10 @@ svg {
 }
 
 /* ==========================================================================
-   5. MOTEUR D'ANIMATION & MICRO-ZOOMS ULTRA SMOOTH AU CURSEUR
+   3. MICRO-ZOOM NET (SANS FLOU) & SYSTÈME D'ENCADREMENT SUR-MESURE
    ========================================================================== */
 
-/* Zoom fluide sur tous les liens du menu et boutons de navigation */
+/* Lien standard avec zoom ultra-net (sans flou de calque 3D, opacité 0.92 au lieu de 0.7) */
 .helmet-zoom-link {
   display: inline-flex;
   align-items: center;
@@ -191,47 +143,103 @@ svg {
   cursor: pointer;
   position: relative;
   transition:
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  transform-origin: center center;
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease !important;
 }
 
 .helmet-zoom-link:hover {
-  transform: scale(1.12) translateZ(0) !important;
-  opacity: 0.72;
+  transform: scale(1.045) !important;
+  opacity: 0.92;
 }
 
 .helmet-zoom-link:active {
-  transform: scale(0.97) translateZ(0) !important;
+  transform: scale(0.98) !important;
 }
 
-/* Zoom fluide sur le grand logo central Helmet Haute Couture */
+/* CADRE ARCHITECTURAL POUR LES BOUTONS DU MENU (Shop, Gallery, Service, Cart, Info, Cart Top) */
+.helmet-frame {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px !important;
+  border: 1px solid #171717;
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 2.75px rgba(0, 0, 0, 0.28);
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s ease,
+    background-color 0.35s ease !important;
+}
+
+/* Petits repères d'angle gothique/atelier aux coins du cadre */
+.helmet-frame::before,
+.helmet-frame::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  pointer-events: none;
+  border: 1px solid transparent;
+  transition: inset 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+
+.helmet-frame:hover {
+  transform: scale(1.045) !important;
+  box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 3px #000000;
+}
+
+.helmet-frame:hover::before {
+  inset: -4px;
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+/* CADRE ARCHITECTURAL POUR LES GRANDS TITRES 1610 EN HAUT DES PAGES (Helmet Shop, Helmet Gallery, etc.) */
+.helmet-title-frame {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 28px 6px 28px !important;
+  border: 1px solid #171717;
+  background-color: #ffffff;
+  box-shadow: inset 0 0 0 2.5px #ffffff, inset 0 0 0 3.25px rgba(0, 0, 0, 0.32);
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s ease !important;
+}
+
+@media (min-width: 768px) {
+  .helmet-title-frame {
+    padding: 12px 42px 8px 42px !important;
+  }
+}
+
+.helmet-title-frame:hover {
+  transform: scale(1.035) !important;
+  box-shadow: inset 0 0 0 2.5px #ffffff, inset 0 0 0 3.5px #000000;
+}
+
+/* Zoom sur le grand logo central de l'accueil */
 .helmet-logo-zoom {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  transform-origin: center center;
-  will-change: transform;
-  backface-visibility: hidden;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .helmet-logo-zoom:hover {
-  transform: scale(1.055) translateZ(0) !important;
+  transform: scale(1.035) !important;
 }
 
-/* Conteneur photo et zoom image progressif (Shop, Produit & Helmet Gallery) */
+/* Zoom photo ultra-net dans Shop & Gallery */
 .helmet-image-frame {
   position: relative;
   overflow: hidden !important;
   background-color: #f5f5f5;
   border: 1px solid #e5e5e5;
-  transform: translateZ(0);
 }
 
 .helmet-zoom-img {
@@ -239,22 +247,17 @@ svg {
   height: 100% !important;
   object-fit: cover !important;
   display: block !important;
-  transition:
-    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.6s ease !important;
-  transform-origin: center center;
-  will-change: transform;
-  backface-visibility: hidden;
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .helmet-image-frame:hover .helmet-zoom-img,
 .helmet-zoom-img:hover,
 a:hover .helmet-zoom-img {
-  transform: scale(1.075) translateZ(0) !important;
+  transform: scale(1.05) !important;
 }
 
 /* ==========================================================================
-   6. ARCHITECTURE DE LA PAGE D'ACCUEIL (MENU CROQUIS PC & MOBILE)
+   4. STRUCTURE DU MENU ET DES PAGES
    ========================================================================== */
 
 .helmet-home-shell {
@@ -275,18 +278,17 @@ a:hover .helmet-zoom-img {
   z-index: 35;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: start;
+  align-items: center;
   padding: 24px 20px 0 20px;
   width: 100%;
 }
 
 @media (min-width: 768px) {
   .helmet-home-topbar {
-    padding: 40px 56px 0 56px;
+    padding: 36px 56px 0 56px;
   }
 }
 
-/* Grille centrale : [Shop | Helmet Gallery] --- [HELMET] --- [Client Service | Cart] */
 .helmet-sketch-stage {
   position: relative;
   z-index: 20;
@@ -300,27 +302,28 @@ a:hover .helmet-zoom-img {
 
 .helmet-sketch-nav {
   width: 100%;
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px;
+  gap: 24px;
   align-items: center;
   justify-items: center;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .helmet-sketch-nav {
     grid-template-columns: 1fr auto 1fr;
-    gap: 44px;
+    gap: 36px;
   }
 }
 
 .helmet-sketch-left {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 16px;
   order: 2;
 }
 
@@ -331,34 +334,35 @@ a:hover .helmet-zoom-img {
   justify-content: center;
   text-align: center;
   order: 1;
-  padding: 0 12px;
+  padding: 0 10px;
 }
 
 .helmet-sketch-right {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 16px;
   order: 3;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .helmet-sketch-left {
     justify-self: end;
     justify-content: flex-end;
-    gap: 52px;
+    gap: 28px;
     order: 1;
   }
 
   .helmet-sketch-center {
     order: 2;
-    padding: 0 24px;
+    padding: 0 20px;
   }
 
   .helmet-sketch-right {
     justify-self: start;
     justify-content: flex-start;
-    gap: 52px;
+    gap: 28px;
     order: 3;
   }
 }
@@ -378,10 +382,6 @@ a:hover .helmet-zoom-img {
     padding: 24px 56px 32px 56px;
   }
 }
-
-/* ==========================================================================
-   7. ARCHITECTURE DES PAGES INTÉRIEURES (SHOP, GALLERY, SERVICE, CART, INFO)
-   ========================================================================== */
 
 .helmet-page-container {
   min-height: 100vh;
@@ -447,10 +447,6 @@ a:hover .helmet-zoom-img {
   }
 }
 
-/* ==========================================================================
-   8. COMPOSANTS DE FORMULAIRES, BOUTONS & MODAL INFO/FAQ
-   ========================================================================== */
-
 .helmet-input {
   width: 100%;
   background-color: #ffffff !important;
@@ -460,7 +456,7 @@ a:hover .helmet-zoom-img {
   font-size: 13px !important;
   letter-spacing: 0.14em;
   outline: none !important;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.25s ease;
 }
 
 .helmet-input:focus {
@@ -480,19 +476,13 @@ a:hover .helmet-zoom-img {
   text-align: center;
   cursor: pointer;
   transition:
-    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.25s ease,
-    opacity 0.25s ease !important;
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease !important;
 }
 
 .helmet-btn-black:hover {
   background-color: #1f1f1f !important;
   transform: scale(1.015);
-}
-
-.helmet-btn-black:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .helmet-faq-overlay {
