@@ -12,10 +12,10 @@ const AUDIO_PATHS = [
   "/ambiance.mp3.mp3",
 ];
 
-let introAlreadyDone = false;
+let introPlayedInMemory = false;
 
 export default function Home() {
-  const [loading, setLoading] = useState(!introAlreadyDone);
+  const [loading, setLoading] = useState(!introPlayedInMemory);
   const [isPlaying, setIsPlaying] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -37,11 +37,11 @@ export default function Home() {
     }
 
     let timer: NodeJS.Timeout;
-    if (introAlreadyDone) {
+    if (introPlayedInMemory) {
       setLoading(false);
     } else {
       timer = setTimeout(() => {
-        introAlreadyDone = true;
+        introPlayedInMemory = true;
         setLoading(false);
       }, 2000);
     }
@@ -201,8 +201,8 @@ export default function Home() {
   ];
 
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-white text-black font-sans select-none flex flex-col justify-between">
-      {/* APERÇU EN ARRIÈRE-PLAN AU SURVOL DU MENU */}
+    <main className="helmet-home-shell">
+      {/* APERÇU FANTÔME AU SURVOL */}
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
@@ -211,12 +211,25 @@ export default function Home() {
             animate={{ opacity: 0.08, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 0,
+              pointerEvents: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             <img
               src={hoveredItem}
               alt=""
-              className="w-[260px] h-[340px] md:w-[420px] md:h-[540px] object-cover grayscale"
+              style={{
+                width: "340px",
+                height: "440px",
+                objectFit: "cover",
+                filter: "grayscale(100%)",
+              }}
             />
           </motion.div>
         )}
@@ -229,18 +242,53 @@ export default function Home() {
             key="loader"
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7, ease: "easeInOut" }}
-            className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center pointer-events-none px-4"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 50,
+              backgroundColor: "#ffffff",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              pointerEvents: "none",
+              padding: "0 16px",
+            }}
           >
             <motion.div
-              initial={{ scale: 1.2, opacity: 0, y: 16 }}
+              initial={{ scale: 1.22, opacity: 0, y: 16 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center flex flex-col items-center"
+              style={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <span className="font-cancellaresca text-[82px] sm:text-[140px] md:text-[240px] tracking-[0.03em] text-black block leading-[1.15] py-4">
+              <span
+                className="font-cancellaresca"
+                style={{
+                  fontSize: "clamp(84px, 16vw, 240px)",
+                  letterSpacing: "0.03em",
+                  color: "#000000",
+                  display: "block",
+                  lineHeight: 1.15,
+                  padding: "12px 0",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 Helmet
               </span>
-              <span className="block text-[10px] md:text-sm tracking-[0.5em] text-neutral-700 mt-2 font-normal font-sans">
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "12px",
+                  letterSpacing: "0.5em",
+                  color: "#404040",
+                  marginTop: "8px",
+                }}
+              >
                 Haute Couture
               </span>
             </motion.div>
@@ -248,37 +296,82 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER ARCHITECTURAL */}
-      <header className="relative z-20 flex items-start justify-between px-6 pt-8 md:px-14 md:pt-14 bg-transparent">
-        <div className="w-24 md:w-48 pt-2 md:pt-3 flex flex-col gap-1 md:gap-1.5 text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.35em] text-neutral-800 font-normal">
-          <span className="whitespace-nowrap">Paris — Atelier</span>
-          <span className="text-[7px] sm:text-[9px] md:text-[10px] tracking-[0.18em] md:tracking-[0.3em] text-neutral-600 whitespace-nowrap">
+      {/* HEADER ARCHITECTURAL 3 COLONNES */}
+      <header className="helmet-header-home">
+        <div
+          style={{
+            paddingTop: "8px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            fontSize: "10px",
+            letterSpacing: "0.3em",
+            color: "#262626",
+            justifySelf: "start",
+          }}
+        >
+          <span style={{ whiteSpace: "nowrap" }}>Paris — Atelier</span>
+          <span style={{ fontSize: "9px", letterSpacing: "0.25em", color: "#525252", whiteSpace: "nowrap" }}>
             Edition -01
           </span>
         </div>
 
-        <div className="flex flex-col items-center">
-          <Link href="/helmet" className="group text-center flex flex-col items-center">
-            <span className="font-cancellaresca text-5xl sm:text-7xl md:text-[115px] tracking-[0.04em] text-black block leading-[1.15] pt-1 transition-transform duration-500 group-hover:scale-[1.03]">
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifySelf: "center" }}>
+          <Link
+            href="/helmet"
+            style={{
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <span
+              className="font-cancellaresca"
+              style={{
+                fontSize: "clamp(54px, 8vw, 115px)",
+                letterSpacing: "0.04em",
+                color: "#000000",
+                display: "block",
+                lineHeight: 1.12,
+                whiteSpace: "nowrap",
+              }}
+            >
               Helmet
             </span>
-            <span className="block text-[9px] sm:text-[11px] md:text-xs tracking-[0.4em] md:tracking-[0.5em] text-neutral-700 mt-1 font-normal font-sans">
+            <span
+              style={{
+                display: "block",
+                fontSize: "11px",
+                letterSpacing: "0.48em",
+                color: "#404040",
+                marginTop: "4px",
+                whiteSpace: "nowrap",
+              }}
+            >
               Haute Couture
             </span>
           </Link>
         </div>
 
-        <div className="flex items-center justify-end w-24 md:w-48 pt-2 md:pt-3">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", paddingTop: "8px", justifySelf: "end" }}>
           <Link
             href="/cart"
-            className="text-[11px] md:text-xs tracking-[0.25em] md:tracking-[0.35em] text-neutral-800 hover:text-black transition-colors font-normal flex items-center gap-2 group"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.3em",
+              color: "#171717",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              whiteSpace: "nowrap",
+            }}
           >
             <span className="hidden sm:inline">Cart</span>
             <svg
               width="16"
               height="16"
-              style={{ width: "16px", height: "16px", minWidth: "16px" }}
-              className="w-4 h-4 text-neutral-900 group-hover:text-black transition-colors"
+              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -290,45 +383,62 @@ export default function Home() {
                 d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
               />
             </svg>
-            <span className="text-black font-semibold">[{cartCount}]</span>
+            <span style={{ fontWeight: 600, color: "#000000" }}>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      {/* MENU CENTRAL */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-6 md:px-14">
-        <nav className="w-full max-w-xl">
-          <div className="flex justify-start items-center pb-3 border-b border-neutral-300 text-[10px] tracking-[0.45em] text-neutral-600 font-normal">
+      {/* MENU CENTRAL : SOMMAIRE D'ATELIER */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "0 24px",
+        }}
+      >
+        <nav className="helmet-summary-nav">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              paddingBottom: "12px",
+              borderBottom: "1px solid #d4d4d4",
+              fontSize: "10px",
+              letterSpacing: "0.45em",
+              color: "#525252",
+            }}
+          >
             <span>Summary</span>
           </div>
 
-          <div className="divide-y divide-neutral-300 border-b border-neutral-300">
+          <div>
             {menuLinks.map((item) => (
               <Link
                 key={item.index}
                 href={item.href}
                 onMouseEnter={() => setHoveredItem(item.preview)}
                 onMouseLeave={() => setHoveredItem(null)}
-                className="group relative flex items-center justify-between py-5 md:py-6 transition-all duration-300"
+                className="helmet-summary-row group"
               >
-                <span className="absolute bottom-0 left-0 h-[1.5px] w-0 bg-black transition-all duration-500 ease-out group-hover:w-full" />
-
-                <div className="flex items-baseline gap-5 md:gap-10">
-                  <span className="text-[10px] tracking-[0.35em] text-neutral-600 font-normal group-hover:text-black transition-colors duration-300">
+                <div style={{ display: "flex", alignItems: "baseline", gap: "28px" }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "0.35em", color: "#525252" }}>
                     {item.index}
                   </span>
-                  <span className="text-xs md:text-sm tracking-[0.35em] md:tracking-[0.45em] text-neutral-900 group-hover:text-black group-hover:translate-x-2 transition-all duration-300 font-normal">
+                  <span style={{ fontSize: "13px", letterSpacing: "0.42em", color: "#171717" }}>
                     {item.title}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 md:gap-4">
-                  <span className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.35em] text-neutral-600 group-hover:text-black transition-colors duration-300 font-normal">
+                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "0.3em", color: "#525252" }}>
                     {item.subtitle}
                   </span>
-                  <span className="text-xs text-neutral-700 group-hover:text-black group-hover:translate-x-1 transition-all duration-300 font-normal">
-                    →
-                  </span>
+                  <span style={{ fontSize: "12px", color: "#404040" }}>→</span>
                 </div>
               </Link>
             ))}
@@ -336,40 +446,51 @@ export default function Home() {
         </nav>
       </div>
 
-      {/* FOOTER */}
-      <footer className="relative z-20 flex items-center justify-between px-6 py-6 md:px-14 text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.3em] text-neutral-700 font-normal bg-transparent">
-        <div className="w-28 md:w-48 flex items-center gap-2 md:gap-4">
-          <a
-            href="https://www.instagram.com/helmet.hautecouture/"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-black transition-colors"
-          >
+      {/* FOOTER SYMÉTRIQUE */}
+      <footer className="helmet-footer-home">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "14px",
+            fontSize: "11px",
+            letterSpacing: "0.28em",
+            color: "#404040",
+            justifySelf: "start",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <a href="https://www.instagram.com/helmet.hautecouture/" target="_blank" rel="noreferrer">
             Instagram
           </a>
-          <span className="text-neutral-400">/</span>
-          <a
-            href="https://www.youtube.com"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-black transition-colors"
-          >
+          <span style={{ color: "#a3a3a3" }}>/</span>
+          <a href="https://www.youtube.com" target="_blank" rel="noreferrer">
             YouTube
           </a>
         </div>
 
-        <div className="flex justify-center">
+        {/* ICÔNE CASQUE AUDIO AU CENTRE */}
+        <div style={{ justifySelf: "center" }}>
           <button
             type="button"
             onClick={toggleAudio}
-            className="relative flex items-center justify-center p-2 text-neutral-900 hover:text-black hover:scale-105 transition-all group cursor-pointer bg-transparent border-0"
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "8px",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "#171717",
+            }}
             title={isPlaying ? "Sound On (70%)" : "Sound Off"}
           >
             <svg
               width="26"
               height="26"
               style={{ width: "26px", height: "26px", minWidth: "26px" }}
-              className="w-6 h-6 md:w-7 md:h-7"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -380,14 +501,40 @@ export default function Home() {
               <rect x="18" y="13.5" width="3.5" height="6.5" rx="1.5" fill="currentColor" />
             </svg>
             {!isPlaying && (
-              <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="w-7 h-[1.5px] bg-red-600 rotate-45 transform" />
+              <span
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  pointerEvents: "none",
+                }}
+              >
+                <span
+                  style={{
+                    width: "28px",
+                    height: "1.5px",
+                    backgroundColor: "#dc2626",
+                    transform: "rotate(45deg)",
+                    display: "block",
+                  }}
+                />
               </span>
             )}
           </button>
         </div>
 
-        <div className="w-28 md:w-48 text-right">
+        <div
+          style={{
+            textAlign: "right",
+            fontSize: "11px",
+            letterSpacing: "0.28em",
+            color: "#404040",
+            justifySelf: "end",
+            whiteSpace: "nowrap",
+          }}
+        >
           <span className="hidden sm:inline">© Helmet All Rights Reserved</span>
           <span className="sm:hidden">© Helmet</span>
         </div>

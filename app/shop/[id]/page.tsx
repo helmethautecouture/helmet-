@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 export default function ProductDetailPage() {
   const [selectedSize, setSelectedSize] = useState("2");
   const [cartCount, setCartCount] = useState(0);
@@ -64,36 +62,53 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
-      <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-8 md:mb-16">
-        <div className="justify-self-start">
+    <div className="helmet-page-container">
+      <header className="helmet-page-header">
+        <div style={{ justifySelf: "start" }}>
           <Link
             href="/shop"
-            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
+            style={{
+              fontSize: "11px",
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              whiteSpace: "nowrap",
+            }}
           >
             ← Back To Shop
           </Link>
         </div>
 
-        <div className="justify-self-center text-center">
+        <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link
             href="/"
-            className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+            className="font-cancellaresca"
+            style={{
+              fontSize: "clamp(34px, 5vw, 52px)",
+              lineHeight: 1,
+              display: "block",
+            }}
           >
             Helmet
           </Link>
         </div>
 
-        <div className="justify-self-end">
+        <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
-            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
+            style={{
+              fontSize: "11px",
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              whiteSpace: "nowrap",
+            }}
           >
             <svg
               width="16"
               height="16"
               style={{ width: "16px", height: "16px", minWidth: "16px" }}
-              className="w-4 h-4 text-black shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -105,43 +120,61 @@ export default function ProductDetailPage() {
                 d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
               />
             </svg>
-            <span className="font-semibold">[{cartCount}]</span>
+            <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-        <div className="aspect-[3/4] w-full bg-neutral-100 border border-neutral-200 overflow-hidden">
+      <div className="helmet-product-grid">
+        <div
+          style={{
+            aspectRatio: "3 / 4",
+            width: "100%",
+            backgroundColor: "#f5f5f5",
+            border: "1px solid #e5e5e5",
+            overflow: "hidden",
+          }}
+        >
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes("article1.jpg")) {
+                target.src = "/article1.jpg";
+              }
+            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
         </div>
 
-        <div className="pt-1 md:pt-2 space-y-6 md:space-y-8">
+        <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
           <div>
-            <h1 className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl font-normal mb-2">
+            <h1 className="font-cancellaresca" style={{ fontSize: "clamp(34px, 4vw, 48px)", margin: "0 0 8px 0" }}>
               Article -01 — Helmet
             </h1>
-            <p className="text-sm tracking-widest text-neutral-600">
+            <p style={{ fontSize: "14px", letterSpacing: "0.18em", color: "#525252", margin: 0 }}>
               ${product.price}
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-neutral-500 mb-3">Size</p>
-            <div className="flex gap-3">
+            <p style={{ fontSize: "12px", color: "#737373", marginBottom: "12px" }}>Size</p>
+            <div style={{ display: "flex", gap: "12px" }}>
               {["1", "2", "3"].map((size) => (
                 <button
                   key={size}
                   type="button"
                   onClick={() => setSelectedSize(size)}
-                  className={`w-14 h-10 border text-xs transition ${
-                    selectedSize === size
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-black border-neutral-300 hover:border-black"
-                  }`}
+                  style={{
+                    width: "56px",
+                    height: "40px",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    border: selectedSize === size ? "1px solid #000000" : "1px solid #d4d4d4",
+                    backgroundColor: selectedSize === size ? "#000000" : "#ffffff",
+                    color: selectedSize === size ? "#ffffff" : "#000000",
+                  }}
                 >
                   {size}
                 </button>
@@ -149,42 +182,62 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="w-full bg-black text-white py-4 text-xs tracking-[0.15em] font-medium hover:bg-neutral-800 transition"
-          >
+          <button type="button" onClick={handleAddToCart} className="helmet-btn-black">
             Add To Cart
           </button>
 
-          <div className="border-t border-neutral-200 pt-2 divide-y divide-neutral-200">
-            <div className="py-4">
+          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "8px" }}>
+            <div style={{ padding: "16px 0", borderBottom: "1px solid #e5e5e5" }}>
               <button
                 type="button"
                 onClick={() => setOpenSection(openSection === "details" ? null : "details")}
-                className="w-full flex justify-between items-center text-xs tracking-wider text-neutral-700 bg-transparent border-0"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  fontSize: "12px",
+                  letterSpacing: "0.1em",
+                  color: "#404040",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
               >
                 <span>Product Details</span>
                 <span>{openSection === "details" ? "−" : "+"}</span>
               </button>
               {openSection === "details" && (
-                <p className="text-xs text-neutral-500 mt-3 leading-relaxed">
+                <p style={{ fontSize: "12px", color: "#737373", marginTop: "12px", lineHeight: 1.6 }}>
                   Paris Atelier — Edition -01. Heavyweight luxury silhouette crafted with custom Helmet Haute Couture detailing.
                 </p>
               )}
             </div>
 
-            <div className="py-4">
+            <div style={{ padding: "16px 0", borderBottom: "1px solid #e5e5e5" }}>
               <button
                 type="button"
                 onClick={() => setOpenSection(openSection === "shipping" ? null : "shipping")}
-                className="w-full flex justify-between items-center text-xs tracking-wider text-neutral-700 bg-transparent border-0"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  fontSize: "12px",
+                  letterSpacing: "0.1em",
+                  color: "#404040",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
               >
                 <span>Shipping & Policy</span>
                 <span>{openSection === "shipping" ? "−" : "+"}</span>
               </button>
               {openSection === "shipping" && (
-                <p className="text-xs text-neutral-500 mt-3 leading-relaxed">
+                <p style={{ fontSize: "12px", color: "#737373", marginTop: "12px", lineHeight: 1.6 }}>
                   Tracked worldwide delivery. All sales are final — no returns or exchanges.
                 </p>
               )}

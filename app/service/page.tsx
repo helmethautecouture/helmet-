@@ -31,9 +31,7 @@ export default function ClientServicePage() {
     try {
       const response = await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
+        headers: { Accept: "application/json" },
         body: formData,
       });
 
@@ -46,7 +44,8 @@ export default function ClientServicePage() {
         const topic = formData.get("Subject");
         const msg = formData.get("Message");
         window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
-          `[HELMET -01] ${topic}` )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
+          `[HELMET -01] ${topic}`
+        )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
         setStatus("success");
       }
     } catch {
@@ -55,36 +54,53 @@ export default function ClientServicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
-      <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-10 md:mb-16">
-        <div className="justify-self-start">
+    <div className="helmet-page-container">
+      <header className="helmet-page-header">
+        <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
-            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
+            style={{
+              fontSize: "11px",
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              whiteSpace: "nowrap",
+            }}
           >
             ← Back To Home
           </Link>
         </div>
 
-        <div className="justify-self-center text-center">
+        <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link
             href="/"
-            className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+            className="font-cancellaresca"
+            style={{
+              fontSize: "clamp(34px, 5vw, 52px)",
+              lineHeight: 1,
+              display: "block",
+            }}
           >
             Helmet
           </Link>
         </div>
 
-        <div className="justify-self-end">
+        <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
-            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
+            style={{
+              fontSize: "11px",
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              whiteSpace: "nowrap",
+            }}
           >
             <svg
               width="16"
               height="16"
               style={{ width: "16px", height: "16px", minWidth: "16px" }}
-              className="w-4 h-4 text-black shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -96,72 +112,60 @@ export default function ClientServicePage() {
                 d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
               />
             </svg>
-            <span className="font-semibold">[{cartCount}]</span>
+            <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8 md:mb-12 text-left">
-          <h1 className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl font-normal mb-3">
+      <div style={{ maxWidth: "672px", margin: "0 auto" }}>
+        <div style={{ marginBottom: "36px" }}>
+          <h1 className="font-cancellaresca" style={{ fontSize: "clamp(34px, 4vw, 48px)", margin: "0 0 12px 0" }}>
             Client Service — Edition -01
           </h1>
-          <p className="text-[10px] md:text-[11px] text-neutral-500 uppercase tracking-[0.18em] md:tracking-[0.2em] leading-relaxed">
+          <p
+            style={{
+              fontSize: "11px",
+              color: "#737373",
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              lineHeight: 1.7,
+              margin: 0,
+            }}
+          >
             Paris Atelier — Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
+              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
                 Full Name *
               </label>
-              <input
-                type="text"
-                name="Client_Name"
-                required
-                placeholder="Full Name"
-                className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
-              />
+              <input type="text" name="Client_Name" required placeholder="Full Name" className="helmet-input" />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
+              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
                 Email Address *
               </label>
-              <input
-                type="email"
-                name="Client_Email"
-                required
-                placeholder="Email Address"
-                className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
-              />
+              <input type="email" name="Client_Email" required placeholder="Email Address" className="helmet-input" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
+              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
                 Order Reference (Optional)
               </label>
-              <input
-                type="text"
-                name="Order_Reference"
-                placeholder="Order #-01"
-                className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
-              />
+              <input type="text" name="Order_Reference" placeholder="Order #-01" className="helmet-input" />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
+              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
                 Topic *
               </label>
-              <select
-                name="Subject"
-                required
-                className="w-full bg-white border border-neutral-300 p-3.5 text-xs uppercase tracking-wider focus:border-black outline-none transition"
-              >
+              <select name="Subject" required className="helmet-input">
                 <option value="Order Status & Shipping">Order Status & Shipping</option>
                 <option value="Sizing & Garment Specifications">Sizing & Garment Specifications</option>
                 <option value="Payment & Billing">Payment & Billing</option>
@@ -172,28 +176,28 @@ export default function ClientServicePage() {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
+            <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
               Message *
             </label>
-            <textarea
-              name="Message"
-              rows={6}
-              required
-              placeholder="Write your message..."
-              className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
-            />
+            <textarea name="Message" rows={6} required placeholder="Write your message..." className="helmet-input" />
           </div>
 
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
-          >
+          <button type="submit" disabled={status === "loading"} className="helmet-btn-black">
             {status === "loading" ? "Sending..." : "Submit Inquiry"}
           </button>
 
           {status === "success" && (
-            <div className="p-4 border border-black bg-neutral-50 text-[11px] uppercase tracking-[0.2em] text-center">
+            <div
+              style={{
+                padding: "16px",
+                border: "1px solid #000000",
+                backgroundColor: "#fafafa",
+                fontSize: "11px",
+                textTransform: "uppercase",
+                letterSpacing: "0.2em",
+                textAlign: "center",
+              }}
+            >
               Thank you. Your inquiry has been sent to Helmet Client Service.
             </div>
           )}
