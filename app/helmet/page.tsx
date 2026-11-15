@@ -1,12 +1,12 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 const galleryItems = [
-  { id: "-01", title: "Shooting -01 â€” Paris", image: "/product1.jpg" },
-  { id: "-02", title: "Shooting -02 â€” Studio", image: "/product2.jpg" },
+  { id: "-01", title: "Shooting -01 — Paris", image: "/product1.jpg" },
+  { id: "-02", title: "Shooting -02 — Studio", image: "/product2.jpg" },
 ];
 
 export default function HelmetGallery() {
@@ -31,21 +31,22 @@ export default function HelmetGallery() {
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
+            className="helmet-zoom-link"
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.22em",
               whiteSpace: "nowrap",
             }}
           >
-            â† Back To Home
+            ← Back To Home
           </Link>
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link
             href="/"
-            className="font-cancellaresca"
+            className="font-cancellaresca helmet-logo-zoom"
             style={{
               fontSize: "clamp(30px, 5vw, 52px)",
               lineHeight: 1,
@@ -60,11 +61,12 @@ export default function HelmetGallery() {
         <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
+            className="helmet-zoom-link"
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
-              display: "flex",
+              letterSpacing: "0.22em",
+              display: "inline-flex",
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
@@ -73,7 +75,7 @@ export default function HelmetGallery() {
             <svg width="16" height="16" style={{ width: "16px", height: "16px", minWidth: "16px" }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
+            <span>[{cartCount}]</span>
           </Link>
         </div>
       </header>
@@ -85,39 +87,29 @@ export default function HelmetGallery() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            style={{ display: "flex", flexDirection: "column", gap: "14px" }}
+            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
           >
             <div
+              className="helmet-image-frame"
               style={{
                 aspectRatio: "4 / 5",
                 width: "100%",
-                overflow: "hidden",
-                backgroundColor: "#f5f5f5",
-                border: "1px solid #e5e5e5",
               }}
             >
               <img
                 src={item.image}
                 alt={item.title}
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.5s ease" }}
                 className="helmet-zoom-img"
               />
             </div>
             <span
               className="font-cancellaresca"
-              style={{ fontSize: "26px", letterSpacing: "0.06em", color: "#262626", textAlign: "center" }}
+              style={{ fontSize: "28px", letterSpacing: "0.06em", color: "#171717", textAlign: "center" }}
             >
               {item.title}
             </span>
           </motion.div>
         ))}
-      </div>
-
-      {/* CASQUE AUDIO EN BAS Ã€ GAUCHE */}
-      <div style={{ position: "absolute", bottom: "24px", left: "24px", zIndex: 30 }}>
-        <a href="/" style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", color: "#737373" }}>
-          â† Sound / Home
-        </a>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import GlobalAudio from "./GlobalAudio";
 
 const fontScript1610 = localFont({
   src: "../public/fonts/1610-cancellaresca.ttf",
@@ -43,11 +42,10 @@ export default function RootLayout({
         style={{
           fontFamily: "var(--font-bordeaux-1589), serif",
           fontWeight: 600,
-          WebkitTextStroke: "0.25px currentColor",
+          WebkitTextStroke: "0.26px currentColor",
         }}
         className="bg-white text-black antialiased selection:bg-black selection:text-white overflow-x-hidden"
       >
-        <GlobalAudio />
         {children}
       </body>
     </html>
