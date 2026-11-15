@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ export default function ClientServicePage() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    formData.append("_subject", "Nouveau message Client Service — HELMET -01");
+    formData.append("_subject", "Nouveau message Client Service â€” HELMET -01");
     formData.append("_captcha", "false");
     formData.append("_template", "table");
 
@@ -63,7 +63,7 @@ export default function ClientServicePage() {
             href="/"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            ← Back To Home
+            â† Back To Home
           </Link>
         </div>
 
@@ -81,7 +81,7 @@ export default function ClientServicePage() {
             href="/cart"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
           >
-            <span>🛍</span>
+            <span>ðŸ›</span>
             <span>[{cartCount}]</span>
           </Link>
         </div>
@@ -91,10 +91,10 @@ export default function ClientServicePage() {
       <div className="max-w-2xl mx-auto">
         <div className="mb-8 md:mb-12 text-left">
           <h1 className="font-helmet text-3xl sm:text-4xl md:text-5xl font-normal mb-3">
-            Client Service — Edition -01
+            Client Service â€” Edition -01
           </h1>
           <p className="text-[10px] md:text-[11px] text-neutral-500 uppercase tracking-[0.18em] md:tracking-[0.2em] leading-relaxed">
-            Paris Atelier — Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
+            Paris Atelier â€” Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
           </p>
         </div>
 

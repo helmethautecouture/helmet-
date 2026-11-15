@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ export default function ProductDetailPage() {
     id: "article--01",
     name: "Article -01 — Helmet",
     price: 180,
-    image: "/article1.jpg",
+    image: "/product1.jpg",
   };
 
   useEffect(() => {
@@ -65,7 +65,6 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
-      {/* HEADER 3 COLONNES IDENTIQUE PC & IPHONE */}
       <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-8 md:mb-16">
         <div className="justify-self-start">
           <Link
@@ -79,7 +78,7 @@ export default function ProductDetailPage() {
         <div className="justify-self-center text-center">
           <Link
             href="/"
-            className="font-helmet text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+            className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
           >
             Helmet
           </Link>
@@ -90,25 +89,32 @@ export default function ProductDetailPage() {
             href="/cart"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
           >
-            <span>🛍</span>
-            <span>[{cartCount}]</span>
+            <svg className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            <span className="font-semibold">[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      {/* FICHE PRODUIT */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
         <div className="aspect-[3/4] w-full bg-neutral-100 border border-neutral-200 overflow-hidden">
           <img
             src={product.image}
             alt={product.name}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes("article1.jpg")) {
+                target.src = "/article1.jpg";
+              }
+            }}
             className="w-full h-full object-cover"
           />
         </div>
 
         <div className="pt-1 md:pt-2 space-y-6 md:space-y-8">
           <div>
-            <h1 className="font-helmet text-3xl sm:text-4xl md:text-5xl font-normal mb-2">
+            <h1 className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl font-normal mb-2">
               Article -01 — Helmet
             </h1>
             <p className="text-sm tracking-widest text-neutral-600">
@@ -167,7 +173,7 @@ export default function ProductDetailPage() {
                 onClick={() => setOpenSection(openSection === "shipping" ? null : "shipping")}
                 className="w-full flex justify-between items-center text-xs tracking-wider text-neutral-700"
               >
-                <span>Shipping & Returns</span>
+                <span>Shipping & Policy</span>
                 <span>{openSection === "shipping" ? "−" : "+"}</span>
               </button>
               {openSection === "shipping" && (

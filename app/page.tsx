@@ -12,18 +12,21 @@ const AUDIO_PATHS = [
   "/ambiance.mp3.mp3",
 ];
 
+let globalIntroShown = false;
+
 export default function Home() {
-  const [loading, setLoading] = useState(true);
-  const [introDelay, setIntroDelay] = useState(1.4);
+  const [loading, setLoading] = useState(!globalIntroShown);
   const [isPlaying, setIsPlaying] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [audioIndex, setAudioIndex] = useState(0);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const userMutedRef = useRef(false);
+
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const isMutedByUserRef = useRef(false);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    // 1. Lecture du panier (compatible avec toutes tes pages)
+    // 1. Lecture synchro du panier
     try {
       const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
       const saved = JSON.parse(raw);
@@ -35,138 +38,136 @@ export default function Home() {
       setCartCount(0);
     }
 
-    // 2. Ne joue l'intro de 2s qu'une seule fois par visite (retour au menu instantané avec toutes les icônes)
-    const alreadySeen = sessionStorage.getItem("helmet_intro_done");
+    // 2. Intro uniquement au tout premier lancement (retour au menu instantane)
     let timer: NodeJS.Timeout;
-    if (alreadySeen === "true") {
+    if (globalIntroShown || sessionStorage.getItem("helmet_intro_done") === "true") {
+      globalIntroShown = true;
       setLoading(false);
-      setIntroDelay(0);
     } else {
       timer = setTimeout(() => {
-        setLoading(false);
+        globalIntroShown = true;
         sessionStorage.setItem("helmet_intro_done", "true");
-      }, 2000);
+        setLoading(false);
+      }, 1800);
     }
 
-    // 3. Désactive le lecteur Spotify/Apple Music sur l'écran verrouillé iPhone
-    const clearIOSMediaSession = () => {
-      if (typeof navigator !== "undefined" && "mediaSession" in navigator) {
-        try {
-          navigator.mediaSession.metadata = null;
-          navigator.mediaSession.playbackState = "none";
-          navigator.mediaSession.setActionHandler("play", null);
-          navigator.mediaSession.setActionHandler("pause", null);
-          navigator.mediaSession.setActionHandler("stop", null);
-          navigator.mediaSession.setActionHandler("seekbackward", null);
-          navigator.mediaSession.setActionHandler("seekforward", null);
-        } catch {}
-      }
-    };
+    // 3. WEB AUDIO API : Ne declenche JAMAIS le lecteur Spotify/Lockscreen sur iPhone !
+    let isMounted = true;
 
-    const startAudio = async () => {
-      const audio = audioRef.current;
-      if (!audio || userMutedRef.current) return;
-      audio.volume = 0.7;
+    const initWebAudio = async () => {
+      if (isInitializedRef.current || !isMounted) return;
+      isInitializedRef.current = true;
+
       try {
-        await audio.play();
-        setIsPlaying(true);
-        clearIOSMediaSession();
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        const ctx: AudioContext = new AudioCtx();
+        audioCtxRef.current = ctx;
+
+        let arrayBuffer: ArrayBuffer | null = null;
+        for (const path of AUDIO_PATHS) {
+          try {
+            const res = await fetch(path);
+            if (res.ok) {
+              arrayBuffer = await res.arrayBuffer();
+              break;
+            }
+          } catch {}
+        }
+
+        if (!arrayBuffer || !isMounted) return;
+
+        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        if (!isMounted) return;
+
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.loop = true;
+
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = 0.7;
+        gainNodeRef.current = gainNode;
+
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        source.start(0);
+
+        if (ctx.state === "running" && !isMutedByUserRef.current) {
+          setIsPlaying(true);
+        } else {
+          setIsPlaying(false);
+        }
       } catch {
         setIsPlaying(false);
-        const unlockAudio = () => {
-          if (audioRef.current && !userMutedRef.current && !document.hidden) {
-            audioRef.current.volume = 0.7;
-            audioRef.current
-              .play()
-              .then(() => {
-                setIsPlaying(true);
-                clearIOSMediaSession();
-              })
-              .catch(() => {});
-          }
-          window.removeEventListener("click", unlockAudio);
-          window.removeEventListener("touchstart", unlockAudio);
-          window.removeEventListener("keydown", unlockAudio);
-        };
-        window.addEventListener("click", unlockAudio, { once: true });
-        window.addEventListener("touchstart", unlockAudio, { once: true });
-        window.addEventListener("keydown", unlockAudio, { once: true });
       }
     };
 
-    startAudio();
+    initWebAudio();
 
-    // 4. Coupe immédiatement le son dès qu'on verrouille l'iPhone ou qu'on quitte Safari
-    const stopAudioOnHide = () => {
-      const audio = audioRef.current;
-      if (!audio) return;
+    const unlockOnInteraction = async () => {
+      if (!audioCtxRef.current) {
+        await initWebAudio();
+      }
+      if (audioCtxRef.current && audioCtxRef.current.state === "suspended" && !isMutedByUserRef.current) {
+        audioCtxRef.current.resume().then(() => {
+          if (isMounted) setIsPlaying(true);
+        }).catch(() => {});
+      }
+    };
+
+    window.addEventListener("click", unlockOnInteraction, { once: true });
+    window.addEventListener("touchstart", unlockOnInteraction, { once: true });
+
+    // 4. Coupe instantanement le son des qu'on verrouille l'iPhone ou qu'on ferme l'onglet
+    const handleVisibility = () => {
+      const ctx = audioCtxRef.current;
+      if (!ctx) return;
       if (document.hidden || document.visibilityState === "hidden") {
-        audio.pause();
+        ctx.suspend().catch(() => {});
         setIsPlaying(false);
-        clearIOSMediaSession();
-      } else if (!userMutedRef.current) {
-        audio
-          .play()
-          .then(() => {
-            setIsPlaying(true);
-            clearIOSMediaSession();
-          })
-          .catch(() => {});
+      } else if (!isMutedByUserRef.current) {
+        ctx.resume().then(() => setIsPlaying(true)).catch(() => {});
       }
     };
 
-    const forceStop = () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
+    const forceSuspend = () => {
+      if (audioCtxRef.current) {
+        audioCtxRef.current.suspend().catch(() => {});
         setIsPlaying(false);
       }
     };
 
-    document.addEventListener("visibilitychange", stopAudioOnHide);
-    window.addEventListener("pagehide", forceStop);
-    window.addEventListener("blur", forceStop);
-    window.addEventListener("beforeunload", forceStop);
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pagehide", forceSuspend);
+    window.addEventListener("blur", forceSuspend);
 
     return () => {
+      isMounted = false;
       if (timer) clearTimeout(timer);
-      document.removeEventListener("visibilitychange", stopAudioOnHide);
-      window.removeEventListener("pagehide", forceStop);
-      window.removeEventListener("blur", forceStop);
-      window.removeEventListener("beforeunload", forceStop);
-      if (audioRef.current) {
-        audioRef.current.pause();
+      window.removeEventListener("click", unlockOnInteraction);
+      window.removeEventListener("touchstart", unlockOnInteraction);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pagehide", forceSuspend);
+      window.removeEventListener("blur", forceSuspend);
+      if (audioCtxRef.current) {
+        audioCtxRef.current.close().catch(() => {});
+        audioCtxRef.current = null;
       }
     };
   }, []);
 
   const toggleAudio = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const audio = audioRef.current;
-    if (!audio) return;
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
 
-    if (!audio.paused && isPlaying) {
-      userMutedRef.current = true;
-      audio.pause();
+    if (isPlaying) {
+      isMutedByUserRef.current = true;
+      await ctx.suspend();
       setIsPlaying(false);
     } else {
-      userMutedRef.current = false;
-      try {
-        audio.volume = 0.7;
-        await audio.play();
-        setIsPlaying(true);
-      } catch {
-        if (audioIndex < AUDIO_PATHS.length - 1) {
-          const nextIdx = audioIndex + 1;
-          setAudioIndex(nextIdx);
-          audio.src = AUDIO_PATHS[nextIdx];
-          audio.load();
-          audio.volume = 0.7;
-          audio
-            .play()
-            .then(() => setIsPlaying(true))
-            .catch(() => {});
-        }
-      }
+      isMutedByUserRef.current = false;
+      await ctx.resume();
+      setIsPlaying(true);
     }
   };
 
@@ -203,20 +204,7 @@ export default function Home() {
 
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden bg-white text-black font-sans select-none flex flex-col justify-between">
-      <audio
-        ref={audioRef}
-        src={AUDIO_PATHS[audioIndex]}
-        loop
-        playsInline
-        preload="auto"
-        onError={() => {
-          if (audioIndex < AUDIO_PATHS.length - 1) {
-            setAudioIndex(audioIndex + 1);
-          }
-        }}
-      />
-
-      {/* APERÇU FANTÔME EN ARRIÈRE-PLAN AU SURVOL DU MENU */}
+      {/* APERCU FANTOME EN ARRIERE-PLAN AU SURVOL DU MENU */}
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
@@ -230,31 +218,31 @@ export default function Home() {
             <img
               src={hoveredItem}
               alt=""
-              className="w-[280px] h-[360px] md:w-[420px] md:h-[540px] object-cover grayscale"
+              className="w-[260px] h-[340px] md:w-[420px] md:h-[540px] object-cover grayscale"
             />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* INTRO CINÉMATOGRAPHIQUE (Parfaitement cadrée sur iPhone et 240px sur PC) */}
+      {/* INTRO CINEMATOGRAPHIQUE (Bien cadree sur iPhone, 240px sur PC) */}
       <AnimatePresence>
         {loading && (
           <motion.div
             key="loader"
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
             className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center pointer-events-none px-4"
           >
             <motion.div
-              initial={{ scale: 1.18, opacity: 0, y: 16 }}
+              initial={{ scale: 1.08, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
               className="text-center flex flex-col items-center max-w-full"
             >
-              <span className="font-cancellaresca text-[76px] sm:text-[140px] md:text-[240px] tracking-[0.03em] text-black block leading-[1.15] py-4 whitespace-nowrap">
+              <span className="font-cancellaresca text-[64px] sm:text-[130px] md:text-[240px] tracking-[0.03em] text-black block leading-[1.15] py-4 whitespace-nowrap">
                 Helmet
               </span>
-              <span className="block text-[10px] sm:text-xs md:text-sm tracking-[0.45em] md:tracking-[0.5em] text-neutral-700 mt-1 md:mt-2 font-normal font-sans uppercase">
+              <span className="block text-[9px] sm:text-xs md:text-sm tracking-[0.45em] md:tracking-[0.5em] text-neutral-700 mt-1 md:mt-2 font-normal font-sans uppercase">
                 Haute Couture
               </span>
             </motion.div>
@@ -262,29 +250,26 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER ARCHITECTURAL (3 colonnes symétriques pour centrage parfait sur iPhone & PC) */}
+      {/* HEADER ARCHITECTURAL (3 colonnes symetriques pour un centrage parfait sur iPhone & PC) */}
       <header className="relative z-20 grid grid-cols-3 items-start px-5 pt-6 sm:px-8 md:px-14 md:pt-14 bg-transparent">
-        {/* Coin Haut Gauche : Visible sur PC ET sur Mobile */}
-        <div className="pt-2 md:pt-3 flex flex-col gap-1 text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.35em] text-neutral-800 font-normal justify-self-start">
+        <div className="pt-2 md:pt-3 flex flex-col gap-1 text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.18em] md:tracking-[0.35em] text-neutral-800 font-normal justify-self-start">
           <span className="whitespace-nowrap">Paris — Atelier</span>
-          <span className="text-[7px] sm:text-[9px] md:text-[10px] tracking-[0.18em] md:tracking-[0.3em] text-neutral-600 whitespace-nowrap">
+          <span className="text-[7px] sm:text-[9px] md:text-[10px] tracking-[0.16em] md:tracking-[0.3em] text-neutral-600 whitespace-nowrap">
             Edition -01
           </span>
         </div>
 
-        {/* Logo Central : 100% Centré */}
         <div className="flex flex-col items-center justify-self-center">
           <Link href="/helmet" className="group text-center flex flex-col items-center">
             <span className="font-cancellaresca text-5xl sm:text-7xl md:text-[115px] tracking-[0.04em] text-black block leading-[1.1] pt-1 transition-transform duration-500 group-hover:scale-[1.03] whitespace-nowrap">
               Helmet
             </span>
-            <span className="block text-[9px] sm:text-[11px] md:text-xs tracking-[0.38em] md:tracking-[0.5em] text-neutral-700 mt-1 font-normal font-sans whitespace-nowrap">
+            <span className="block text-[8px] sm:text-[11px] md:text-xs tracking-[0.35em] md:tracking-[0.5em] text-neutral-700 mt-1 font-normal font-sans whitespace-nowrap uppercase">
               Haute Couture
             </span>
           </Link>
         </div>
 
-        {/* Coin Haut Droit : Panier + Icône toujours visible */}
         <div className="flex items-center justify-end pt-2 md:pt-3 justify-self-end">
           <Link
             href="/cart"
@@ -309,21 +294,14 @@ export default function Home() {
         </div>
       </header>
 
-      {/* MENU : SOMMAIRE D'ATELIER ÉDITORIAL (Centré sur iPhone et PC) */}
+      {/* MENU : SOMMAIRE D'ATELIER EDITORIAL (Toujours visible, ne disparait jamais au retour) */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 md:px-14">
-        <motion.nav
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: introDelay, ease: "easeOut" }}
-          className="w-full max-w-xl mx-auto"
-        >
-          {/* En-tête : "Summary" */}
+        <nav className="w-full max-w-xl mx-auto">
           <div className="flex justify-between items-center pb-2.5 md:pb-3 border-b border-neutral-300 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.45em] text-neutral-600 font-normal">
             <span>Summary</span>
             <span className="md:hidden text-neutral-400">Edition -01</span>
           </div>
 
-          {/* Lignes du menu */}
           <div className="divide-y divide-neutral-300 border-b border-neutral-300">
             {menuLinks.map((item) => (
               <Link
@@ -355,10 +333,10 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </motion.nav>
+        </nav>
       </div>
 
-      {/* FOOTER SYMÉTRIQUE (Casque Audio toujours au centre exact sur iPhone & PC) */}
+      {/* FOOTER SYMETRIQUE */}
       <footer className="relative z-20 grid grid-cols-3 items-center px-5 py-5 sm:px-8 md:px-14 md:py-6 text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.18em] md:tracking-[0.3em] text-neutral-700 font-normal bg-transparent">
         <div className="flex items-center gap-2 sm:gap-4 justify-self-start whitespace-nowrap">
           <a
@@ -380,7 +358,7 @@ export default function Home() {
           </a>
         </div>
 
-        {/* ICÔNE CASQUE AUDIO AU CENTRE */}
+        {/* ICONE CASQUE AUDIO AU CENTRE */}
         <div className="justify-self-center">
           <button
             type="button"

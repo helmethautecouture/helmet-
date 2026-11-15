@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -61,9 +61,9 @@ function CartContent() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: "NOUVELLE COMMANDE PAYÉE — HELMET -01",
+          _subject: "NOUVELLE COMMANDE PAYÃ‰E â€” HELMET -01",
           _template: "table",
-          Statut: "PAIEMENT VALIDÉ PAR STRIPE",
+          Statut: "PAIEMENT VALIDÃ‰ PAR STRIPE",
           Client: `${customerData.firstName || ""} ${customerData.lastName || ""}`,
           Email: customerData.email || "Voir compte Stripe",
           Telephone: customerData.phone || "Voir compte Stripe",
@@ -155,7 +155,7 @@ function CartContent() {
             href="/shop"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            ← Back To Shop
+            â† Back To Shop
           </Link>
         </div>
 
@@ -170,7 +170,7 @@ function CartContent() {
 
         <div className="justify-self-end">
           <span className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 whitespace-nowrap">
-            <span>🛍</span>
+            <span>ðŸ›</span>
             <span>[{totalCount}]</span>
           </span>
         </div>
@@ -180,7 +180,7 @@ function CartContent() {
         {isSuccess ? (
           <div className="max-w-lg mx-auto border border-black p-8 md:p-10 text-center space-y-6 my-12">
             <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400">
-              Paris Atelier — Edition -01
+              Paris Atelier â€” Edition -01
             </p>
             <h1 className="font-helmet text-3xl md:text-4xl font-normal">
               Order Confirmed
@@ -241,7 +241,7 @@ function CartContent() {
                             )}
                             <div className="space-y-1">
                               <h3 className="font-helmet text-xl md:text-2xl font-normal">
-                                {item.name || item.title || "Article -01 — Helmet"}
+                                {item.name || item.title || "Article -01 â€” Helmet"}
                               </h3>
                               {item.size && (
                                 <p className="text-[11px] text-neutral-500 uppercase tracking-widest">
@@ -414,7 +414,7 @@ function CartContent() {
                     >
                       {loading
                         ? "Redirecting..."
-                        : `Checkout — $${subtotal}`}
+                        : `Checkout â€” $${subtotal}`}
                     </button>
                   </div>
                 </div>
