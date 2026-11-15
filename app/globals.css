@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* 1. Chargement de la vraie police 1610 Cancellaresca pour iPhone et PC */
 @font-face {
   font-family: "1610-cancellaresca-lim";
   src: url("/fonts/1610-cancellaresca.woff2") format("woff2"),
@@ -16,7 +15,7 @@
 }
 
 :root {
-  --font-helmet-script: "1610-cancellaresca-lim", var(--font-couture), "Cormorant Garamond", serif;
+  --font-helmet-script: "1610-cancellaresca-lim", var(--font-couture), "Cormorant Garamond", Georgia, serif;
 }
 
 * {
@@ -37,15 +36,16 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Force la police calligraphique partout où elle est appelée */
+/* Active la police calligraphique sur .font-cancellaresca ET .font-helmet sur PC et iPhone */
+.font-cancellaresca,
 .font-helmet,
 [style*="1610-cancellaresca-lim"] {
   font-family: var(--font-helmet-script) !important;
   font-weight: 400 !important;
+  font-style: italic;
   font-synthesis: none !important;
 }
 
-/* Désactive le style arrondi iPhone sur les formulaires */
 input,
 textarea,
 select,
@@ -55,26 +55,7 @@ button {
   border-radius: 0 !important;
 }
 
-/* =========================================================
-   CORRECTIONS UNIQUEMENT SUR MOBILE (ZÉRO IMPACT SUR PC)
-   ========================================================= */
 @media screen and (max-width: 768px) {
-  /* Empêche l'animation vidéo/canvas d'intro d'être ultra zoomée sur iPhone */
-  video.object-cover,
-  canvas.object-cover {
-    object-fit: contain !important;
-    background-color: #000000;
-  }
-
-  /* Force les conteneurs plein écran sur la vraie hauteur de Safari iPhone (100dvh) */
-  .h-screen {
-    height: 100dvh !important;
-  }
-  .min-h-screen {
-    min-height: 100dvh !important;
-  }
-
-  /* Empêche Safari iPhone de zoomer tout seul quand on clique sur un champ */
   input,
   select,
   textarea {
