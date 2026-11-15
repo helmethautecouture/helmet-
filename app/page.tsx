@@ -101,9 +101,12 @@ export default function Home() {
         await initWebAudio();
       }
       if (audioCtxRef.current && audioCtxRef.current.state === "suspended" && !isMutedByUserRef.current) {
-        audioCtxRef.current.resume().then(() => {
-          if (isMounted) setIsPlaying(true);
-        }).catch(() => {});
+        audioCtxRef.current
+          .resume()
+          .then(() => {
+            if (isMounted) setIsPlaying(true);
+          })
+          .catch(() => {});
       }
     };
 
@@ -117,7 +120,10 @@ export default function Home() {
         ctx.suspend().catch(() => {});
         setIsPlaying(false);
       } else if (!isMutedByUserRef.current) {
-        ctx.resume().then(() => setIsPlaying(true)).catch(() => {});
+        ctx
+          .resume()
+          .then(() => setIsPlaying(true))
+          .catch(() => {});
       }
     };
 
@@ -174,7 +180,7 @@ export default function Home() {
     {
       index: "02",
       title: "Helmet Gallery",
-      subtitle: "Visual Archive \u2014 Paris",
+      subtitle: "Visual Archive — Paris",
       href: "/helmet",
       preview: "/product2.jpg",
     },
@@ -196,7 +202,7 @@ export default function Home() {
 
   return (
     <main className="relative h-screen w-full overflow-hidden bg-white text-black font-sans select-none flex flex-col justify-between">
-      {/* APERCU EN ARRIERE-PLAN AU SURVOL DU MENU */}
+      {/* APERÇU EN ARRIÈRE-PLAN AU SURVOL DU MENU */}
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
@@ -216,7 +222,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* INTRO CINEMATOGRAPHIQUE */}
+      {/* INTRO CINÉMATOGRAPHIQUE */}
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -245,7 +251,7 @@ export default function Home() {
       {/* HEADER ARCHITECTURAL */}
       <header className="relative z-20 flex items-start justify-between px-6 pt-8 md:px-14 md:pt-14 bg-transparent">
         <div className="w-24 md:w-48 pt-2 md:pt-3 flex flex-col gap-1 md:gap-1.5 text-[8px] sm:text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.35em] text-neutral-800 font-normal">
-          <span className="whitespace-nowrap">{"Paris \u2014 Atelier"}</span>
+          <span className="whitespace-nowrap">Paris — Atelier</span>
           <span className="text-[7px] sm:text-[9px] md:text-[10px] tracking-[0.18em] md:tracking-[0.3em] text-neutral-600 whitespace-nowrap">
             Edition -01
           </span>
@@ -269,6 +275,8 @@ export default function Home() {
           >
             <span className="hidden sm:inline">Cart</span>
             <svg
+              width="16"
+              height="16"
               style={{ width: "16px", height: "16px", minWidth: "16px" }}
               className="w-4 h-4 text-neutral-900 group-hover:text-black transition-colors"
               fill="none"
@@ -319,7 +327,7 @@ export default function Home() {
                     {item.subtitle}
                   </span>
                   <span className="text-xs text-neutral-700 group-hover:text-black group-hover:translate-x-1 transition-all duration-300 font-normal">
-                    {"\u2192"}
+                    →
                   </span>
                 </div>
               </Link>
@@ -358,6 +366,8 @@ export default function Home() {
             title={isPlaying ? "Sound On (70%)" : "Sound Off"}
           >
             <svg
+              width="26"
+              height="26"
               style={{ width: "26px", height: "26px", minWidth: "26px" }}
               className="w-6 h-6 md:w-7 md:h-7"
               viewBox="0 0 24 24"
@@ -378,8 +388,8 @@ export default function Home() {
         </div>
 
         <div className="w-28 md:w-48 text-right">
-          <span className="hidden sm:inline">{"\u00A9 Helmet All Rights Reserved"}</span>
-          <span className="sm:hidden">{"\u00A9 Helmet"}</span>
+          <span className="hidden sm:inline">© Helmet All Rights Reserved</span>
+          <span className="sm:hidden">© Helmet</span>
         </div>
       </footer>
     </main>
