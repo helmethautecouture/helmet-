@@ -3,6 +3,8 @@ import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 interface CartItem {
   id?: string | number;
   name?: string;
@@ -51,7 +53,7 @@ function CartContent() {
           if (Array.isArray(parsed) && parsed.length > 0) {
             found = parsed.map((item: CartItem) => ({
               ...item,
-              name: "Article -01 \u2014 Helmet",
+              name: "Article -01 — Helmet",
               price: parsePrice(item.price),
               image: "/product1.jpg",
             }));
@@ -158,7 +160,7 @@ function CartContent() {
             href="/shop"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            {"\u2190 Back To Shop"}
+            ← Back To Shop
           </Link>
         </div>
 
@@ -173,8 +175,21 @@ function CartContent() {
 
         <div className="justify-self-end">
           <span className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 whitespace-nowrap">
-            <svg style={{ width: "16px", height: "16px", minWidth: "16px" }}  width="16" height="16" className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px" }}
+              className="w-4 h-4 text-black shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+              />
             </svg>
             <span className="font-semibold">[{totalCount}]</span>
           </span>
@@ -185,7 +200,7 @@ function CartContent() {
         {isSuccess ? (
           <div className="max-w-lg mx-auto border border-black p-8 md:p-10 text-center space-y-6 my-12">
             <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400">
-              {"Paris Atelier \u2014 Edition -01"}
+              Paris Atelier — Edition -01
             </p>
             <h1 className="font-cancellaresca text-3xl md:text-4xl font-normal">
               Order Confirmed
@@ -244,7 +259,7 @@ function CartContent() {
                             />
                             <div className="space-y-1">
                               <h3 className="font-cancellaresca text-xl md:text-2xl font-normal">
-                                {"Article -01 \u2014 Helmet"}
+                                Article -01 — Helmet
                               </h3>
                               {item.size && (
                                 <p className="text-[11px] text-neutral-500 uppercase tracking-widest">
@@ -415,9 +430,7 @@ function CartContent() {
                       disabled={loading}
                       className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
                     >
-                      {loading
-                        ? "Redirecting..."
-                        : `Checkout \u2014 $${subtotal}`}
+                      {loading ? "Redirecting..." : `Checkout — $${subtotal}`}
                     </button>
                   </div>
                 </div>

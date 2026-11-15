@@ -46,8 +46,7 @@ export default function ClientServicePage() {
         const topic = formData.get("Subject");
         const msg = formData.get("Message");
         window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
-          `[HELMET -01] ${topic}`
-        )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
+          `[HELMET -01] ${topic}` )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
         setStatus("success");
       }
     } catch {
@@ -63,7 +62,7 @@ export default function ClientServicePage() {
             href="/"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            {"\u2190 Back To Home"}
+            ← Back To Home
           </Link>
         </div>
 
@@ -81,8 +80,21 @@ export default function ClientServicePage() {
             href="/cart"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
           >
-            <svg style={{ width: "16px", height: "16px", minWidth: "16px" }}  width="16" height="16" className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px" }}
+              className="w-4 h-4 text-black shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+              />
             </svg>
             <span className="font-semibold">[{cartCount}]</span>
           </Link>
@@ -92,10 +104,10 @@ export default function ClientServicePage() {
       <div className="max-w-2xl mx-auto">
         <div className="mb-8 md:mb-12 text-left">
           <h1 className="font-cancellaresca text-3xl sm:text-4xl md:text-5xl font-normal mb-3">
-            {"Client Service \u2014 Edition -01"}
+            Client Service — Edition -01
           </h1>
           <p className="text-[10px] md:text-[11px] text-neutral-500 uppercase tracking-[0.18em] md:tracking-[0.2em] leading-relaxed">
-            {"Paris Atelier \u2014 Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final."}
+            Paris Atelier — Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
           </p>
         </div>
 

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const galleryItems = [
-  { id: "-01", title: "Shooting -01 \u2014 Paris", image: "/product1.jpg" },
-  { id: "-02", title: "Shooting -02 \u2014 Studio", image: "/product2.jpg" },
+  { id: "-01", title: "Shooting -01 — Paris", image: "/product1.jpg" },
+  { id: "-02", title: "Shooting -02 — Studio", image: "/product2.jpg" },
 ];
 
 export default function HelmetGallery() {
@@ -33,7 +33,7 @@ export default function HelmetGallery() {
             href="/"
             className="text-[10px] md:text-xs uppercase tracking-[0.15em] md:tracking-[0.25em] text-neutral-600 hover:text-black transition-colors whitespace-nowrap"
           >
-            {"\u2190 Back To Home"}
+            ← Back To Home
           </Link>
         </div>
 
@@ -51,8 +51,21 @@ export default function HelmetGallery() {
             href="/cart"
             className="text-[10px] md:text-xs tracking-[0.15em] md:tracking-widest text-neutral-800 hover:text-black transition-colors flex items-center gap-1.5 whitespace-nowrap"
           >
-            <svg style={{ width: "16px", height: "16px", minWidth: "16px" }}  width="16" height="16" className="w-4 h-4 md:w-5 md:h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px" }}
+              className="w-4 h-4 md:w-5 md:h-5 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+              />
             </svg>
             <span className="font-semibold">[{cartCount}]</span>
           </Link>

@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 const SINGLE_PRODUCT = {
   id: "-01",
-  name: "Article -01 \u2014 Helmet",
-  edition: "Paris Atelier \u2014 Edition -01",
+  name: "Article -01 — Helmet",
+  edition: "Paris Atelier — Edition -01",
   price: 180,
   image: "/product1.jpg",
 };
@@ -33,7 +33,7 @@ export default function Shop() {
             href="/"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            {"\u2190 Back To Home"}
+            ← Back To Home
           </Link>
         </div>
 
@@ -51,8 +51,21 @@ export default function Shop() {
             href="/cart"
             className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
           >
-            <svg style={{ width: "16px", height: "16px", minWidth: "16px" }}  width="16" height="16" className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px" }}
+              className="w-4 h-4 text-black shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+              />
             </svg>
             <span className="font-semibold">[{cartCount}]</span>
           </Link>
@@ -61,12 +74,12 @@ export default function Shop() {
 
       <div className="text-center mb-8 md:mb-12">
         <p className="text-[10px] uppercase tracking-[0.25em] md:tracking-[0.3em] text-neutral-400">
-          {"Paris Atelier \u2014 Edition -01"}
+          Paris Atelier — Edition -01
         </p>
       </div>
 
       <div className="max-w-sm md:max-w-md mx-auto">
-        <Link href="/shop/-01" className="group block">
+        <Link href="/shop/article-01" className="group block">
           <div className="aspect-[3/4] w-full bg-neutral-100 border border-neutral-200 overflow-hidden mb-4 md:mb-5 flex items-center justify-center">
             <img
               src={SINGLE_PRODUCT.image}
