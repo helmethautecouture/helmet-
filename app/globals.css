@@ -1,28 +1,5 @@
 ﻿@import "tailwindcss";
 
-@font-face {
-  font-family: "HelmetScript1610";
-  src: url("/fonts/1610-cancellaresca.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-}
-
-@font-face {
-  font-family: "HelmetBordeaux1589";
-  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-}
-
-:root {
-  --background: #ffffff;
-  --foreground: #000000;
-  --font-helmet-script: "HelmetScript1610", Georgia, serif;
-  --font-primary: "HelmetBordeaux1589", Georgia, serif;
-}
-
 *,
 *::before,
 *::after {
@@ -41,21 +18,21 @@ body {
   overflow-x: hidden;
   background-color: #ffffff;
   color: #000000;
-  font-family: "HelmetBordeaux1589", Georgia, serif !important;
+  font-family: var(--font-bordeaux-1589), Georgia, serif !important;
   font-weight: 600 !important;
   -webkit-text-stroke: 0.25px currentColor;
   -webkit-text-size-adjust: 100%;
 }
 
-/* Force 1589-humane-bordeaux-regular partout (lettres, chiffres, Haute Couture, inputs, boutons, meme si font-sans est present) */
+/* Force 1589-humane-bordeaux-regular partout : lettres, chiffres, Haute Couture, inputs, boutons */
 body, div, span, p, a, li, ul, h1, h2, h3, h4, h5, h6, button, input, select, textarea, label, .font-sans, .font-bordeaux {
-  font-family: "HelmetBordeaux1589", Georgia, serif !important;
+  font-family: var(--font-bordeaux-1589), Georgia, serif !important;
 }
 
 /* Exception unique : Le logo "Helmet" et les titres en 1610-cancellaresca */
 .font-cancellaresca,
 .font-helmet {
-  font-family: "HelmetScript1610", Georgia, serif !important;
+  font-family: var(--font-script-1610), Georgia, serif !important;
   font-weight: 400 !important;
   font-style: normal !important;
   -webkit-text-stroke: 0px transparent !important;
@@ -108,7 +85,6 @@ div:hover > .helmet-zoom-img {
   transform: scale(1.065) !important;
 }
 
-/* Structure des pages */
 .helmet-home-shell {
   position: relative;
   height: 100dvh;
