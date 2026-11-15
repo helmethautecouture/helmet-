@@ -18,11 +18,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Helmet — Haute Couture",
   description: "Helmet Haute Couture Paris",
-  icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
-  },
 };
 
 export default function RootLayout({
@@ -32,9 +27,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${cormorant.variable} ${inter.variable}`}>
-      <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
-      </head>
       <body className="bg-white text-black font-sans antialiased selection:bg-black selection:text-white">
         {children}
       </body>
