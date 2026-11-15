@@ -113,43 +113,11 @@ export default function Home() {
     window.addEventListener("click", unlockOnInteraction, { once: true });
     window.addEventListener("touchstart", unlockOnInteraction, { once: true });
 
-    const handleVisibility = () => {
-      const ctx = audioCtxRef.current;
-      if (!ctx) return;
-      if (document.hidden || document.visibilityState === "hidden") {
-        ctx.suspend().catch(() => {});
-        setIsPlaying(false);
-      } else if (!isMutedByUserRef.current) {
-        ctx
-          .resume()
-          .then(() => setIsPlaying(true))
-          .catch(() => {});
-      }
-    };
-
-    const forceSuspend = () => {
-      if (audioCtxRef.current) {
-        audioCtxRef.current.suspend().catch(() => {});
-        setIsPlaying(false);
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("pagehide", forceSuspend);
-    window.addEventListener("blur", forceSuspend);
-
     return () => {
       isMounted = false;
       if (timer) clearTimeout(timer);
       window.removeEventListener("click", unlockOnInteraction);
       window.removeEventListener("touchstart", unlockOnInteraction);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("pagehide", forceSuspend);
-      window.removeEventListener("blur", forceSuspend);
-      if (audioCtxRef.current) {
-        audioCtxRef.current.close().catch(() => {});
-        audioCtxRef.current = null;
-      }
     };
   }, []);
 
@@ -170,7 +138,7 @@ export default function Home() {
   };
 
   return (
-    <main className="helmet-home-shell" style={{ fontFamily: "var(--font-sans), Inter, sans-serif" }}>
+    <main className="helmet-home-shell">
       {/* APERÇU FANTÔME AVEC ZOOM FLUIDE EN ARRIÈRE-PLAN */}
       <AnimatePresence>
         {hoveredItem && (
@@ -266,13 +234,13 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER HAUT : COIN GAUCHE ET COIN DROIT */}
+      {/* HEADER HAUT : COIN GAUCHE, INFO AU MILIEU EXACT */}
       <header
         style={{
           position: "relative",
           zIndex: 20,
-          display: "flex",
-          justifyContent: "space-between",
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
           alignItems: "flex-start",
           padding: "28px 24px 0 24px",
           width: "100%",
@@ -287,6 +255,7 @@ export default function Home() {
             letterSpacing: "0.3em",
             color: "#262626",
             textTransform: "uppercase",
+            justifySelf: "start",
           }}
         >
           <span>Paris — Atelier</span>
@@ -295,19 +264,23 @@ export default function Home() {
           </span>
         </div>
 
+        {/* INFO STRICTEMENT AU MILIEU EN HAUT */}
         <div
           style={{
             fontSize: "10px",
             letterSpacing: "0.3em",
             color: "#262626",
             textTransform: "uppercase",
+            justifySelf: "center",
           }}
         >
           <span>Info</span>
         </div>
+
+        <div style={{ justifySelf: "end" }} />
       </header>
 
-      {/* CORPS DE PAGE : ORGANISATION EXACTE DE TON DESSIN (LIENS À GAUCHE & DROITE DU LOGO CENTRAL) */}
+      {/* CORPS DE PAGE : ORGANISATION DU CROQUIS */}
       <div
         style={{
           position: "relative",
@@ -329,7 +302,7 @@ export default function Home() {
             gap: "24px",
           }}
         >
-          {/* LIENS DE GAUCHE : Shop & Helmet Gallery */}
+          {/* GAUCHE : Shop & Helmet Gallery */}
           <div
             style={{
               display: "flex",
@@ -371,7 +344,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* LOGO CENTRAL : Helmet Haute Couture (Police Calligraphique inchangée) */}
+          {/* CENTRE : LOGO HELMET */}
           <div style={{ textAlign: "center", justifySelf: "center" }}>
             <Link href="/helmet" style={{ display: "inline-block", textDecoration: "none" }}>
               <span
@@ -401,7 +374,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* LIENS DE DROITE : Client Service & Cart */}
+          {/* DROITE : Client Service & Cart */}
           <div
             style={{
               display: "flex",
@@ -461,7 +434,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FOOTER BAS : Instagram/YouTube à gauche, Casque audio au centre, Copyright à droite */}
+      {/* FOOTER BAS : Instagram/YouTube à gauche, Casque au centre, Copyright à droite */}
       <footer
         style={{
           position: "relative",

@@ -2,24 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Police calligraphique originale pour le grand logo */
 @font-face {
   font-family: "1610-cancellaresca-lim";
   src: url("/fonts/1610-cancellaresca.ttf") format("truetype"),
-       url("/1610-cancellaresca-lim.ttf") format("truetype");
+       url("/fonts/1610-cancellaresca-lim.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-/* Nouvelle police principale (lettres et chiffres) */
 @font-face {
   font-family: "1589-humane-bordeaux";
   src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
        url("/fonts/1589-humane-bordeaux-regular.otf") format("opentype"),
        local("1589 humane bordeaux regular"),
        local("1589-humane-bordeaux-regular");
-  font-weight: 400;
+  font-weight: 600; /* Forcé un peu plus épais */
   font-style: normal;
   font-display: swap;
 }
@@ -28,7 +26,7 @@
   --background: #ffffff;
   --foreground: #000000;
   --font-helmet-script: "1610-cancellaresca-lim", "Cormorant Garamond", Georgia, serif;
-  --font-primary: "1589-humane-bordeaux", sans-serif;
+  --font-primary: "1589-humane-bordeaux", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 *,
@@ -49,9 +47,14 @@ body {
   overflow-x: hidden;
   background-color: #ffffff;
   color: #000000;
-  /* Application de la nouvelle police partout par défaut */
-  font-family: var(--font-primary);
+  font-family: var(--font-primary) !important;
+  font-weight: 600 !important; /* Rend les lettres et chiffres globalement un poil plus épais */
   -webkit-text-size-adjust: 100%;
+}
+
+/* Force la police et l'épaisseur sur absolument tous les éléments texte et inputs */
+p, span, a, h1, h2, h3, h4, h5, h6, input, textarea, select, button, label {
+  font-family: var(--font-primary) !important;
 }
 
 a,
@@ -71,7 +74,7 @@ svg {
   flex-shrink: 0;
 }
 
-/* Logo central inchangé */
+/* Le grand logo central garde sa calligraphie d'origine */
 .font-cancellaresca,
 .font-helmet {
   font-family: var(--font-helmet-script) !important;
@@ -80,7 +83,6 @@ svg {
   font-synthesis: none !important;
 }
 
-/* Classes utilitaires Helmet */
 .helmet-home-shell {
   position: relative;
   height: 100dvh;
@@ -99,13 +101,13 @@ svg {
   width: 100%;
   background-color: #ffffff;
   color: #000000;
-  padding: 20px 16px 80px 16px;
-  font-family: var(--font-primary);
+  padding: 20px 16px 100px 16px;
+  position: relative;
 }
 
 @media (min-width: 768px) {
   .helmet-page-container {
-    padding: 28px 80px 96px 80px;
+    padding: 28px 80px 120px 80px;
   }
 }
 
@@ -150,7 +152,7 @@ svg {
   padding: 14px;
   font-size: 13px;
   letter-spacing: 0.12em;
-  font-family: var(--font-primary);
+  font-family: var(--font-primary) !important;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -169,7 +171,7 @@ svg {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.25em;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -191,7 +193,7 @@ button {
   -webkit-appearance: none;
   appearance: none;
   border-radius: 0;
-  font-family: inherit;
+  font-family: var(--font-primary) !important;
 }
 
 @media screen and (max-width: 768px) {
