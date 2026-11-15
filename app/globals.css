@@ -5,7 +5,19 @@
 @font-face {
   font-family: "1610-cancellaresca-lim";
   src: url("/fonts/1610-cancellaresca.ttf") format("truetype"),
-       url("/1610-cancellaresca-lim.ttf") format("truetype");
+       url("/fonts/1610-cancellaresca-lim.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Déclaration de ta nouvelle police Baskerville */
+@font-face {
+  font-family: "1785-GLC-Baskerville";
+  src: url("/fonts/1785 GLC Baskerville-N.ttf") format("truetype"),
+       url("/fonts/1785-GLC-Baskerville.ttf") format("truetype"),
+       local("1785 GLC Baskerville"),
+       local("1785-GLC-Baskerville");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -15,6 +27,7 @@
   --background: #ffffff;
   --foreground: #000000;
   --font-helmet-script: "1610-cancellaresca-lim", "Cormorant Garamond", Georgia, serif;
+  --font-baskerville: "1785-GLC-Baskerville", Georgia, serif;
 }
 
 *,
@@ -35,7 +48,8 @@ body {
   overflow-x: hidden;
   background-color: #ffffff;
   color: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Application globale de la nouvelle police sur tout le site par défaut */
+  font-family: var(--font-baskerville), serif;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -56,6 +70,7 @@ svg {
   flex-shrink: 0;
 }
 
+/* Le grand logo garde strictement sa calligraphie d'origine */
 .font-cancellaresca,
 .font-helmet {
   font-family: var(--font-helmet-script) !important;
@@ -84,6 +99,7 @@ svg {
   background-color: #ffffff;
   color: #000000;
   padding: 20px 16px 80px 16px;
+  font-family: var(--font-baskerville), serif;
 }
 
 @media (min-width: 768px) {
@@ -109,22 +125,6 @@ svg {
   }
 }
 
-.helmet-summary-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 0;
-  border-bottom: 1px solid #d4d4d4;
-  transition: all 0.3s ease;
-}
-
-@media (min-width: 768px) {
-  .helmet-summary-row {
-    padding: 24px 0;
-  }
-}
-
 .helmet-cart-grid {
   max-width: 1152px;
   margin: 0 auto;
@@ -147,8 +147,9 @@ svg {
   color: #000000;
   border: 1px solid #d4d4d4;
   padding: 14px;
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  font-family: var(--font-baskerville), serif;
   outline: none;
   transition: border-color 0.2s ease;
 }
