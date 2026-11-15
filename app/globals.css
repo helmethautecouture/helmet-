@@ -3,18 +3,15 @@
 @font-face {
   font-family: "1610-cancellaresca-lim";
   src: url("/fonts/1610-cancellaresca.ttf") format("truetype"),
-       url("/1610-cancellaresca-lim.ttf") format("truetype"),
-       url("/fonts/1610-cancellaresca.otf") format("opentype"),
-       url("/fonts/1610-cancellaresca.woff2") format("woff2"),
-       local("1610 Cancellaresca"),
-       local("1610-cancellaresca-lim");
+       url("/1610-cancellaresca-lim.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
-  --font-helmet-script: "1610-cancellaresca-lim", var(--font-couture), "Cormorant Garamond", Georgia, serif;
+  --background: #ffffff;
+  --foreground: #000000;
 }
 
 *, *::before, *::after {
@@ -49,7 +46,7 @@ svg {
 
 .font-cancellaresca,
 .font-helmet {
-  font-family: var(--font-helmet-script) !important;
+  font-family: "1610-cancellaresca-lim", var(--font-couture), "Cormorant Garamond", Georgia, serif !important;
   font-weight: 400 !important;
   font-style: normal !important;
   font-synthesis: none !important;

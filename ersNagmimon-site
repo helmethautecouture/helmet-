@@ -1,0 +1,13 @@
+[33me39a8dc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix prerender /shop/[id] and clean all pages
+[33md49b165[m Fix manuel globals.css et page.tsx
+[33m12f37e1[m Restore Tailwind v4 @import and hard-lock SVG icon dimensions
+[33m3a3475a[m Fix UTF8-NoBOM Tailwind CSS compilation, SVG sizing, Product Image and Price
+[33m1de7b61[m Fix total auto: WebAudio iOS sans lockscreen, retour menu sans disparition, SVG icons et responsive
+[33m76f0466[m Fix menu mobile, intro, icones et font-cancellaresca
+[33m3a63dd1[m Fix audio iOS lockscreen, font mobile et responsive
+[33m05b0ecf[m Fix police iPhone et audio iOS
+[33mb75f2af[m Fix responsive iPhone et police mobile
+[33mcae2c82[m Update Edition -01, Article -01 unique et thème Client Service
+[33m96a3b73[m Vrai paiement Stripe + Client Service sans return + Icon
+[33m5ec5af7[m Update complet Client Service et Checkout Stripe
+[33m0933b94[m Projet complet Helmet
