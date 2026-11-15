@@ -72,6 +72,196 @@ const HELMET_FAQ_SECTIONS = [
   },
 ];
 
+/* ============================================================================
+   COMPOSANT 1 : DRAPEAU / RUBAN DE PARCHEMIN COURBÉ (_4d70a2.png)
+   Avec rouleaux gravés, ombrages hachurés, petites étoiles et texte courbé
+   ============================================================================ */
+function CurvedRibbonBanner({
+  id,
+  label,
+}: {
+  id: string;
+  label: string;
+}) {
+  const pathId = `ribbon-curve-${id}`;
+  const isLong = label.length > 10;
+
+  return (
+    <svg
+      viewBox="0 0 260 76"
+      className="helmet-ornament-svg"
+      style={{ width: "100%", height: "100%" }}
+      aria-label={label}
+    >
+      {/* Ombre de gravure sous les rouleaux gauche et droit */}
+      <path
+        d="M 16,47 C 8,49 7,61 18,64 C 28,66 39,60 44,51 L 34,37 Z"
+        fill="#e5e5e5"
+        stroke="#111111"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M 244,47 C 252,49 253,61 242,64 C 232,66 221,60 216,51 L 226,37 Z"
+        fill="#e5e5e5"
+        stroke="#111111"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+
+      {/* Hachures de gravure dans les plis d'ombre */}
+      <path
+        d="M 28,50 L 38,54 M 31,45 L 40,49 M 232,50 L 222,54 M 229,45 L 220,49"
+        stroke="#111111"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
+
+      {/* Petite étoile gravée gauche (style As Above So Below) */}
+      <path
+        d="M 43,23 L 45,28 L 50,26 L 46,30 L 49,34 L 44,32 L 41,36 L 42,31 L 37,29 L 42,28 Z"
+        fill="#ffffff"
+        stroke="#111111"
+        strokeWidth="1.15"
+        strokeLinejoin="round"
+      />
+      <line x1="44" y1="33" x2="43" y2="39" stroke="#111111" strokeWidth="1.1" />
+
+      {/* Petite étoile gravée droite */}
+      <path
+        d="M 217,21 L 219,26 L 224,24 L 220,28 L 223,32 L 218,30 L 215,34 L 216,29 L 211,27 L 216,26 Z"
+        fill="#ffffff"
+        stroke="#111111"
+        strokeWidth="1.15"
+        strokeLinejoin="round"
+      />
+      <line x1="216" y1="31" x2="217" y2="37" stroke="#111111" strokeWidth="1.1" />
+
+      {/* Corps principal du Drapeau / Parchemin Courbé */}
+      <path
+        d="M 28,42 C 82,11 178,11 232,42 L 220,60 C 172,33 88,33 40,60 Z"
+        fill="#ffffff"
+        stroke="#111111"
+        strokeWidth="1.55"
+        strokeLinejoin="round"
+      />
+
+      {/* Filet de gravure interne subtil le long des bords du parchemin */}
+      <path
+        d="M 33,43 C 84,14.5 176,14.5 227,43"
+        fill="none"
+        stroke="#111111"
+        strokeWidth="0.6"
+        strokeDasharray="3 2"
+        opacity="0.55"
+      />
+
+      {/* Volute / Enroulement du parchemin à gauche */}
+      <path
+        d="M 28,42 C 19,36 11,42 14,52 C 16,59 26,63 34,58 C 39,55 40,48 35,45 C 31,43 27,47 29,51"
+        fill="#ffffff"
+        stroke="#111111"
+        strokeWidth="1.45"
+        strokeLinecap="round"
+      />
+
+      {/* Volute / Enroulement du parchemin à droite */}
+      <path
+        d="M 232,42 C 241,36 249,42 246,52 C 244,59 234,63 226,58 C 221,55 220,48 225,45 C 229,43 233,47 231,51"
+        fill="#ffffff"
+        stroke="#111111"
+        strokeWidth="1.45"
+        strokeLinecap="round"
+      />
+
+      {/* Courbe invisible sur laquelle le texte s'aligne */}
+      <defs>
+        <path
+          id={pathId}
+          d="M 36,52 C 86,24 174,24 224,52"
+        />
+      </defs>
+
+      {/* Texte en police 1589 Humane Bordeaux suivant la courbe du drapeau */}
+      <text
+        fill="#000000"
+        fontSize={isLong ? "12.5" : "14"}
+        letterSpacing={isLong ? "2.2px" : "3.4px"}
+        textAnchor="middle"
+      >
+        <textPath href={`#${pathId}`} startOffset="50%">
+          {label.toUpperCase()}
+        </textPath>
+      </text>
+    </svg>
+  );
+}
+
+/* ============================================================================
+   COMPOSANT 2 : MINI-CARTOUCHE RENAISSANCE À FLEURONS (_4d70e2.png)
+   Pour les petits boutons Info (en haut au milieu) et Cart [0] (en haut à droite)
+   ============================================================================ */
+function RenaissanceCrestFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="helmet-crest-pill">
+      <svg
+        viewBox="0 0 140 44"
+        className="helmet-ornament-svg"
+        preserveAspectRatio="none"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+        }}
+      >
+        {/* Fleurons gravés haut, bas, gauche, droite (style _4d70e2.png) */}
+        <path
+          d="M 70,2 L 74,7 L 70,10 L 66,7 Z M 70,42 L 74,37 L 70,34 L 66,37 Z"
+          fill="#ffffff"
+          stroke="#111111"
+          strokeWidth="1.3"
+        />
+        <path
+          d="M 3,22 L 10,17 L 13,22 L 10,27 Z M 137,22 L 130,17 L 127,22 L 130,27 Z"
+          fill="#ffffff"
+          stroke="#111111"
+          strokeWidth="1.3"
+        />
+        {/* Cadre double filet à encoches baroques */}
+        <path
+          d="M 16,9 L 58,9 C 62,5 78,5 82,9 L 124,9 C 127,13 131,17 131,22 C 131,27 127,31 124,35 L 82,35 C 78,39 62,39 58,35 L 16,35 C 13,31 9,27 9,22 C 9,17 13,13 16,9 Z"
+          fill="#ffffff"
+          stroke="#111111"
+          strokeWidth="1.45"
+          strokeLinejoin="round"
+        />
+        <rect
+          x="15"
+          y="12"
+          width="110"
+          height="20"
+          fill="none"
+          stroke="#111111"
+          strokeWidth="0.75"
+        />
+      </svg>
+      <span
+        style={{
+          position: "relative",
+          zIndex: 2,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        {children}
+      </span>
+    </span>
+  );
+}
+
 export default function Home() {
   const [loading, setLoading] = useState(!introPlayedInMemory);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -219,15 +409,15 @@ export default function Home() {
 
   return (
     <main className="helmet-home-shell">
-      {/* APERÇU PHOTO PLUS NET (Moins flou, meilleur contraste) */}
+      {/* APERÇU PHOTO NET AU SURVOL */}
       <AnimatePresence>
         {hoveredItem && !infoOpen && (
           <motion.div
             key={hoveredItem}
-            initial={{ opacity: 0, scale: 1.06 }}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 0.22, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
               inset: 0,
@@ -242,8 +432,8 @@ export default function Home() {
               src={hoveredItem}
               alt=""
               style={{
-                width: "clamp(260px, 30vw, 400px)",
-                height: "clamp(340px, 38vw, 500px)",
+                width: "clamp(260px, 28vw, 380px)",
+                height: "clamp(340px, 36vw, 480px)",
                 objectFit: "cover",
                 filter: "grayscale(100%) contrast(1.08)",
               }}
@@ -257,9 +447,9 @@ export default function Home() {
         {infoOpen && (
           <motion.div
             key="faq-overlay"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 14 }}
+            exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="helmet-faq-overlay"
           >
@@ -456,7 +646,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER HAUT : Paris — Atelier (sans cadre) | Info (ENCADRÉ) | Cart [0] (ENCADRÉ) */}
+      {/* HEADER HAUT : Paris — Atelier | Info (Cartouche Renaissance) | Cart [0] (Cartouche Renaissance) */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -481,95 +671,81 @@ export default function Home() {
           <button
             type="button"
             onClick={() => setInfoOpen(true)}
-            className="helmet-frame helmet-zoom-link"
             style={{
+              background: "transparent",
+              border: "none",
+              padding: 0,
               fontSize: "11px",
-              letterSpacing: "0.34em",
+              letterSpacing: "0.32em",
               color: "#000000",
               textTransform: "uppercase",
             }}
           >
-            Info
+            <RenaissanceCrestFrame>Info</RenaissanceCrestFrame>
           </button>
         </div>
 
-        {/* CART [0] ENCADRÉ EN HAUT À DROITE */}
+        {/* PANIER ENCADRÉ EN HAUT À DROITE */}
         <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
-            className="helmet-frame helmet-zoom-link"
             style={{
               fontSize: "11px",
-              letterSpacing: "0.24em",
+              letterSpacing: "0.22em",
               color: "#000000",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
               textTransform: "uppercase",
             }}
           >
-            <svg
-              width="15"
-              height="15"
-              style={{ width: "15px", height: "15px", minWidth: "15px", color: "#000000" }}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
-            </svg>
-            <span>[{cartCount}]</span>
+            <RenaissanceCrestFrame>
+              <svg
+                width="14"
+                height="14"
+                style={{ width: "14px", height: "14px", minWidth: "14px", color: "#000000" }}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
+              </svg>
+              <span>[{cartCount}]</span>
+            </RenaissanceCrestFrame>
           </Link>
         </div>
       </header>
 
-      {/* MENU CENTRAL AVEC LES 4 BOUTONS ENCADRÉS AUTOUR DU LOGO HELMET */}
+      {/* MENU CENTRAL : Les 4 Rubans de Parchemin Courbés autour du Logo Helmet */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-sketch-nav">
-          {/* GAUCHE : Shop (Encadré) & Helmet Gallery (Encadré) */}
+          {/* GAUCHE : Shop & Helmet Gallery en Rubans Courbés */}
           <div className="helmet-sketch-left">
             <Link
               href="/shop"
               onMouseEnter={() => setHoveredItem("/product1.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
-              className="helmet-frame helmet-zoom-link"
-              style={{
-                fontSize: "clamp(12px, 1.2vw, 14px)",
-                letterSpacing: "0.28em",
-                textTransform: "uppercase",
-                color: "#000000",
-                whiteSpace: "nowrap",
-              }}
+              className="helmet-ribbon-btn"
             >
-              Shop
+              <CurvedRibbonBanner id="shop" label="Shop" />
             </Link>
 
             <Link
               href="/helmet"
               onMouseEnter={() => setHoveredItem("/product2.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
-              className="helmet-frame helmet-zoom-link"
-              style={{
-                fontSize: "clamp(12px, 1.2vw, 14px)",
-                letterSpacing: "0.28em",
-                textTransform: "uppercase",
-                color: "#000000",
-                whiteSpace: "nowrap",
-              }}
+              className="helmet-ribbon-btn"
             >
-              Helmet Gallery
+              <CurvedRibbonBanner id="gallery" label="Helmet Gallery" />
             </Link>
           </div>
 
-          {/* CENTRE : Logo Helmet Haute Couture (Sans cadre) */}
+          {/* CENTRE : Logo Helmet Haute Couture */}
           <div className="helmet-sketch-center">
             <Link href="/helmet" className="helmet-logo-zoom">
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(68px, 11vw, 152px)",
+                  fontSize: "clamp(66px, 10vw, 142px)",
                   color: "#000000",
                   display: "block",
                   lineHeight: 1.06,
@@ -581,10 +757,10 @@ export default function Home() {
               <span
                 style={{
                   display: "block",
-                  fontSize: "clamp(11px, 1.1vw, 14px)",
+                  fontSize: "clamp(11px, 1.05vw, 13.5px)",
                   letterSpacing: "0.46em",
                   color: "#171717",
-                  marginTop: "8px",
+                  marginTop: "6px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
                 }}
@@ -594,44 +770,20 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* DROITE : Client Service (Encadré) & Cart (Encadré) */}
+          {/* DROITE : Client Service & Cart en Rubans Courbés */}
           <div className="helmet-sketch-right">
-            <Link
-              href="/service"
-              className="helmet-frame helmet-zoom-link"
-              style={{
-                fontSize: "clamp(12px, 1.2vw, 14px)",
-                letterSpacing: "0.28em",
-                textTransform: "uppercase",
-                color: "#000000",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Client Service
+            <Link href="/service" className="helmet-ribbon-btn">
+              <CurvedRibbonBanner id="service" label="Client Service" />
             </Link>
 
-            <Link
-              href="/cart"
-              className="helmet-frame helmet-zoom-link"
-              style={{
-                fontSize: "clamp(12px, 1.2vw, 14px)",
-                letterSpacing: "0.28em",
-                textTransform: "uppercase",
-                color: "#000000",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                whiteSpace: "nowrap",
-              }}
-            >
-              <span>Cart</span>
-              <span>[{cartCount}]</span>
+            <Link href="/cart" className="helmet-ribbon-btn">
+              <CurvedRibbonBanner id="cart" label={`Cart [${cartCount}]`} />
             </Link>
           </div>
         </nav>
       </div>
 
-      {/* FOOTER BAS (Laissé tel quel, sans cadre) */}
+      {/* FOOTER BAS */}
       <footer className="helmet-home-footer">
         <div
           style={{
