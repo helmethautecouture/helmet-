@@ -1,5 +1,5 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 
 const cormorant = Cormorant_Garamond({
@@ -7,13 +7,23 @@ const cormorant = Cormorant_Garamond({
   weight: ["400", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-couture",
+  display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
   variable: "--font-sans",
+  display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#ffffff",
+};
 
 export const metadata: Metadata = {
   title: "Helmet — Haute Couture",
@@ -27,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="bg-white text-black font-sans antialiased selection:bg-black selection:text-white">
+      <body className="bg-white text-black font-sans antialiased selection:bg-black selection:text-white overflow-x-hidden">
         {children}
       </body>
     </html>

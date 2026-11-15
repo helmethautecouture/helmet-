@@ -64,36 +64,41 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 md:px-20 pt-6 pb-20 font-sans">
-      {/* HEADER */}
-      <header className="flex justify-between items-center border-b border-neutral-200 pb-6 mb-16">
-        <Link
-          href="/shop"
-          className="text-[11px] uppercase tracking-[0.2em] hover:opacity-60 transition"
-        >
-          ← Back To Shop
-        </Link>
+    <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
+      {/* HEADER 3 COLONNES IDENTIQUE PC & IPHONE */}
+      <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-8 md:mb-16">
+        <div className="justify-self-start">
+          <Link
+            href="/shop"
+            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
+          >
+            ← Back To Shop
+          </Link>
+        </div>
 
-        <Link
-          href="/"
-          style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
-          className="text-4xl md:text-5xl tracking-normal font-normal select-none"
-        >
-          Helmet
-        </Link>
+        <div className="justify-self-center text-center">
+          <Link
+            href="/"
+            className="font-helmet text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+          >
+            Helmet
+          </Link>
+        </div>
 
-        <Link
-          href="/cart"
-          className="text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 hover:opacity-60 transition"
-        >
-          <span>🛍</span>
-          <span>[{cartCount}]</span>
-        </Link>
+        <div className="justify-self-end">
+          <Link
+            href="/cart"
+            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
+          >
+            <span>🛍</span>
+            <span>[{cartCount}]</span>
+          </Link>
+        </div>
       </header>
 
       {/* FICHE PRODUIT */}
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        <div className="aspect-[3/4] bg-neutral-100 border border-neutral-200 overflow-hidden">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+        <div className="aspect-[3/4] w-full bg-neutral-100 border border-neutral-200 overflow-hidden">
           <img
             src={product.image}
             alt={product.name}
@@ -101,12 +106,9 @@ export default function ProductDetailPage() {
           />
         </div>
 
-        <div className="pt-2 space-y-8">
+        <div className="pt-1 md:pt-2 space-y-6 md:space-y-8">
           <div>
-            <h1
-              style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
-              className="text-4xl md:text-5xl font-normal mb-2"
-            >
+            <h1 className="font-helmet text-3xl sm:text-4xl md:text-5xl font-normal mb-2">
               Article -01 — Helmet
             </h1>
             <p className="text-sm tracking-widest text-neutral-600">
@@ -165,7 +167,7 @@ export default function ProductDetailPage() {
                 onClick={() => setOpenSection(openSection === "shipping" ? null : "shipping")}
                 className="w-full flex justify-between items-center text-xs tracking-wider text-neutral-700"
               >
-                <span>Shipping & Policy</span>
+                <span>Shipping & Returns</span>
                 <span>{openSection === "shipping" ? "−" : "+"}</span>
               </button>
               {openSection === "shipping" && (

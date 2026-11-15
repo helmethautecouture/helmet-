@@ -35,7 +35,6 @@ function CartContent() {
   });
 
   useEffect(() => {
-    // Cherche toutes les clés possibles que ton Shop utilise pour stocker le panier
     const possibleKeys = ["cart", "helmet_cart", "helmetCart", "shopping-cart", "bag"];
     let found: CartItem[] = [];
 
@@ -54,7 +53,6 @@ function CartContent() {
 
     setCart(found);
 
-    // Si retour après un VRAI paiement Stripe validé, on envoie le bordereau de commande par mail et on vide le panier
     if (isSuccess && found.length > 0) {
       const savedCustomer = localStorage.getItem("helmet_pending_customer");
       const customerData = savedCustomer ? JSON.parse(savedCustomer) : {};
@@ -63,7 +61,7 @@ function CartContent() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: "NOUVELLE COMMANDE PAYÉE — HELMET HAUTE COUTURE",
+          _subject: "NOUVELLE COMMANDE PAYÉE — HELMET -01",
           _template: "table",
           Statut: "PAIEMENT VALIDÉ PAR STRIPE",
           Client: `${customerData.firstName || ""} ${customerData.lastName || ""}`,
@@ -71,7 +69,7 @@ function CartContent() {
           Telephone: customerData.phone || "Voir compte Stripe",
           Adresse_Livraison: `${customerData.address || ""}, ${customerData.postalCode || ""} ${customerData.city || ""}, ${customerData.country || ""}`,
           Articles: found
-            .map((i) => `${i.name || i.title} (Taille: ${i.size || "TU"}) x${i.quantity || 1} - ${i.price}€`)
+            .map((i) => `${i.name || i.title} (Size: ${i.size || "TU"}) x${i.quantity || 1} - $${i.price}`)
             .join(" | "),
         }),
       }).catch(() => {});
@@ -110,6 +108,8 @@ function CartContent() {
     0
   );
 
+  const totalCount = cart.reduce((s, i) => s + (Number(i.quantity) || 1), 0);
+
   async function handleRealCheckout(e: React.FormEvent) {
     e.preventDefault();
     setErrorMsg("");
@@ -135,7 +135,6 @@ function CartContent() {
 
       const data = await res.json();
       if (data.url) {
-        // Redirection OBLIGATOIRE vers la vraie page bancaire Stripe (CB / Apple Pay / PayPal)
         window.location.href = data.url;
       } else {
         setErrorMsg(data.error || "Payment initialization failed.");
@@ -147,278 +146,281 @@ function CartContent() {
     }
   }
 
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-white text-black px-6 md:px-20 py-24 font-sans flex items-center justify-center">
-        <div className="max-w-lg w-full border border-black p-10 text-center space-y-6">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400">
-            Helmet Haute Couture — Paris
-          </p>
-          <h1 className="text-2xl uppercase tracking-[0.25em] font-light">
-            Payment & Order Confirmed
-          </h1>
-          <p className="text-xs text-neutral-600 uppercase tracking-widest leading-relaxed">
-            Thank you for your acquisition. Your payment has been verified and a confirmation receipt has been sent to your email address.
-          </p>
+  return (
+    <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
+      {/* HEADER 3 COLONNES IDENTIQUE PC & IPHONE */}
+      <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-10 md:mb-14">
+        <div className="justify-self-start">
           <Link
             href="/shop"
-            className="inline-block w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] hover:bg-neutral-800 transition"
+            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
           >
-            Return to Archive
+            ← Back To Shop
           </Link>
         </div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-white text-black px-6 md:px-20 py-12 font-sans">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-12 border-b border-neutral-200 pb-5">
-          <Link href="/shop" className="text-xs uppercase tracking-[0.25em] hover:opacity-50 transition">
-            ← Continue Shopping
+        <div className="justify-self-center text-center">
+          <Link
+            href="/"
+            className="font-helmet text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+          >
+            Helmet
           </Link>
-          <span className="text-xs uppercase tracking-[0.25em] text-neutral-400">
-            Bag ({cart.reduce((s, i) => s + (Number(i.quantity) || 1), 0)})
+        </div>
+
+        <div className="justify-self-end">
+          <span className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 whitespace-nowrap">
+            <span>🛍</span>
+            <span>[{totalCount}]</span>
           </span>
         </div>
+      </header>
 
-        {isCanceled && (
-          <div className="mb-8 p-4 border border-red-600 text-red-600 text-xs uppercase tracking-[0.2em] text-center">
-            Payment was canceled. Your order has not been charged.
-          </div>
-        )}
-
-        {errorMsg && (
-          <div className="mb-8 p-4 border border-red-600 text-red-600 text-xs uppercase tracking-[0.2em] text-center">
-            {errorMsg}
-          </div>
-        )}
-
-        {cart.length === 0 ? (
-          <div className="py-28 text-center border border-neutral-200">
-            <p className="text-xs uppercase tracking-[0.25em] text-neutral-400 mb-8">
-              Your shopping bag is currently empty.
+      <div className="max-w-6xl mx-auto">
+        {isSuccess ? (
+          <div className="max-w-lg mx-auto border border-black p-8 md:p-10 text-center space-y-6 my-12">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400">
+              Paris Atelier — Edition -01
+            </p>
+            <h1 className="font-helmet text-3xl md:text-4xl font-normal">
+              Order Confirmed
+            </h1>
+            <p className="text-xs text-neutral-600 uppercase tracking-widest leading-relaxed">
+              Thank you for your acquisition. Your payment has been verified and a confirmation receipt has been sent to your email.
             </p>
             <Link
               href="/shop"
-              className="inline-block bg-black text-white px-10 py-4 text-xs uppercase tracking-[0.25em]"
+              className="inline-block w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] hover:bg-neutral-800 transition"
             >
-              Explore Collection
+              Return to Shop
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleRealCheckout} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Colonne Gauche : Articles + Infos Livraison */}
-            <div className="lg:col-span-7 space-y-12">
-              <div>
-                <h2 className="text-sm uppercase tracking-[0.25em] mb-6 border-b border-neutral-200 pb-3">
-                  1. Selected Pieces
-                </h2>
-                <div className="divide-y divide-neutral-200">
-                  {cart.map((item, idx) => (
-                    <div key={idx} className="py-6 flex justify-between items-center gap-4">
-                      <div className="flex items-center gap-4">
-                        {item.image && (
-                          <img
-                            src={item.image}
-                            alt={item.name || "HELMET"}
-                            className="w-16 h-20 object-cover border border-neutral-200"
-                          />
-                        )}
-                        <div className="space-y-1">
-                          <h3 className="text-xs uppercase tracking-[0.2em] font-medium">
-                            {item.name || item.title || "HELMET GARMENT"}
-                          </h3>
-                          {item.size && (
-                            <p className="text-[11px] text-neutral-500 uppercase tracking-widest">
-                              Size: {item.size}
-                            </p>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => removeItem(idx)}
-                            className="text-[10px] uppercase tracking-widest text-neutral-400 underline pt-1 block hover:text-black"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
+          <>
+            {isCanceled && (
+              <div className="mb-8 p-4 border border-red-600 text-red-600 text-xs uppercase tracking-[0.2em] text-center">
+                Payment was canceled. Your order has not been charged.
+              </div>
+            )}
 
-                      <div className="flex items-center gap-6">
-                        <div className="flex items-center border border-neutral-300">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(idx, -1)}
-                            className="px-3 py-1.5 text-xs hover:bg-neutral-100"
-                          >
-                            -
-                          </button>
-                          <span className="px-3 py-1.5 text-xs">{item.quantity || 1}</span>
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(idx, 1)}
-                            className="px-3 py-1.5 text-xs hover:bg-neutral-100"
-                          >
-                            +
-                          </button>
+            {errorMsg && (
+              <div className="mb-8 p-4 border border-red-600 text-red-600 text-xs uppercase tracking-[0.2em] text-center">
+                {errorMsg}
+              </div>
+            )}
+
+            {cart.length === 0 ? (
+              <div className="py-20 md:py-28 text-center border border-neutral-200">
+                <p className="text-xs uppercase tracking-[0.25em] text-neutral-400 mb-8">
+                  Your shopping bag is currently empty.
+                </p>
+                <Link
+                  href="/shop"
+                  className="inline-block bg-black text-white px-10 py-4 text-xs uppercase tracking-[0.25em]"
+                >
+                  Explore Edition -01
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={handleRealCheckout} className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
+                <div className="lg:col-span-7 space-y-10 md:space-y-12">
+                  <div>
+                    <h2 className="font-helmet text-2xl md:text-3xl mb-4 border-b border-neutral-200 pb-3">
+                      Selected Pieces
+                    </h2>
+                    <div className="divide-y divide-neutral-200">
+                      {cart.map((item, idx) => (
+                        <div key={idx} className="py-5 flex justify-between items-center gap-3">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            {item.image && (
+                              <img
+                                src={item.image}
+                                alt={item.name || "HELMET"}
+                                className="w-14 h-20 md:w-16 md:h-20 object-cover border border-neutral-200 shrink-0"
+                              />
+                            )}
+                            <div className="space-y-1">
+                              <h3 className="font-helmet text-xl md:text-2xl font-normal">
+                                {item.name || item.title || "Article -01 — Helmet"}
+                              </h3>
+                              {item.size && (
+                                <p className="text-[11px] text-neutral-500 uppercase tracking-widest">
+                                  Size: {item.size}
+                                </p>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => removeItem(idx)}
+                                className="text-[10px] uppercase tracking-widest text-neutral-400 underline pt-1 block hover:text-black"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 md:gap-6 shrink-0">
+                            <div className="flex items-center border border-neutral-300">
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(idx, -1)}
+                                className="px-2.5 py-1 text-xs hover:bg-neutral-100"
+                              >
+                                -
+                              </button>
+                              <span className="px-2.5 py-1 text-xs">{item.quantity || 1}</span>
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(idx, 1)}
+                                className="px-2.5 py-1 text-xs hover:bg-neutral-100"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <p className="text-xs tracking-widest font-medium w-14 md:w-20 text-right">
+                              ${parsePrice(item.price) * (Number(item.quantity) || 1)}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs tracking-widest font-medium w-20 text-right">
-                          {parsePrice(item.price) * (Number(item.quantity) || 1)} €
-                        </p>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="font-helmet text-2xl md:text-3xl mb-4 border-b border-neutral-200 pb-3">
+                      Shipping Information
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        required
+                        placeholder="FIRST NAME *"
+                        value={customer.firstName}
+                        onChange={(e) => setCustomer({ ...customer, firstName: e.target.value })}
+                        className="bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                      <input
+                        type="text"
+                        required
+                        placeholder="LAST NAME *"
+                        value={customer.lastName}
+                        onChange={(e) => setCustomer({ ...customer, lastName: e.target.value })}
+                        className="bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                      <input
+                        type="email"
+                        required
+                        placeholder="EMAIL ADDRESS *"
+                        value={customer.email}
+                        onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+                        className="bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                      <input
+                        type="tel"
+                        required
+                        placeholder="PHONE NUMBER *"
+                        value={customer.phone}
+                        onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                        className="bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                      <input
+                        type="text"
+                        required
+                        placeholder="STREET ADDRESS *"
+                        value={customer.address}
+                        onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
+                        className="md:col-span-2 bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                      <input
+                        type="text"
+                        required
+                        placeholder="POSTAL CODE *"
+                        value={customer.postalCode}
+                        onChange={(e) => setCustomer({ ...customer, postalCode: e.target.value })}
+                        className="bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                      <input
+                        type="text"
+                        required
+                        placeholder="CITY *"
+                        value={customer.city}
+                        onChange={(e) => setCustomer({ ...customer, city: e.target.value })}
+                        className="bg-white border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5">
+                  <div className="border border-neutral-200 p-6 md:p-8 space-y-6 md:space-y-8 lg:sticky lg:top-8">
+                    <h2 className="font-helmet text-2xl md:text-3xl border-b border-neutral-200 pb-3">
+                      Payment Method
+                    </h2>
+
+                    <div className="grid grid-cols-3 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("card")}
+                        className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
+                          paymentMethod === "card"
+                            ? "border-black bg-black text-white"
+                            : "border-neutral-300 text-neutral-600 hover:border-black"
+                        }`}
+                      >
+                        Card
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("apple_pay")}
+                        className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
+                          paymentMethod === "apple_pay"
+                            ? "border-black bg-black text-white"
+                            : "border-neutral-300 text-neutral-600 hover:border-black"
+                        }`}
+                      >
+                        Apple Pay
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("paypal")}
+                        className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
+                          paymentMethod === "paypal"
+                            ? "border-black bg-black text-white"
+                            : "border-neutral-300 text-neutral-600 hover:border-black"
+                        }`}
+                      >
+                        PayPal
+                      </button>
+                    </div>
+
+                    <div className="space-y-3 pt-4 border-t border-neutral-200 text-xs uppercase tracking-[0.2em]">
+                      <div className="flex justify-between text-neutral-500">
+                        <span>Subtotal</span>
+                        <span>${subtotal}</span>
+                      </div>
+                      <div className="flex justify-between text-neutral-500">
+                        <span>Shipping</span>
+                        <span>Complimentary</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-medium pt-4 border-t border-neutral-200">
+                        <span>Total</span>
+                        <span>${subtotal}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Infos Client pour le bordereau de livraison */}
-              <div>
-                <h2 className="text-sm uppercase tracking-[0.25em] mb-6 border-b border-neutral-200 pb-3">
-                  2. Shipping Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    required
-                    placeholder="FIRST NAME *"
-                    value={customer.firstName}
-                    onChange={(e) => setCustomer({ ...customer, firstName: e.target.value })}
-                    className="border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                  <input
-                    type="text"
-                    required
-                    placeholder="LAST NAME *"
-                    value={customer.lastName}
-                    onChange={(e) => setCustomer({ ...customer, lastName: e.target.value })}
-                    className="border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                  <input
-                    type="email"
-                    required
-                    placeholder="EMAIL ADDRESS *"
-                    value={customer.email}
-                    onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
-                    className="border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                  <input
-                    type="tel"
-                    required
-                    placeholder="PHONE NUMBER *"
-                    value={customer.phone}
-                    onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                    className="border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                  <input
-                    type="text"
-                    required
-                    placeholder="STREET ADDRESS *"
-                    value={customer.address}
-                    onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
-                    className="md:col-span-2 border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                  <input
-                    type="text"
-                    required
-                    placeholder="POSTAL CODE *"
-                    value={customer.postalCode}
-                    onChange={(e) => setCustomer({ ...customer, postalCode: e.target.value })}
-                    className="border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                  <input
-                    type="text"
-                    required
-                    placeholder="CITY *"
-                    value={customer.city}
-                    onChange={(e) => setCustomer({ ...customer, city: e.target.value })}
-                    className="border border-neutral-300 p-3.5 text-xs tracking-widest outline-none focus:border-black"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Colonne Droite : Choix du Paiement + Vrai Checkout Stripe */}
-            <div className="lg:col-span-5">
-              <div className="border border-neutral-200 p-8 space-y-8 sticky top-8">
-                <h2 className="text-sm uppercase tracking-[0.25em] border-b border-neutral-200 pb-4">
-                  3. Payment Method
-                </h2>
-
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("card")}
-                    className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
-                      paymentMethod === "card"
-                        ? "border-black bg-black text-white"
-                        : "border-neutral-300 text-neutral-600 hover:border-black"
-                    }`}
-                  >
-                    Card
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("apple_pay")}
-                    className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
-                      paymentMethod === "apple_pay"
-                        ? "border-black bg-black text-white"
-                        : "border-neutral-300 text-neutral-600 hover:border-black"
-                    }`}
-                  >
-                    Apple Pay
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("paypal")}
-                    className={`py-3 px-2 border text-[10px] uppercase tracking-widest transition ${
-                      paymentMethod === "paypal"
-                        ? "border-black bg-black text-white"
-                        : "border-neutral-300 text-neutral-600 hover:border-black"
-                    }`}
-                  >
-                    PayPal
-                  </button>
-                </div>
-
-                <div className="space-y-3 pt-4 border-t border-neutral-200 text-xs uppercase tracking-[0.2em]">
-                  <div className="flex justify-between text-neutral-500">
-                    <span>Subtotal</span>
-                    <span>{subtotal} €</span>
-                  </div>
-                  <div className="flex justify-between text-neutral-500">
-                    <span>Shipping</span>
-                    <span>Complimentary</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-medium pt-4 border-t border-neutral-200">
-                    <span>Total Due</span>
-                    <span>{subtotal} €</span>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
+                    >
+                      {loading
+                        ? "Redirecting..."
+                        : `Checkout — $${subtotal}`}
+                    </button>
                   </div>
                 </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
-                >
-                  {loading
-                    ? "Connecting to Secure Bank..."
-                    : `Pay ${subtotal} € with ${
-                        paymentMethod === "apple_pay"
-                          ? "Apple Pay"
-                          : paymentMethod === "paypal"
-                          ? "PayPal"
-                          : "Card"
-                      }`}
-                </button>
-
-                <p className="text-[10px] text-neutral-400 uppercase tracking-widest text-center leading-relaxed">
-                  Encrypted transaction powered by Stripe. Orders are only confirmed once payment is authorized.
-                </p>
-              </div>
-            </div>
-          </form>
+              </form>
+            )}
+          </>
         )}
       </div>
     </div>

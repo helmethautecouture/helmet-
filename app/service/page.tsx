@@ -41,7 +41,6 @@ export default function ClientServicePage() {
         setStatus("success");
         form.reset();
       } else {
-        // Fallback : ouvre le client mail directement si FormSubmit attend encore le clic d'activation
         const name = formData.get("Client_Name");
         const email = formData.get("Client_Email");
         const topic = formData.get("Subject");
@@ -56,49 +55,51 @@ export default function ClientServicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 md:px-20 pt-6 pb-20 font-sans">
-      {/* HEADER IDENTIQUE AU SHOP */}
-      <header className="flex justify-between items-center border-b border-neutral-200 pb-6 mb-16">
-        <Link
-          href="/"
-          className="text-[11px] uppercase tracking-[0.2em] hover:opacity-60 transition"
-        >
-          ← Back To Home
-        </Link>
+    <div className="min-h-screen bg-white text-black px-4 sm:px-8 md:px-20 pt-5 md:pt-6 pb-20 font-sans">
+      {/* HEADER 3 COLONNES IDENTIQUE PC & IPHONE */}
+      <header className="grid grid-cols-3 items-center border-b border-neutral-200 pb-4 md:pb-6 mb-10 md:mb-16">
+        <div className="justify-self-start">
+          <Link
+            href="/"
+            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] hover:opacity-60 transition whitespace-nowrap"
+          >
+            ← Back To Home
+          </Link>
+        </div>
 
-        <Link
-          href="/"
-          style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
-          className="text-4xl md:text-5xl tracking-normal font-normal select-none"
-        >
-          Helmet
-        </Link>
+        <div className="justify-self-center text-center">
+          <Link
+            href="/"
+            className="font-helmet text-3xl sm:text-4xl md:text-5xl tracking-normal font-normal select-none leading-none block"
+          >
+            Helmet
+          </Link>
+        </div>
 
-        <Link
-          href="/cart"
-          className="text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 hover:opacity-60 transition"
-        >
-          <span>🛍</span>
-          <span>[{cartCount}]</span>
-        </Link>
+        <div className="justify-self-end">
+          <Link
+            href="/cart"
+            className="text-[10px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] flex items-center gap-1.5 hover:opacity-60 transition whitespace-nowrap"
+          >
+            <span>🛍</span>
+            <span>[{cartCount}]</span>
+          </Link>
+        </div>
       </header>
 
       {/* CONTENU CLIENT SERVICE */}
       <div className="max-w-2xl mx-auto">
-        <div className="mb-12 text-center md:text-left">
-          <h1
-            style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
-            className="text-4xl md:text-5xl font-normal mb-3"
-          >
+        <div className="mb-8 md:mb-12 text-left">
+          <h1 className="font-helmet text-3xl sm:text-4xl md:text-5xl font-normal mb-3">
             Client Service — Edition -01
           </h1>
-          <p className="text-[11px] text-neutral-500 uppercase tracking-[0.2em] leading-relaxed">
+          <p className="text-[10px] md:text-[11px] text-neutral-500 uppercase tracking-[0.18em] md:tracking-[0.2em] leading-relaxed">
             Paris Atelier — Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
                 Full Name *
@@ -108,7 +109,7 @@ export default function ClientServicePage() {
                 name="Client_Name"
                 required
                 placeholder="Full Name"
-                className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+                className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
               />
             </div>
 
@@ -121,12 +122,12 @@ export default function ClientServicePage() {
                 name="Client_Email"
                 required
                 placeholder="Email Address"
-                className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+                className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
                 Order Reference (Optional)
@@ -135,7 +136,7 @@ export default function ClientServicePage() {
                 type="text"
                 name="Order_Reference"
                 placeholder="Order #-01"
-                className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+                className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
               />
             </div>
 
@@ -166,7 +167,7 @@ export default function ClientServicePage() {
               rows={6}
               required
               placeholder="Write your message..."
-              className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
+              className="w-full bg-white border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
             />
           </div>
 
