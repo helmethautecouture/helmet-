@@ -1,28 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-
-const AUDIO_PATHS = [
-  "/ambiante.mp3",
-  "/ambiance.mp3",
-  "/ambient.mp3",
-  "/ambiante.mp3.mp3",
-  "/ambiance.mp3.mp3",
-];
 
 let introPlayedInMemory = false;
 
 export default function Home() {
   const [loading, setLoading] = useState(!introPlayedInMemory);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const isMutedByUserRef = useRef(false);
-  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     try {
@@ -46,96 +33,10 @@ export default function Home() {
       }, 2000);
     }
 
-    let isMounted = true;
-
-    const initWebAudio = async () => {
-      if (isInitializedRef.current || !isMounted) return;
-      isInitializedRef.current = true;
-
-      try {
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        const ctx: AudioContext = new AudioCtx();
-        audioCtxRef.current = ctx;
-
-        let arrayBuffer: ArrayBuffer | null = null;
-        for (const path of AUDIO_PATHS) {
-          try {
-            const res = await fetch(path);
-            if (res.ok) {
-              arrayBuffer = await res.arrayBuffer();
-              break;
-            }
-          } catch {}
-        }
-
-        if (!arrayBuffer || !isMounted) return;
-
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-        if (!isMounted) return;
-
-        const source = ctx.createBufferSource();
-        source.buffer = audioBuffer;
-        source.loop = true;
-
-        const gainNode = ctx.createGain();
-        gainNode.gain.value = 0.7;
-
-        source.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        source.start(0);
-
-        if (ctx.state === "running" && !isMutedByUserRef.current) {
-          setIsPlaying(true);
-        } else {
-          setIsPlaying(false);
-        }
-      } catch {
-        setIsPlaying(false);
-      }
-    };
-
-    initWebAudio();
-
-    const unlockOnInteraction = async () => {
-      if (!audioCtxRef.current) {
-        await initWebAudio();
-      }
-      if (audioCtxRef.current && audioCtxRef.current.state === "suspended" && !isMutedByUserRef.current) {
-        audioCtxRef.current
-          .resume()
-          .then(() => {
-            if (isMounted) setIsPlaying(true);
-          })
-          .catch(() => {});
-      }
-    };
-
-    window.addEventListener("click", unlockOnInteraction, { once: true });
-    window.addEventListener("touchstart", unlockOnInteraction, { once: true });
-
     return () => {
-      isMounted = false;
       if (timer) clearTimeout(timer);
-      window.removeEventListener("click", unlockOnInteraction);
-      window.removeEventListener("touchstart", unlockOnInteraction);
     };
   }, []);
-
-  const toggleAudio = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const ctx = audioCtxRef.current;
-    if (!ctx) return;
-
-    if (isPlaying) {
-      isMutedByUserRef.current = true;
-      await ctx.suspend();
-      setIsPlaying(false);
-    } else {
-      isMutedByUserRef.current = false;
-      await ctx.resume();
-      setIsPlaying(true);
-    }
-  };
 
   return (
     <main className="helmet-home-shell">
@@ -145,9 +46,9 @@ export default function Home() {
           <motion.div
             key={hoveredItem}
             initial={{ opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 0.12, scale: 1 }}
+            animate={{ opacity: 0.11, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
               inset: 0,
@@ -162,8 +63,8 @@ export default function Home() {
               src={hoveredItem}
               alt=""
               style={{
-                width: "380px",
-                height: "480px",
+                width: "360px",
+                height: "460px",
                 objectFit: "cover",
                 filter: "grayscale(100%)",
               }}
@@ -234,7 +135,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER HAUT : COIN GAUCHE, INFO AU MILIEU EXACT */}
+      {/* HEADER HAUT : Paris — Atelier à gauche | INFO au milieu en haut | Panier en haut à droite */}
       <header
         style={{
           position: "relative",
@@ -251,7 +152,7 @@ export default function Home() {
             display: "flex",
             flexDirection: "column",
             gap: "4px",
-            fontSize: "10px",
+            fontSize: "11px",
             letterSpacing: "0.3em",
             color: "#262626",
             textTransform: "uppercase",
@@ -259,28 +160,64 @@ export default function Home() {
           }}
         >
           <span>Paris — Atelier</span>
-          <span style={{ fontSize: "9px", letterSpacing: "0.25em", color: "#525252" }}>
+          <span style={{ fontSize: "10px", letterSpacing: "0.25em", color: "#525252" }}>
             Edition -01
           </span>
         </div>
 
-        {/* INFO STRICTEMENT AU MILIEU EN HAUT */}
-        <div
-          style={{
-            fontSize: "10px",
-            letterSpacing: "0.3em",
-            color: "#262626",
-            textTransform: "uppercase",
-            justifySelf: "center",
-          }}
-        >
-          <span>Info</span>
+        {/* BOUTON INFO CLIQUABLE AU MILIEU TOUT EN HAUT */}
+        <div style={{ justifySelf: "center" }}>
+          <Link
+            href="/info"
+            className="helmet-zoom-link"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.35em",
+              color: "#171717",
+              textTransform: "uppercase",
+              padding: "4px 10px",
+            }}
+          >
+            Info
+          </Link>
         </div>
 
-        <div style={{ justifySelf: "end" }} />
+        {/* PETIT LOGO PANIER EN HAUT À DROITE */}
+        <div style={{ justifySelf: "end" }}>
+          <Link
+            href="/cart"
+            className="helmet-zoom-link"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.25em",
+              color: "#171717",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              textTransform: "uppercase",
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+              />
+            </svg>
+            <span>[{cartCount}]</span>
+          </Link>
+        </div>
       </header>
 
-      {/* CORPS DE PAGE : ORGANISATION DU CROQUIS */}
+      {/* MENU HORIZONTAL ARCHITECTURAL COMME SUR TON DESSIN */}
       <div
         style={{
           position: "relative",
@@ -289,40 +226,40 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "0 24px",
+          padding: "0 20px",
         }}
       >
         <div
           style={{
             width: "100%",
-            maxWidth: "1100px",
-            display: "grid",
-            gridTemplateColumns: "1fr auto 1fr",
+            maxWidth: "1180px",
+            display: "flex",
+            flexWrap: "wrap",
             alignItems: "center",
-            gap: "24px",
+            justifyContent: "center",
+            gap: "clamp(20px, 5vw, 72px)",
           }}
         >
-          {/* GAUCHE : Shop & Helmet Gallery */}
+          {/* GAUCHE DU LOGO : Shop & Helmet Gallery */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-              justifySelf: "start",
+              alignItems: "center",
+              gap: "clamp(18px, 4vw, 52px)",
             }}
           >
             <Link
               href="/shop"
               onMouseEnter={() => setHoveredItem("/product1.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
+              className="helmet-zoom-link"
               style={{
-                fontSize: "13px",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.3vw, 15px)",
+                letterSpacing: "0.32em",
                 textTransform: "uppercase",
                 color: "#171717",
-                transition: "opacity 0.2s ease, transform 0.2s ease",
+                whiteSpace: "nowrap",
               }}
-              className="hover:opacity-60 hover:translate-x-1"
             >
               Shop
             </Link>
@@ -331,30 +268,40 @@ export default function Home() {
               href="/helmet"
               onMouseEnter={() => setHoveredItem("/product2.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
+              className="helmet-zoom-link"
               style={{
-                fontSize: "13px",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.3vw, 15px)",
+                letterSpacing: "0.32em",
                 textTransform: "uppercase",
                 color: "#171717",
-                transition: "opacity 0.2s ease, transform 0.2s ease",
+                whiteSpace: "nowrap",
               }}
-              className="hover:opacity-60 hover:translate-x-1"
             >
               Helmet Gallery
             </Link>
           </div>
 
-          {/* CENTRE : LOGO HELMET */}
-          <div style={{ textAlign: "center", justifySelf: "center" }}>
-            <Link href="/helmet" style={{ display: "inline-block", textDecoration: "none" }}>
+          {/* CENTRE : LOGO TEXTE HELMET HAUTE COUTURE (1610-cancellaresca-lim) */}
+          <div style={{ textAlign: "center", padding: "0 8px" }}>
+            <Link
+              href="/helmet"
+              className="helmet-zoom-link"
+              style={{
+                display: "inline-flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textDecoration: "none",
+              }}
+            >
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(64px, 11vw, 150px)",
+                  fontSize: "clamp(64px, 10.5vw, 145px)",
                   letterSpacing: "0.04em",
                   color: "#000000",
                   display: "block",
-                  lineHeight: 1.1,
+                  lineHeight: 1.08,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Helmet
@@ -362,11 +309,12 @@ export default function Home() {
               <span
                 style={{
                   display: "block",
-                  fontSize: "11px",
-                  letterSpacing: "0.45em",
+                  fontSize: "clamp(10px, 1vw, 12px)",
+                  letterSpacing: "0.48em",
                   color: "#404040",
                   marginTop: "6px",
                   textTransform: "uppercase",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Haute Couture
@@ -374,67 +322,50 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* DROITE : Client Service & Cart */}
+          {/* DROITE DU LOGO : Client Service & Cart */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-              justifySelf: "end",
-              alignItems: "flex-end",
+              alignItems: "center",
+              gap: "clamp(18px, 4vw, 52px)",
             }}
           >
             <Link
               href="/service"
+              className="helmet-zoom-link"
               style={{
-                fontSize: "13px",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.3vw, 15px)",
+                letterSpacing: "0.32em",
                 textTransform: "uppercase",
                 color: "#171717",
-                transition: "opacity 0.2s ease, transform 0.2s ease",
+                whiteSpace: "nowrap",
               }}
-              className="hover:opacity-60 hover:-translate-x-1"
             >
               Client Service
             </Link>
 
             <Link
               href="/cart"
+              className="helmet-zoom-link"
               style={{
-                fontSize: "13px",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(12px, 1.3vw, 15px)",
+                letterSpacing: "0.32em",
                 textTransform: "uppercase",
                 color: "#171717",
-                display: "flex",
+                display: "inline-flex",
                 alignItems: "center",
                 gap: "8px",
-                transition: "opacity 0.2s ease, transform 0.2s ease",
+                whiteSpace: "nowrap",
               }}
-              className="hover:opacity-60 hover:-translate-x-1"
             >
               <span>Cart</span>
-              <svg
-                width="16"
-                height="16"
-                style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                />
-              </svg>
-              <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
+              <span>[{cartCount}]</span>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* FOOTER BAS : Instagram/YouTube à gauche, Casque au centre, Copyright à droite */}
+      {/* FOOTER BAS : Instagram / YouTube à gauche, Copyright à droite (Le casque est géré au centre par GlobalAudio) */}
       <footer
         style={{
           position: "relative",
@@ -442,7 +373,7 @@ export default function Home() {
           display: "grid",
           gridTemplateColumns: "1fr auto 1fr",
           alignItems: "center",
-          padding: "20px 24px 28px 24px",
+          padding: "20px 24px 26px 24px",
           width: "100%",
         }}
       >
@@ -450,78 +381,36 @@ export default function Home() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "14px",
+            gap: "12px",
             fontSize: "11px",
             letterSpacing: "0.28em",
             color: "#404040",
             justifySelf: "start",
             textTransform: "uppercase",
+            whiteSpace: "nowrap",
           }}
         >
-          <a href="https://www.instagram.com/helmet.hautecouture/" target="_blank" rel="noreferrer" className="hover:text-black">
+          <a
+            href="https://www.instagram.com/helmet.hautecouture/"
+            target="_blank"
+            rel="noreferrer"
+            className="helmet-zoom-link"
+          >
             Instagram
           </a>
           <span style={{ color: "#a3a3a3" }}>/</span>
-          <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-black">
+          <a
+            href="https://www.youtube.com"
+            target="_blank"
+            rel="noreferrer"
+            className="helmet-zoom-link"
+          >
             YouTube
           </a>
         </div>
 
-        {/* CASQUE AUDIO FIXE AU CENTRE */}
-        <div style={{ justifySelf: "center" }}>
-          <button
-            type="button"
-            onClick={toggleAudio}
-            style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "8px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "#171717",
-            }}
-            title={isPlaying ? "Sound On (70%)" : "Sound Off"}
-          >
-            <svg
-              width="26"
-              height="26"
-              style={{ width: "26px", height: "26px", minWidth: "26px" }}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.7"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 15v-3a8 8 0 0 1 16 0v3" />
-              <rect x="2.5" y="13.5" width="3.5" height="6.5" rx="1.5" fill="currentColor" />
-              <rect x="18" y="13.5" width="3.5" height="6.5" rx="1.5" fill="currentColor" />
-            </svg>
-            {!isPlaying && (
-              <span
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  pointerEvents: "none",
-                }}
-              >
-                <span
-                  style={{
-                    width: "28px",
-                    height: "1.5px",
-                    backgroundColor: "#dc2626",
-                    transform: "rotate(45deg)",
-                    display: "block",
-                  }}
-                />
-              </span>
-            )}
-          </button>
-        </div>
+        {/* Espace réservé au casque audio centré */}
+        <div style={{ width: "44px", height: "36px", justifySelf: "center" }} />
 
         <div
           style={{
@@ -531,9 +420,11 @@ export default function Home() {
             color: "#404040",
             justifySelf: "end",
             textTransform: "uppercase",
+            whiteSpace: "nowrap",
           }}
         >
-          <span>© Helmet All Rights Reserved</span>
+          <span className="hidden sm:inline">© Helmet All Rights Reserved</span>
+          <span className="sm:hidden">© Helmet</span>
         </div>
       </footer>
     </main>

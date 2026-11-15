@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 const galleryItems = [
-  { id: "-01", title: "Shooting -01 — Paris", image: "/product1.jpg" },
-  { id: "-02", title: "Shooting -02 — Studio", image: "/product2.jpg" },
+  { id: "-01", title: "Shooting -01 â€” Paris", image: "/product1.jpg" },
+  { id: "-02", title: "Shooting -02 â€” Studio", image: "/product2.jpg" },
 ];
 
 export default function HelmetGallery() {
@@ -38,7 +38,7 @@ export default function HelmetGallery() {
               whiteSpace: "nowrap",
             }}
           >
-            ← Back To Home
+            â† Back To Home
           </Link>
         </div>
 
@@ -100,7 +100,7 @@ export default function HelmetGallery() {
                 src={item.image}
                 alt={item.title}
                 style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.5s ease" }}
-                className="hover:scale-105"
+                className="helmet-zoom-img"
               />
             </div>
             <span
@@ -113,10 +113,10 @@ export default function HelmetGallery() {
         ))}
       </div>
 
-      {/* CASQUE AUDIO EN BAS À GAUCHE */}
+      {/* CASQUE AUDIO EN BAS Ã€ GAUCHE */}
       <div style={{ position: "absolute", bottom: "24px", left: "24px", zIndex: 30 }}>
         <a href="/" style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", color: "#737373" }}>
-          ← Sound / Home
+          â† Sound / Home
         </a>
       </div>
     </div>

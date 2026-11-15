@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import GlobalAudio from "./GlobalAudio";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -22,7 +23,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="bg-white text-black font-sans antialiased selection:bg-black selection:text-white overflow-x-hidden">
+      <body className="bg-white text-black antialiased selection:bg-black selection:text-white overflow-x-hidden">
+        <GlobalAudio />
         {children}
       </body>
     </html>

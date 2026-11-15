@@ -99,7 +99,7 @@ export default function Shop() {
               src={SINGLE_PRODUCT.image}
               alt={SINGLE_PRODUCT.name}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.5s ease" }}
-              className="hover:scale-105"
+              className="helmet-zoom-img"
             />
           </div>
 
@@ -117,7 +117,7 @@ export default function Shop() {
       {/* CASQUE AUDIO EN BAS À GAUCHE */}
       <div style={{ position: "absolute", bottom: "24px", left: "24px", zIndex: 30 }}>
         <a href="/" style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", color: "#737373" }}>
-          ← Sound / Home
+          
         </a>
       </div>
     </div>

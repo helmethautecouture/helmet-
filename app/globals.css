@@ -1,23 +1,25 @@
-﻿@tailwind base;
-@tailwind components;
-@tailwind utilities;
+﻿@import "tailwindcss";
 
 @font-face {
   font-family: "1610-cancellaresca-lim";
   src: url("/fonts/1610-cancellaresca.ttf") format("truetype"),
-       url("/fonts/1610-cancellaresca-lim.ttf") format("truetype");
+       url("/1610-cancellaresca-lim.ttf") format("truetype"),
+       local("1610 Cancellaresca"),
+       local("1610-cancellaresca-lim");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "1589-humane-bordeaux";
+  font-family: "1589-humane-bordeaux-regular";
   src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
+       url("/1589-humane-bordeaux-regular.ttf") format("truetype"),
        url("/fonts/1589-humane-bordeaux-regular.otf") format("opentype"),
-       local("1589 humane bordeaux regular"),
-       local("1589-humane-bordeaux-regular");
-  font-weight: 600; /* Forcé un peu plus épais */
+       local("1589 Humane Bordeaux Regular"),
+       local("1589-humane-bordeaux-regular"),
+       local("1589 Humane Bordeaux");
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
@@ -25,8 +27,8 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --font-helmet-script: "1610-cancellaresca-lim", "Cormorant Garamond", Georgia, serif;
-  --font-primary: "1589-humane-bordeaux", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-helmet-script: "1610-cancellaresca-lim", Georgia, serif;
+  --font-primary: "1589-humane-bordeaux-regular", Georgia, serif;
 }
 
 *,
@@ -48,13 +50,27 @@ body {
   background-color: #ffffff;
   color: #000000;
   font-family: var(--font-primary) !important;
-  font-weight: 600 !important; /* Rend les lettres et chiffres globalement un poil plus épais */
+  font-weight: 500 !important;
+  /* Épaissit légèrement la police (+1.5 cran) tout en gardant sa finesse */
+  -webkit-text-stroke: 0.22px currentColor;
   -webkit-text-size-adjust: 100%;
 }
 
-/* Force la police et l'épaisseur sur absolument tous les éléments texte et inputs */
-p, span, a, h1, h2, h3, h4, h5, h6, input, textarea, select, button, label {
+/* Force 1589-humane-bordeaux-regular sur TOUTES les lettres et TOUS les chiffres (même sur .font-sans) */
+body, p, span, a, div, li, ul, h1, h2, h3, h4, h5, h6, input, textarea, select, button, label, .font-sans {
   font-family: var(--font-primary) !important;
+}
+
+/* Le logo et les titres calligraphiques gardent strictement 1610-cancellaresca-lim sans épaississement */
+.font-cancellaresca,
+.font-helmet,
+.font-cancellaresca *,
+.font-helmet * {
+  font-family: var(--font-helmet-script) !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  -webkit-text-stroke: 0px transparent !important;
+  font-synthesis: none !important;
 }
 
 a,
@@ -74,15 +90,40 @@ svg {
   flex-shrink: 0;
 }
 
-/* Le grand logo central garde sa calligraphie d'origine */
-.font-cancellaresca,
-.font-helmet {
-  font-family: var(--font-helmet-script) !important;
-  font-weight: 400 !important;
-  font-style: normal !important;
-  font-synthesis: none !important;
+/* ANIMATIONS DE ZOOM ULTRA SMOOTH AU CURSEUR */
+.helmet-zoom-link {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease !important;
+  transform-origin: center center;
+  will-change: transform;
 }
 
+.helmet-zoom-link:hover {
+  transform: scale(1.11) !important;
+  opacity: 0.72;
+}
+
+.helmet-zoom-card {
+  overflow: hidden;
+  position: relative;
+}
+
+.helmet-zoom-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform;
+}
+
+.helmet-zoom-card:hover .helmet-zoom-img,
+.group:hover .helmet-zoom-img {
+  transform: scale(1.065) !important;
+}
+
+/* Structure des pages */
 .helmet-home-shell {
   position: relative;
   height: 100dvh;
@@ -128,6 +169,22 @@ svg {
   }
 }
 
+.helmet-product-grid {
+  max-width: 1024px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .helmet-product-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+}
+
 .helmet-cart-grid {
   max-width: 1152px;
   margin: 0 auto;
@@ -152,9 +209,8 @@ svg {
   padding: 14px;
   font-size: 13px;
   letter-spacing: 0.12em;
-  font-family: var(--font-primary) !important;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.25s ease;
 }
 
 .helmet-input:focus {
@@ -171,14 +227,14 @@ svg {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.25em;
-  font-weight: 600;
   text-align: center;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
 }
 
 .helmet-btn-black:hover {
   opacity: 0.86;
+  transform: scale(1.015);
 }
 
 .helmet-btn-black:disabled {
@@ -193,7 +249,6 @@ button {
   -webkit-appearance: none;
   appearance: none;
   border-radius: 0;
-  font-family: var(--font-primary) !important;
 }
 
 @media screen and (max-width: 768px) {
