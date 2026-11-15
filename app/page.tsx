@@ -169,48 +169,17 @@ export default function Home() {
     }
   };
 
-  const menuLinks = [
-    {
-      index: "01",
-      title: "Shop",
-      subtitle: "Collection & Pieces",
-      href: "/shop",
-      preview: "/product1.jpg",
-    },
-    {
-      index: "02",
-      title: "Helmet Gallery",
-      subtitle: "Visual Archive — Paris",
-      href: "/helmet",
-      preview: "/product2.jpg",
-    },
-    {
-      index: "03",
-      title: "Client Service",
-      subtitle: "Private Concierge",
-      href: "/service",
-      preview: null,
-    },
-    {
-      index: "04",
-      title: "Cart",
-      subtitle: `${cartCount} Selected ${cartCount <= 1 ? "Piece" : "Pieces"}`,
-      href: "/cart",
-      preview: null,
-    },
-  ];
-
   return (
-    <main className="helmet-home-shell">
-      {/* APERÇU FANTÔME AU SURVOL */}
+    <main className="helmet-home-shell" style={{ fontFamily: "var(--font-sans), Inter, sans-serif" }}>
+      {/* APERÇU FANTÔME AVEC ZOOM FLUIDE EN ARRIÈRE-PLAN */}
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
             key={hoveredItem}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 0.08, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 0.12, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             style={{
               position: "fixed",
               inset: 0,
@@ -225,8 +194,8 @@ export default function Home() {
               src={hoveredItem}
               alt=""
               style={{
-                width: "340px",
-                height: "440px",
+                width: "380px",
+                height: "480px",
                 objectFit: "cover",
                 filter: "grayscale(100%)",
               }}
@@ -287,6 +256,7 @@ export default function Home() {
                   letterSpacing: "0.5em",
                   color: "#404040",
                   marginTop: "8px",
+                  textTransform: "uppercase",
                 }}
               >
                 Haute Couture
@@ -296,99 +266,48 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER ARCHITECTURAL 3 COLONNES */}
-      <header className="helmet-header-home">
+      {/* HEADER HAUT : COIN GAUCHE ET COIN DROIT */}
+      <header
+        style={{
+          position: "relative",
+          zIndex: 20,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          padding: "28px 24px 0 24px",
+          width: "100%",
+        }}
+      >
         <div
           style={{
-            paddingTop: "8px",
             display: "flex",
             flexDirection: "column",
             gap: "4px",
             fontSize: "10px",
             letterSpacing: "0.3em",
             color: "#262626",
-            justifySelf: "start",
+            textTransform: "uppercase",
           }}
         >
-          <span style={{ whiteSpace: "nowrap" }}>Paris — Atelier</span>
-          <span style={{ fontSize: "9px", letterSpacing: "0.25em", color: "#525252", whiteSpace: "nowrap" }}>
+          <span>Paris — Atelier</span>
+          <span style={{ fontSize: "9px", letterSpacing: "0.25em", color: "#525252" }}>
             Edition -01
           </span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifySelf: "center" }}>
-          <Link
-            href="/helmet"
-            style={{
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <span
-              className="font-cancellaresca"
-              style={{
-                fontSize: "clamp(54px, 8vw, 115px)",
-                letterSpacing: "0.04em",
-                color: "#000000",
-                display: "block",
-                lineHeight: 1.12,
-                whiteSpace: "nowrap",
-              }}
-            >
-              Helmet
-            </span>
-            <span
-              style={{
-                display: "block",
-                fontSize: "11px",
-                letterSpacing: "0.48em",
-                color: "#404040",
-                marginTop: "4px",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Haute Couture
-            </span>
-          </Link>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", paddingTop: "8px", justifySelf: "end" }}>
-          <Link
-            href="/cart"
-            style={{
-              fontSize: "11px",
-              letterSpacing: "0.3em",
-              color: "#171717",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span className="hidden sm:inline">Cart</span>
-            <svg
-              width="16"
-              height="16"
-              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-              />
-            </svg>
-            <span style={{ fontWeight: 600, color: "#000000" }}>[{cartCount}]</span>
-          </Link>
+        <div
+          style={{
+            fontSize: "10px",
+            letterSpacing: "0.3em",
+            color: "#262626",
+            textTransform: "uppercase",
+          }}
+        >
+          <span>Info</span>
         </div>
       </header>
 
-      {/* MENU CENTRAL : SOMMAIRE D'ATELIER */}
+      {/* CORPS DE PAGE : ORGANISATION EXACTE DE TON DESSIN (LIENS À GAUCHE & DROITE DU LOGO CENTRAL) */}
       <div
         style={{
           position: "relative",
@@ -400,54 +319,160 @@ export default function Home() {
           padding: "0 24px",
         }}
       >
-        <nav className="helmet-summary-nav">
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "1100px",
+            display: "grid",
+            gridTemplateColumns: "1fr auto 1fr",
+            alignItems: "center",
+            gap: "24px",
+          }}
+        >
+          {/* LIENS DE GAUCHE : Shop & Helmet Gallery */}
           <div
             style={{
               display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              paddingBottom: "12px",
-              borderBottom: "1px solid #d4d4d4",
-              fontSize: "10px",
-              letterSpacing: "0.45em",
-              color: "#525252",
+              flexDirection: "column",
+              gap: "20px",
+              justifySelf: "start",
             }}
           >
-            <span>Summary</span>
+            <Link
+              href="/shop"
+              onMouseEnter={() => setHoveredItem("/product1.jpg")}
+              onMouseLeave={() => setHoveredItem(null)}
+              style={{
+                fontSize: "13px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#171717",
+                transition: "opacity 0.2s ease, transform 0.2s ease",
+              }}
+              className="hover:opacity-60 hover:translate-x-1"
+            >
+              Shop
+            </Link>
+
+            <Link
+              href="/helmet"
+              onMouseEnter={() => setHoveredItem("/product2.jpg")}
+              onMouseLeave={() => setHoveredItem(null)}
+              style={{
+                fontSize: "13px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#171717",
+                transition: "opacity 0.2s ease, transform 0.2s ease",
+              }}
+              className="hover:opacity-60 hover:translate-x-1"
+            >
+              Helmet Gallery
+            </Link>
           </div>
 
-          <div>
-            {menuLinks.map((item) => (
-              <Link
-                key={item.index}
-                href={item.href}
-                onMouseEnter={() => setHoveredItem(item.preview)}
-                onMouseLeave={() => setHoveredItem(null)}
-                className="helmet-summary-row group"
+          {/* LOGO CENTRAL : Helmet Haute Couture (Police Calligraphique inchangée) */}
+          <div style={{ textAlign: "center", justifySelf: "center" }}>
+            <Link href="/helmet" style={{ display: "inline-block", textDecoration: "none" }}>
+              <span
+                className="font-cancellaresca"
+                style={{
+                  fontSize: "clamp(64px, 11vw, 150px)",
+                  letterSpacing: "0.04em",
+                  color: "#000000",
+                  display: "block",
+                  lineHeight: 1.1,
+                }}
               >
-                <div style={{ display: "flex", alignItems: "baseline", gap: "28px" }}>
-                  <span style={{ fontSize: "10px", letterSpacing: "0.35em", color: "#525252" }}>
-                    {item.index}
-                  </span>
-                  <span style={{ fontSize: "13px", letterSpacing: "0.42em", color: "#171717" }}>
-                    {item.title}
-                  </span>
-                </div>
-
-                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                  <span style={{ fontSize: "10px", letterSpacing: "0.3em", color: "#525252" }}>
-                    {item.subtitle}
-                  </span>
-                  <span style={{ fontSize: "12px", color: "#404040" }}>→</span>
-                </div>
-              </Link>
-            ))}
+                Helmet
+              </span>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  letterSpacing: "0.45em",
+                  color: "#404040",
+                  marginTop: "6px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Haute Couture
+              </span>
+            </Link>
           </div>
-        </nav>
+
+          {/* LIENS DE DROITE : Client Service & Cart */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+              justifySelf: "end",
+              alignItems: "flex-end",
+            }}
+          >
+            <Link
+              href="/service"
+              style={{
+                fontSize: "13px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#171717",
+                transition: "opacity 0.2s ease, transform 0.2s ease",
+              }}
+              className="hover:opacity-60 hover:-translate-x-1"
+            >
+              Client Service
+            </Link>
+
+            <Link
+              href="/cart"
+              style={{
+                fontSize: "13px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#171717",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                transition: "opacity 0.2s ease, transform 0.2s ease",
+              }}
+              className="hover:opacity-60 hover:-translate-x-1"
+            >
+              <span>Cart</span>
+              <svg
+                width="16"
+                height="16"
+                style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                />
+              </svg>
+              <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* FOOTER SYMÉTRIQUE */}
-      <footer className="helmet-footer-home">
+      {/* FOOTER BAS : Instagram/YouTube à gauche, Casque audio au centre, Copyright à droite */}
+      <footer
+        style={{
+          position: "relative",
+          zIndex: 20,
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
+          alignItems: "center",
+          padding: "20px 24px 28px 24px",
+          width: "100%",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -457,19 +482,19 @@ export default function Home() {
             letterSpacing: "0.28em",
             color: "#404040",
             justifySelf: "start",
-            whiteSpace: "nowrap",
+            textTransform: "uppercase",
           }}
         >
-          <a href="https://www.instagram.com/helmet.hautecouture/" target="_blank" rel="noreferrer">
+          <a href="https://www.instagram.com/helmet.hautecouture/" target="_blank" rel="noreferrer" className="hover:text-black">
             Instagram
           </a>
           <span style={{ color: "#a3a3a3" }}>/</span>
-          <a href="https://www.youtube.com" target="_blank" rel="noreferrer">
+          <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="hover:text-black">
             YouTube
           </a>
         </div>
 
-        {/* ICÔNE CASQUE AUDIO AU CENTRE */}
+        {/* CASQUE AUDIO FIXE AU CENTRE */}
         <div style={{ justifySelf: "center" }}>
           <button
             type="button"
@@ -532,11 +557,10 @@ export default function Home() {
             letterSpacing: "0.28em",
             color: "#404040",
             justifySelf: "end",
-            whiteSpace: "nowrap",
+            textTransform: "uppercase",
           }}
         >
-          <span className="hidden sm:inline">© Helmet All Rights Reserved</span>
-          <span className="sm:hidden">© Helmet</span>
+          <span>© Helmet All Rights Reserved</span>
         </div>
       </footer>
     </main>
