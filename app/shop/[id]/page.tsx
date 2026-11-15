@@ -1,105 +1,131 @@
 "use client";
-
-import { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-function ProductContent() {
-  const params = useParams();
-  const id = params?.id || "01";
-
-  const [openDetails, setOpenDetails] = useState(false);
-  const [openShipping, setOpenShipping] = useState(false);
+export default function ProductDetailPage() {
+  const router = useRouter();
   const [selectedSize, setSelectedSize] = useState("2");
-  const [added, setAdded] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const product = {
+    id: "article--01",
+    name: "Article -01 — Helmet",
+    price: 180,
+    image: "/article1.jpg",
+  };
 
   useEffect(() => {
-    try {
-      const existingCart = JSON.parse(localStorage.getItem("helmet_cart") || "[]");
-      const totalQty = existingCart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0);
-      setCartCount(totalQty);
-    } catch {
-      setCartCount(0);
+    const raw = localStorage.getItem("cart") || localStorage.getItem("helmet_cart");
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setCartCount(parsed.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0));
+        }
+      } catch {}
     }
   }, []);
 
   const handleAddToCart = () => {
-    const existingCart = JSON.parse(localStorage.getItem("helmet_cart") || "[]");
-    const newItem = { 
-      id, 
-      size: selectedSize, 
-      name: `Article ${id} — Helmet`, 
-      price: "$0",
-      image: `/product${id === "02" ? "2" : "1"}.jpg`,
-      quantity: 1
-    };
-    
-    const existingIndex = existingCart.findIndex((i: any) => i.id === id && i.size === selectedSize);
-    if (existingIndex > -1) {
-      existingCart[existingIndex].name = `Article ${id} — Helmet`;
-      existingCart[existingIndex].quantity = (existingCart[existingIndex].quantity || 1) + 1;
-    } else {
-      existingCart.push(newItem);
+    const raw = localStorage.getItem("cart") || localStorage.getItem("helmet_cart");
+    let currentCart = [];
+    if (raw) {
+      try {
+        currentCart = JSON.parse(raw);
+        if (!Array.isArray(currentCart)) currentCart = [];
+      } catch {
+        currentCart = [];
+      }
     }
 
-    localStorage.setItem("helmet_cart", JSON.stringify(existingCart));
-    const totalQty = existingCart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0);
-    setCartCount(totalQty);
+    const existingIndex = currentCart.findIndex(
+      (item: any) => item.id === product.id && item.size === selectedSize
+    );
 
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    if (existingIndex > -1) {
+      currentCart[existingIndex].quantity = (Number(currentCart[existingIndex].quantity) || 1) + 1;
+    } else {
+      currentCart.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        size: selectedSize,
+        quantity: 1,
+        image: product.image,
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(currentCart));
+    localStorage.setItem("helmet_cart", JSON.stringify(currentCart));
+    setCartCount(currentCart.reduce((acc: number, item: any) => acc + (Number(item.quantity) || 1), 0));
+    router.push("/cart");
   };
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 md:px-20 font-sans pt-6">
-      
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md flex justify-between items-center py-6 mb-12 border-b border-neutral-200">
-        <Link href="/shop" className="text-xs tracking-[0.25em] text-neutral-600 hover:text-black transition-colors w-40">
+    <div className="min-h-screen bg-white text-black px-6 md:px-20 pt-6 pb-20 font-sans">
+      {/* HEADER */}
+      <header className="flex justify-between items-center border-b border-neutral-200 pb-6 mb-16">
+        <Link
+          href="/shop"
+          className="text-[11px] uppercase tracking-[0.2em] hover:opacity-60 transition"
+        >
           ← Back To Shop
         </Link>
-        <Link href="/" className="font-cancellaresca text-4xl md:text-5xl tracking-[0.08em] text-center text-black">
+
+        <Link
+          href="/"
+          style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
+          className="text-4xl md:text-5xl tracking-normal font-normal select-none"
+        >
           Helmet
         </Link>
-        <div className="w-40 flex justify-end">
-          <Link href="/cart" className="text-sm tracking-widest text-neutral-800 hover:text-black transition-colors flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg>
-            <span className="font-semibold">[{cartCount}]</span>
-          </Link>
-        </div>
+
+        <Link
+          href="/cart"
+          className="text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 hover:opacity-60 transition"
+        >
+          <span>🛍</span>
+          <span>[{cartCount}]</span>
+        </Link>
       </header>
 
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start py-8">
-        <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 border border-neutral-200">
+      {/* FICHE PRODUIT */}
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        <div className="aspect-[3/4] bg-neutral-100 border border-neutral-200 overflow-hidden">
           <img
-            src={`/product${id === "02" ? "2" : "1"}.jpg`}
-            alt={`Article ${id} — Helmet`}
-            className="h-full w-full object-cover"
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover"
           />
         </div>
 
-        <div className="flex flex-col gap-6 md:pl-8 sticky top-28">
+        <div className="pt-2 space-y-8">
           <div>
-            <h1 className="font-cancellaresca text-3xl md:text-4xl tracking-[0.08em]">
-              Article {id} — Helmet
+            <h1
+              style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
+              className="text-4xl md:text-5xl font-normal mb-2"
+            >
+              Article -01 — Helmet
             </h1>
-            <p className="text-sm text-neutral-500 mt-2 tracking-widest">$0</p>
+            <p className="text-sm tracking-widest text-neutral-600">
+              ${product.price}
+            </p>
           </div>
 
-          <div className="flex flex-col gap-2 mt-4">
-            <label className="text-xs tracking-widest text-neutral-500">Size</label>
+          <div>
+            <p className="text-xs text-neutral-500 mb-3">Size</p>
             <div className="flex gap-3">
               {["1", "2", "3"].map((size) => (
                 <button
                   key={size}
+                  type="button"
                   onClick={() => setSelectedSize(size)}
-                  className={`px-6 py-2 text-xs tracking-widest border transition-colors cursor-pointer ${
+                  className={`w-14 h-10 border text-xs transition ${
                     selectedSize === size
-                      ? "border-black bg-black text-white font-bold"
-                      : "border-neutral-300 text-neutral-600 hover:border-black"
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-black border-neutral-300 hover:border-black"
                   }`}
                 >
                   {size}
@@ -108,65 +134,49 @@ function ProductContent() {
             </div>
           </div>
 
-          <button 
+          <button
+            type="button"
             onClick={handleAddToCart}
-            className="w-full bg-black text-white font-bold text-xs tracking-[0.25em] py-4 mt-4 hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="w-full bg-black text-white py-4 text-xs tracking-[0.15em] font-medium hover:bg-neutral-800 transition"
           >
-            {added ? `Added To Cart — Size ${selectedSize} ✓` : "Add To Cart"}
+            Add To Cart
           </button>
 
-          <div className="mt-8 border-t border-neutral-200 divide-y divide-neutral-200">
+          <div className="border-t border-neutral-200 pt-2 divide-y divide-neutral-200">
             <div className="py-4">
               <button
-                onClick={() => setOpenDetails(!openDetails)}
-                className="w-full flex justify-between items-center text-xs tracking-[0.2em] text-neutral-800 hover:text-black cursor-pointer"
+                type="button"
+                onClick={() => setOpenSection(openSection === "details" ? null : "details")}
+                className="w-full flex justify-between items-center text-xs tracking-wider text-neutral-700"
               >
                 <span>Product Details</span>
-                <span>{openDetails ? "−" : "+"}</span>
+                <span>{openSection === "details" ? "−" : "+"}</span>
               </button>
-              {openDetails && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="mt-3 text-xs text-neutral-600 space-y-1 tracking-wider"
-                >
-                  <p>• Color: Black</p>
-                  <p>• Made In Paris</p>
-                  <p>• Material: 100% Heavy Cotton</p>
-                </motion.div>
+              {openSection === "details" && (
+                <p className="text-xs text-neutral-500 mt-3 leading-relaxed">
+                  Paris Atelier — Edition -01. Heavyweight luxury silhouette crafted with custom Helmet Haute Couture detailing.
+                </p>
               )}
             </div>
 
             <div className="py-4">
               <button
-                onClick={() => setOpenShipping(!openShipping)}
-                className="w-full flex justify-between items-center text-xs tracking-[0.2em] text-neutral-800 hover:text-black cursor-pointer"
+                type="button"
+                onClick={() => setOpenSection(openSection === "shipping" ? null : "shipping")}
+                className="w-full flex justify-between items-center text-xs tracking-wider text-neutral-700"
               >
-                <span>Shipping & Returns</span>
-                <span>{openShipping ? "−" : "+"}</span>
+                <span>Shipping & Policy</span>
+                <span>{openSection === "shipping" ? "−" : "+"}</span>
               </button>
-              {openShipping && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="mt-3 text-xs text-neutral-600 space-y-1 tracking-wider"
-                >
-                  <p>Worldwide Express Shipping.</p>
-                  <p>Dispatched Within 48 Hours.</p>
-                </motion.div>
+              {openSection === "shipping" && (
+                <p className="text-xs text-neutral-500 mt-3 leading-relaxed">
+                  Tracked worldwide delivery. All sales are final — no returns or exchanges.
+                </p>
               )}
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function ProductDetail() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-white text-black flex items-center justify-center text-xs tracking-widest">Loading...</div>}>
-      <ProductContent />
-    </Suspense>
   );
 }

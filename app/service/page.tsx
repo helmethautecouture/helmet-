@@ -1,38 +1,54 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function ClientServicePage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const raw = localStorage.getItem("cart") || localStorage.getItem("helmet_cart");
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setCartCount(parsed.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0));
+        }
+      } catch {}
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
 
-    const formData = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.append("_subject", "Nouveau message Client Service — HELMET -01");
+    formData.append("_captcha", "false");
+    formData.append("_template", "table");
 
     try {
       const response = await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          ...payload,
-          _subject: `HELMET Client Service — ${payload.Subject || "New Inquiry"}`,
-          _template: "table",
-          _captcha: "false",
-        }),
+        body: formData,
       });
 
-      const result = await response.json();
-      if (response.ok && result.success !== "false") {
+      if (response.ok) {
         setStatus("success");
-        e.currentTarget.reset();
+        form.reset();
       } else {
-        setStatus("error");
+        // Fallback : ouvre le client mail directement si FormSubmit attend encore le clic d'activation
+        const name = formData.get("Client_Name");
+        const email = formData.get("Client_Email");
+        const topic = formData.get("Subject");
+        const msg = formData.get("Message");
+        window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
+          `[HELMET -01] ${topic}` )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
+        setStatus("success");
       }
     } catch {
       setStatus("error");
@@ -40,116 +56,131 @@ export default function ClientServicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 md:px-20 py-12 font-sans">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex justify-between items-center mb-16 border-b border-neutral-200 pb-6">
-          <Link href="/" className="text-xs uppercase tracking-[0.25em] hover:opacity-50 transition">
-            ← Helmet Archive
-          </Link>
-          <span className="text-xs uppercase tracking-[0.25em] text-neutral-400">
-            Client Service
-          </span>
-        </div>
+    <div className="min-h-screen bg-white text-black px-6 md:px-20 pt-6 pb-20 font-sans">
+      {/* HEADER IDENTIQUE AU SHOP */}
+      <header className="flex justify-between items-center border-b border-neutral-200 pb-6 mb-16">
+        <Link
+          href="/"
+          className="text-[11px] uppercase tracking-[0.2em] hover:opacity-60 transition"
+        >
+          ← Back To Home
+        </Link>
 
-        <div className="mb-12">
-          <h1 className="text-3xl uppercase tracking-[0.25em] mb-4 font-light">
-            Client Service
+        <Link
+          href="/"
+          style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
+          className="text-4xl md:text-5xl tracking-normal font-normal select-none"
+        >
+          Helmet
+        </Link>
+
+        <Link
+          href="/cart"
+          className="text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 hover:opacity-60 transition"
+        >
+          <span>🛍</span>
+          <span>[{cartCount}]</span>
+        </Link>
+      </header>
+
+      {/* CONTENU CLIENT SERVICE */}
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-12 text-center md:text-left">
+          <h1
+            style={{ fontFamily: "'1610-cancellaresca-lim', var(--font-couture), serif" }}
+            className="text-4xl md:text-5xl font-normal mb-3"
+          >
+            Client Service — Edition -01
           </h1>
-          <p className="text-xs text-neutral-500 uppercase tracking-[0.18em] leading-relaxed">
-            Our dedicated advisors are available for any inquiries regarding your order, sizing, or garment care. Please note that all sales are final — no returns or exchanges.
+          <p className="text-[11px] text-neutral-500 uppercase tracking-[0.2em] leading-relaxed">
+            Paris Atelier — Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.25em] mb-2.5 text-neutral-500">
+              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
                 Full Name *
               </label>
               <input
                 type="text"
                 name="Client_Name"
                 required
-                placeholder="YOUR NAME"
-                className="w-full bg-transparent border border-neutral-300 p-4 text-xs tracking-widest focus:border-black outline-none transition"
+                placeholder="Full Name"
+                className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.25em] mb-2.5 text-neutral-500">
+              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
                 Email Address *
               </label>
               <input
                 type="email"
                 name="Client_Email"
                 required
-                placeholder="YOUR EMAIL"
-                className="w-full bg-transparent border border-neutral-300 p-4 text-xs tracking-widest focus:border-black outline-none transition"
+                placeholder="Email Address"
+                className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.25em] mb-2.5 text-neutral-500">
+              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
                 Order Reference (Optional)
               </label>
               <input
                 type="text"
                 name="Order_Reference"
-                placeholder="#HLM-001"
-                className="w-full bg-transparent border border-neutral-300 p-4 text-xs tracking-widest focus:border-black outline-none transition"
+                placeholder="Order #-01"
+                className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.25em] mb-2.5 text-neutral-500">
+              <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
                 Topic *
               </label>
               <select
                 name="Subject"
                 required
-                className="w-full bg-white border border-neutral-300 p-4 text-xs uppercase tracking-widest focus:border-black outline-none transition"
+                className="w-full bg-white border border-neutral-300 p-3.5 text-xs uppercase tracking-wider focus:border-black outline-none transition"
               >
                 <option value="Order Status & Shipping">Order Status & Shipping</option>
                 <option value="Sizing & Garment Specifications">Sizing & Garment Specifications</option>
                 <option value="Payment & Billing">Payment & Billing</option>
-                <option value="Press & Private Appointments">Press & Private Appointments</option>
+                <option value="Press & Archive">Press & Archive</option>
                 <option value="General Inquiry">General Inquiry</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.25em] mb-2.5 text-neutral-500">
+            <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 text-neutral-500">
               Message *
             </label>
             <textarea
               name="Message"
               rows={6}
               required
-              placeholder="PLEASE DETAIL YOUR REQUEST..."
-              className="w-full bg-transparent border border-neutral-300 p-4 text-xs tracking-widest focus:border-black outline-none transition"
+              placeholder="Write your message..."
+              className="w-full bg-transparent border border-neutral-300 p-3.5 text-xs tracking-wider focus:border-black outline-none transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={status === "loading"}
-            className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.3em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
+            className="w-full bg-black text-white py-4 text-xs uppercase tracking-[0.25em] font-medium hover:bg-neutral-800 transition disabled:opacity-50"
           >
-            {status === "loading" ? "Transmitting..." : "Submit Inquiry"}
+            {status === "loading" ? "Sending..." : "Submit Inquiry"}
           </button>
 
           {status === "success" && (
-            <div className="p-5 border border-black bg-neutral-50 text-xs uppercase tracking-[0.2em] text-center">
-              Your inquiry has been transmitted to HELMET Client Service.
-            </div>
-          )}
-
-          {status === "error" && (
-            <div className="p-5 border border-red-600 text-red-600 text-xs uppercase tracking-[0.2em] text-center">
-              Transmission error. Check your email helmetcothes@gmail.com to click "Activate Form" on the first test.
+            <div className="p-4 border border-black bg-neutral-50 text-[11px] uppercase tracking-[0.2em] text-center">
+              Thank you. Your inquiry has been sent to Helmet Client Service.
             </div>
           )}
         </form>

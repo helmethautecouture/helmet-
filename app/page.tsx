@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -93,7 +93,7 @@ export default function Home() {
     {
       index: "02",
       title: "Helmet Gallery",
-      subtitle: "Visual Archive — Paris",
+      subtitle: "Visual Archive â€” Paris",
       href: "/helmet",
       preview: "/product2.jpg",
     },
@@ -129,7 +129,7 @@ export default function Home() {
         }}
       />
 
-      {/* APERÇU FANTÔME EN ARRIÈRE-PLAN AU SURVOL DU MENU */}
+      {/* APERÃ‡U FANTÃ”ME EN ARRIÃˆRE-PLAN AU SURVOL DU MENU */}
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
@@ -149,7 +149,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* INTRO CINÉMATOGRAPHIQUE */}
+      {/* INTRO CINÃ‰MATOGRAPHIQUE */}
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -177,10 +177,10 @@ export default function Home() {
 
       {/* HEADER ARCHITECTURAL */}
       <header className="relative z-20 flex items-start justify-between px-6 pt-10 md:px-14 md:pt-14 bg-transparent">
-        {/* Coin Haut Gauche : Plus foncé (text-neutral-800 / text-neutral-600) */}
+        {/* Coin Haut Gauche : Plus foncÃ© (text-neutral-800 / text-neutral-600) */}
         <div className="w-48 pt-3 hidden md:flex flex-col gap-1.5 text-[11px] tracking-[0.35em] text-neutral-800 font-normal">
-          <span>Paris — Atelier</span>
-          <span className="text-[10px] tracking-[0.3em] text-neutral-600">Edition 01</span>
+          <span>Paris â€” Atelier</span>
+          <span className="text-[10px] tracking-[0.3em] text-neutral-600">Edition -01</span>
         </div>
         <div className="w-20 md:hidden" />
 
@@ -196,7 +196,7 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Coin Haut Droit : Panier plus contrasté */}
+        {/* Coin Haut Droit : Panier plus contrastÃ© */}
         <div className="flex items-center justify-end w-20 md:w-48 pt-3">
           <Link 
             href="/cart" 
@@ -211,7 +211,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* MENU : SOMMAIRE D'ATELIER ÉDITORIAL (Traits et textes assombris) */}
+      {/* MENU : SOMMAIRE D'ATELIER Ã‰DITORIAL (Traits et textes assombris) */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-6 md:px-14">
         <motion.nav 
           initial={{ opacity: 0, y: 12 }}
@@ -219,7 +219,7 @@ export default function Home() {
           transition={{ duration: 0.9, delay: 1.5, ease: "easeOut" }}
           className="w-full max-w-xl"
         >
-          {/* En-tête : "Summary" et trait plus foncés */}
+          {/* En-tÃªte : "Summary" et trait plus foncÃ©s */}
           <div className="flex justify-start items-center pb-3 border-b border-neutral-300 text-[10px] tracking-[0.45em] text-neutral-600 font-normal">
             <span>Summary</span>
           </div>
@@ -250,7 +250,7 @@ export default function Home() {
                     {item.subtitle}
                   </span>
                   <span className="text-xs text-neutral-700 group-hover:text-black group-hover:translate-x-1 transition-all duration-300 font-normal">
-                    →
+                    â†’
                   </span>
                 </div>
               </Link>
@@ -259,7 +259,7 @@ export default function Home() {
         </motion.nav>
       </div>
 
-      {/* FOOTER PLUS CONTRASTÉ */}
+      {/* FOOTER PLUS CONTRASTÃ‰ */}
       <footer className="relative z-20 flex items-end justify-between px-6 py-6 md:px-14 text-[11px] tracking-[0.3em] text-neutral-700 font-normal bg-transparent">
         <div className="flex items-center gap-4">
           <a 
@@ -281,7 +281,7 @@ export default function Home() {
           </a>
         </div>
 
-        {/* ICÔNE CASQUE AUDIO */}
+        {/* ICÃ”NE CASQUE AUDIO */}
         <div>
           <button 
             onClick={toggleAudio}
@@ -302,7 +302,7 @@ export default function Home() {
         </div>
 
         <div className="text-right">
-          <span>© Helmet All Rights Reserved</span>
+          <span>Â© Helmet All Rights Reserved</span>
         </div>
       </footer>
 
