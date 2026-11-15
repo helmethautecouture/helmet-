@@ -2,22 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Police calligraphique originale pour le grand logo */
 @font-face {
   font-family: "1610-cancellaresca-lim";
   src: url("/fonts/1610-cancellaresca.ttf") format("truetype"),
-       url("/fonts/1610-cancellaresca-lim.ttf") format("truetype");
+       url("/1610-cancellaresca-lim.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-/* Déclaration de ta nouvelle police Baskerville */
+/* Nouvelle police principale (lettres et chiffres) */
 @font-face {
-  font-family: "1785-GLC-Baskerville";
-  src: url("/fonts/1785 GLC Baskerville-N.ttf") format("truetype"),
-       url("/fonts/1785-GLC-Baskerville.ttf") format("truetype"),
-       local("1785 GLC Baskerville"),
-       local("1785-GLC-Baskerville");
+  font-family: "1589-humane-bordeaux";
+  src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
+       url("/fonts/1589-humane-bordeaux-regular.otf") format("opentype"),
+       local("1589 humane bordeaux regular"),
+       local("1589-humane-bordeaux-regular");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -27,7 +28,7 @@
   --background: #ffffff;
   --foreground: #000000;
   --font-helmet-script: "1610-cancellaresca-lim", "Cormorant Garamond", Georgia, serif;
-  --font-baskerville: "1785-GLC-Baskerville", Georgia, serif;
+  --font-primary: "1589-humane-bordeaux", sans-serif;
 }
 
 *,
@@ -48,8 +49,8 @@ body {
   overflow-x: hidden;
   background-color: #ffffff;
   color: #000000;
-  /* Application globale de la nouvelle police sur tout le site par défaut */
-  font-family: var(--font-baskerville), serif;
+  /* Application de la nouvelle police partout par défaut */
+  font-family: var(--font-primary);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -70,7 +71,7 @@ svg {
   flex-shrink: 0;
 }
 
-/* Le grand logo garde strictement sa calligraphie d'origine */
+/* Logo central inchangé */
 .font-cancellaresca,
 .font-helmet {
   font-family: var(--font-helmet-script) !important;
@@ -99,7 +100,7 @@ svg {
   background-color: #ffffff;
   color: #000000;
   padding: 20px 16px 80px 16px;
-  font-family: var(--font-baskerville), serif;
+  font-family: var(--font-primary);
 }
 
 @media (min-width: 768px) {
@@ -149,7 +150,7 @@ svg {
   padding: 14px;
   font-size: 13px;
   letter-spacing: 0.12em;
-  font-family: var(--font-baskerville), serif;
+  font-family: var(--font-primary);
   outline: none;
   transition: border-color 0.2s ease;
 }
