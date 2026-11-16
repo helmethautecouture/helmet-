@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import EngravedCartouche from "../EngravedCartouche";
 
 const SINGLE_PRODUCT = {
   id: "-01",
@@ -44,15 +45,7 @@ export default function Shop() {
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link
-            href="/"
-            className="font-cancellaresca helmet-title-frame"
-            style={{
-              fontSize: "clamp(36px, 5vw, 54px)",
-              lineHeight: 1,
-              display: "block",
-            }}
-          >Helmet Shop</Link>
+          <Link href="/"><EngravedCartouche variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Shop</span></EngravedCartouche></Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>
