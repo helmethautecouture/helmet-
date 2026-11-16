@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import LouisXVIFrame from "../LouisXVIFrame";
 
 const SINGLE_PRODUCT = {
   id: "-01",
-  name: "Article -01 — Helmet",
+  name: "Overlayer Jogger -01 — Helmet",
   edition: "Paris Atelier — Edition -01",
-  price: 180,
+  price: 150,
   image: "/product1.jpg",
 };
 
@@ -101,7 +101,7 @@ export default function Shop() {
         </p>
       </div>
 
-      <div style={{ maxWidth: "420px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "440px", margin: "0 auto" }}>
         <Link href="/shop/-01" style={{ display: "block" }}>
           <div
             className="helmet-image-frame"
@@ -122,10 +122,22 @@ export default function Shop() {
             <h2 className="font-cancellaresca" style={{ fontSize: "28px", margin: 0 }}>
               {SINGLE_PRODUCT.name}
             </h2>
-            <span style={{ fontSize: "13px", letterSpacing: "0.2em", color: "#171717" }}>
-              ${SINGLE_PRODUCT.price}
+            <span style={{ fontSize: "13px", letterSpacing: "0.18em", color: "#171717", whiteSpace: "nowrap" }}>
+              150 €
             </span>
           </div>
+
+          <p
+            style={{
+              fontSize: "10.5px",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#737373",
+              marginTop: "6px",
+            }}
+          >
+            100% Italian Cotton — Handcrafted in France — Unique Piece
+          </p>
         </Link>
       </div>
     </div>

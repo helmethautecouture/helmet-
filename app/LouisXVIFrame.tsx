@@ -4,15 +4,14 @@ import React from "react";
 
 interface FrameProps {
   children: React.ReactNode;
-  variant?: "menu" | "pill" | "title";
+  variant?: "menu" | "title";
   className?: string;
 }
 
 /* ============================================================================
-   SOUS-COMPOSANT : ROSE GRAVÉE À L'ENCRE NOIRE (Style gravure sur bois)
-   Reproduit les pétales enroulés noirs et blancs de l'image d'inspiration
+   ROSE GRAVÉE WOODCUT (Trait d'encre organique, anguleux et contrasté)
    ============================================================================ */
-function EngravedRose({
+function WoodcutRose({
   x,
   y,
   scale = 1,
@@ -25,55 +24,52 @@ function EngravedRose({
 }) {
   return (
     <g transform={`translate(${x}, ${y}) scale(${scale}) rotate(${rotate})`}>
-      {/* Silhouette extérieure irrégulière de la rose */}
+      {/* Base blanche pour masquer les tiges derrière la fleur */}
       <path
-        d="M -18,-6 C -20,-16 -10,-22 0,-21 C 11,-22 20,-15 21,-4 C 22,7 15,18 3,20 C -9,21 -19,14 -20,2 Z"
+        d="M -19,-5 L -16,-16 L -5,-22 L 8,-21 L 19,-14 L 22,-2 L 17,12 L 6,20 L -7,21 L -17,13 L -21,2 Z"
         fill="#ffffff"
         stroke="#000000"
         strokeWidth="2.4"
         strokeLinejoin="round"
       />
-      {/* Pétales extérieurs gravés */}
+      {/* Pétales extérieurs ciselés avec ombres noires (style gravure ancienne) */}
       <path
-        d="M -14,-8 C -8,-17 6,-18 14,-10 M 15,-8 C 19,0 15,12 5,15 M 2,16 C -8,17 -16,10 -16,-1"
+        d="M -16,-7 C -13,-16 -2,-19 9,-16 C 16,-13 19,-4 16,5 M -17,3 C -14,14 -3,18 8,14 C 15,11 19,2 15,-6"
+        fill="none"
+        stroke="#000000"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      {/* Pétales internes anguleux et nervurés */}
+      <path
+        d="M -12,-3 L -7,-12 L 4,-13 L 12,-7 L 11,4 L 3,11 L -8,9 L -13,1 Z"
+        fill="#ffffff"
+        stroke="#000000"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      {/* Pochages d'encre noire entre les pétales */}
+      <path
+        d="M -9,-8 L -2,-11 L 5,-9 L 2,-6 Z M 7,-3 L 11,2 L 5,8 L 4,3 Z M -10,2 L -5,8 L 1,7 L -4,3 Z"
+        fill="#000000"
+      />
+      {/* Cœur serré en spirale irrégulière */}
+      <path
+        d="M -6,-1 L -2,-6 L 5,-5 L 7,1 L 2,5 L -4,4 L -5,0 L 0,-2 L 3,0 L 0,2"
         fill="none"
         stroke="#000000"
         strokeWidth="2"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      {/* Pétales intermédiaires en coupole */}
-      <path
-        d="M -10,-3 C -11,-11 -2,-14 6,-11 C 13,-8 14,2 8,8 C 2,13 -8,11 -11,3"
-        fill="none"
-        stroke="#000000"
-        strokeWidth="2.1"
-        strokeLinecap="round"
-      />
-      {/* Ombres épaisses entre les pétales (style woodcut) */}
-      <path
-        d="M -7,-8 C -2,-12 6,-10 9,-4 M -9,4 C -4,10 5,9 9,3 M -13,-2 C -12,6 -6,12 1,12"
-        fill="none"
-        stroke="#000000"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      {/* Cœur enroulé de la rose */}
-      <path
-        d="M -5,-1 C -5,-6 1,-8 5,-4 C 8,0 5,5 0,5 C -4,5 -6,1 -3,-2 C -1,-4 2,-2 1,1"
-        fill="none"
-        stroke="#000000"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <circle cx="0" cy="0" r="1.8" fill="#000000" />
     </g>
   );
 }
 
 /* ============================================================================
-   SOUS-COMPOSANT : FEUILLE DE ROSIER NERVURÉE & DENTELÉE
+   FEUILLE DE RONCE DENTELÉE & POINTUE (Avec dents acérées et nervures)
    ============================================================================ */
-function ThornLeaf({
+function JaggedLeaf({
   x,
   y,
   scale = 1,
@@ -87,15 +83,14 @@ function ThornLeaf({
   return (
     <g transform={`translate(${x}, ${y}) scale(${scale}) rotate(${rotate})`}>
       <path
-        d="M 0,0 C 6,-7 16,-9 24,0 C 16,9 6,7 0,0 Z"
+        d="M 0,0 L 4,-5 L 6,-3 L 11,-8 L 13,-5 L 19,-7 L 26,0 L 19,7 L 13,5 L 11,8 L 6,3 L 4,5 Z"
         fill="#ffffff"
         stroke="#000000"
-        strokeWidth="2"
+        strokeWidth="1.9"
         strokeLinejoin="round"
       />
-      {/* Nervure centrale et hachures */}
       <path
-        d="M 1,0 L 21,0 M 6,0 L 10,-4 M 11,0 L 15,-4 M 16,0 L 19,-3 M 6,0 L 10,4 M 11,0 L 15,4 M 16,0 L 19,3"
+        d="M 1,0 L 23,0 M 6,0 L 10,-4 M 12,0 L 16,-4 M 17,0 L 20,-3 M 6,0 L 10,4 M 12,0 L 16,4 M 17,0 L 20,3"
         fill="none"
         stroke="#000000"
         strokeWidth="1.2"
@@ -105,36 +100,48 @@ function ThornLeaf({
   );
 }
 
+/* ============================================================================
+   ÉPINE RECOURBÉE EN GRIFFE / BARBELÉ ORGANIQUE
+   ============================================================================ */
+function HookThorn({
+  x,
+  y,
+  rotate = 0,
+  scale = 1,
+}: {
+  x: number;
+  y: number;
+  rotate?: number;
+  scale?: number;
+}) {
+  return (
+    <path
+      transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}
+      d="M -4,0 C -1,-3 2,-8 6,-13 C 4,-6 3,-2 5,1 Z"
+      fill="#000000"
+      stroke="#000000"
+      strokeWidth="0.6"
+      strokeLinejoin="round"
+    />
+  );
+}
+
 export default function LouisXVIFrame({
   children,
   variant = "menu",
   className = "",
 }: FrameProps) {
-  const isPill = variant === "pill";
   const isTitle = variant === "title";
 
-  /* Dimensions et espacements calibrés pour que le cadre entoure parfaitement chaque mot */
-  const containerStyle: React.CSSProperties = isPill
+  const containerStyle: React.CSSProperties = isTitle
     ? {
         position: "relative",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: "126px",
-        height: "54px",
-        padding: "10px 26px 8px 30px",
-        cursor: "pointer",
-        verticalAlign: "middle",
-      }
-    : isTitle
-    ? {
-        position: "relative",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minWidth: "clamp(270px, 34vw, 390px)",
-        minHeight: "clamp(88px, 10vw, 118px)",
-        padding: "22px 58px 18px 64px",
+        minWidth: "clamp(280px, 35vw, 400px)",
+        minHeight: "clamp(92px, 10vw, 122px)",
+        padding: "24px 62px 20px 68px",
         cursor: "pointer",
         verticalAlign: "middle",
       }
@@ -143,9 +150,9 @@ export default function LouisXVIFrame({
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: "clamp(185px, 17vw, 235px)",
-        height: "clamp(68px, 6.2vw, 82px)",
-        padding: "14px 36px 12px 42px",
+        minWidth: "clamp(190px, 17.5vw, 242px)",
+        height: "clamp(70px, 6.4vw, 84px)",
+        padding: "15px 38px 13px 44px",
         cursor: "pointer",
         verticalAlign: "middle",
       };
@@ -153,7 +160,7 @@ export default function LouisXVIFrame({
   return (
     <span className={`helmet-thorn-wrapper ${className}`} style={containerStyle}>
       <svg
-        viewBox="0 0 420 170"
+        viewBox="0 0 440 180"
         preserveAspectRatio="none"
         className="helmet-ornament-svg"
         aria-hidden="true"
@@ -171,132 +178,154 @@ export default function LouisXVIFrame({
         }}
       >
         {/* ====================================================================
-            1. TIGES DE RONCES ENTRELACÉES (Effet barbelé organique de la photo)
+            1. SARMENTS DE RONCES NOUEUX & ASYMÉTRIQUES (Tracé brisé réaliste)
             ==================================================================== */}
         <g fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round">
-          {/* Branche maîtresse extérieure */}
+          {/* Ronce principale épaisse et noueuse */}
           <path
-            d="M 46,88 C 38,42 108,16 208,18 C 314,20 388,44 392,86 C 396,128 322,154 212,152 C 104,150 52,126 46,88 Z"
-            strokeWidth="2.8"
+            d="M 48,94 L 44,74 L 53,54 L 72,38 L 104,25 L 146,18 L 196,16 L 248,18 L 298,23 L 344,33 L 378,49 L 398,70 L 403,92 L 395,115 L 374,134 L 336,149 L 284,158 L 222,160 L 158,156 L 106,145 L 68,128 L 52,110 Z"
+            strokeWidth="3"
           />
 
-          {/* Deuxième ronce croisée (effet barbelé tressé) */}
+          {/* Deuxième ronce barbelée qui croise et étrangle la première */}
           <path
-            d="M 56,74 C 74,30 162,24 254,28 C 344,32 402,58 384,102 C 366,142 272,158 176,146 C 86,136 42,110 56,74 Z"
+            d="M 56,80 L 66,55 L 94,35 L 138,24 L 192,23 L 252,27 L 312,26 L 362,38 L 392,58 L 406,84 L 398,108 L 378,126 L 342,142 L 292,150 L 234,151 L 172,161 L 116,152 L 76,136 L 54,114 L 50,95 Z"
             strokeWidth="2.3"
           />
 
-          {/* Troisième ronce interne asymétrique avec vrilles libres */}
+          {/* Troisième tige nerveuse interne avec cassures sèches */}
           <path
-            d="M 68,96 C 64,52 136,32 228,32 C 312,32 372,56 368,90 C 364,124 298,142 206,140 C 122,138 72,118 68,96"
-            strokeWidth="1.9"
-          />
-
-          {/* Rameau sauvage qui dépasse en haut à gauche (comme sur la photo) */}
-          <path
-            d="M 96,36 C 68,26 42,24 14,34 C 8,36 4,42 8,47"
-            strokeWidth="2.1"
-          />
-
-          {/* Rameau épineux qui plonge vers l'intérieur en haut à droite (détail signature de la photo) */}
-          <path
-            d="M 334,36 C 304,44 278,56 254,68 M 288,52 C 272,54 256,52 244,48"
+            d="M 68,102 L 65,78 L 78,56 L 112,38 L 164,29 L 226,28 L 286,32 L 338,44 L 370,64 L 380,88 L 372,114 L 346,133 L 298,144 L 238,146 L 176,144 L 122,136 L 84,121 Z"
             strokeWidth="1.8"
           />
 
-          {/* Rameau épineux interne à droite qui remonte (détail de la photo) */}
+          {/* Rameau épineux sauvage qui s'échappe en haut à gauche (comme sur l'image) */}
           <path
-            d="M 342,132 C 354,106 350,76 326,54"
-            strokeWidth="1.9"
+            d="M 104,35 L 74,27 L 48,25 L 24,29 L 8,37 L 14,46"
+            strokeWidth="2.2"
           />
 
-          {/* Rameaux croisés en bas */}
+          {/* Rameaux cassés et griffes qui rentrent vers l'intérieur à droite (comme sur l'image) */}
           <path
-            d="M 118,142 C 164,128 238,128 298,148 M 156,148 C 212,158 278,154 328,132"
+            d="M 344,33 L 316,42 L 290,54 L 266,68 L 252,67 L 246,62"
             strokeWidth="2"
           />
+          <path
+            d="M 314,43 L 296,58 L 282,72"
+            strokeWidth="1.6"
+          />
+          <path
+            d="M 352,142 L 362,116 L 360,88 L 348,64 L 332,48"
+            strokeWidth="2.1"
+          />
+
+          {/* Rameaux emmêlés et racines épineuses en bas */}
+          <path
+            d="M 116,145 L 154,134 L 204,132 L 258,138 L 308,152 L 338,162"
+            strokeWidth="2"
+          />
+          <path
+            d="M 82,134 L 106,154 L 136,164 M 228,151 L 202,164 L 178,168"
+            strokeWidth="1.7"
+          />
+
+          {/* Vrilles internes sous les roses de gauche */}
+          <path
+            d="M 84,98 L 106,108 L 122,104 L 120,96 M 92,122 L 116,118 L 132,126"
+            strokeWidth="1.7"
+          />
         </g>
 
         {/* ====================================================================
-            2. ÉPINES ACÉRÉES / PICOTS FAÇON BARBELÉ LE LONG DES TIGES
+            2. ÉPINES ACÉRÉES & BARBELÉS ORGANIQUES (Plus de 42 pics agressifs)
             ==================================================================== */}
-        <g fill="#000000" stroke="#000000" strokeWidth="0.8" strokeLinejoin="round">
-          {/* Épines du haut */}
-          <polygon points="118,24 123,14 127,23" />
-          <polygon points="148,20 154,11 157,20" />
-          <polygon points="172,28 168,36 176,30" />
-          <polygon points="272,22 278,12 281,23" />
-          <polygon points="304,26 312,17 313,28" />
-          <polygon points="324,38 318,46 329,41" />
-          <polygon points="354,38 363,30 361,42" />
+        {/* Épines supérieures */}
+        <HookThorn x={118} y={22} rotate={-15} scale={1.15} />
+        <HookThorn x={136} y={26} rotate={165} scale={0.95} />
+        <HookThorn x={156} y={18} rotate={10} scale={1.2} />
+        <HookThorn x={176} y={28} rotate={195} scale={1} />
+        <HookThorn x={232} y={18} rotate={-20} scale={1.1} />
+        <HookThorn x={278} y={21} rotate={15} scale={1.25} />
+        <HookThorn x={296} y={29} rotate={190} scale={1} />
+        <HookThorn x={322} y={28} rotate={25} scale={1.2} />
+        <HookThorn x={348} y={34} rotate={35} scale={1.15} />
+        <HookThorn x={368} y={42} rotate={45} scale={1.2} />
 
-          {/* Épines du flanc droit */}
-          <polygon points="386,62 396,57 390,68" />
-          <polygon points="392,82 403,80 393,89" />
-          <polygon points="386,106 396,111 384,114" />
-          <polygon points="370,74 361,70 368,80" />
-          <polygon points="366,102 357,105 366,110" />
-          <polygon points="348,84 340,81 347,90" />
+        {/* Épines sur les branches plongeantes intérieures */}
+        <HookThorn x={302} y={47} rotate={145} scale={0.95} />
+        <HookThorn x={282} y={58} rotate={-45} scale={0.95} />
+        <HookThorn x={264} y={66} rotate={135} scale={0.9} />
+        <HookThorn x={292} y={62} rotate={120} scale={0.85} />
 
-          {/* Épines du bas */}
-          <polygon points="342,136 350,145 337,141" />
-          <polygon points="306,146 312,156 300,149" />
-          <polygon points="266,152 270,162 260,153" />
-          <polygon points="228,140 224,131 233,139" />
-          <polygon points="192,152 188,162 198,153" />
-          <polygon points="146,146 140,155 152,149" />
-          <polygon points="104,136 96,144 109,140" />
+        {/* Épines du flanc droit (intérieur et extérieur) */}
+        <HookThorn x={392} y={58} rotate={65} scale={1.2} />
+        <HookThorn x={402} y={76} rotate={85} scale={1.25} />
+        <HookThorn x={404} y={96} rotate={100} scale={1.2} />
+        <HookThorn x={396} y={114} rotate={115} scale={1.15} />
+        <HookThorn x={378} y={74} rotate={-95} scale={1} />
+        <HookThorn x={376} y={98} rotate={-80} scale={1.05} />
+        <HookThorn x={358} y={78} rotate={-110} scale={0.95} />
+        <HookThorn x={360} y={106} rotate={75} scale={0.95} />
 
-          {/* Épines du flanc gauche et de la branche libre */}
-          <polygon points="62,118 52,123 65,124" />
-          <polygon points="48,96 37,98 48,103" />
-          <polygon points="52,62 42,57 55,56" />
-          <polygon points="42,28 38,19 47,27" />
-          <polygon points="68,30 65,21 73,29" />
+        {/* Épines inférieures */}
+        <HookThorn x={380} y={130} rotate={135} scale={1.2} />
+        <HookThorn x={356} y={142} rotate={150} scale={1.15} />
+        <HookThorn x={324} y={152} rotate={165} scale={1.2} />
+        <HookThorn x={294} y={144} rotate={-15} scale={1} />
+        <HookThorn x={272} y={158} rotate={175} scale={1.25} />
+        <HookThorn x={244} y={146} rotate={10} scale={1} />
+        <HookThorn x={212} y={160} rotate={185} scale={1.2} />
+        <HookThorn x={182} y={144} rotate={-10} scale={1.05} />
+        <HookThorn x={158} y={158} rotate={195} scale={1.2} />
+        <HookThorn x={126} y={152} rotate={205} scale={1.15} />
+        <HookThorn x={96} y={142} rotate={215} scale={1.15} />
 
-          {/* Épines sur la branche plongeante intérieure */}
-          <polygon points="292,48 287,40 297,46" />
-          <polygon points="268,60 263,53 273,57" />
-        </g>
+        {/* Épines du flanc gauche et du rameau libre */}
+        <HookThorn x={68} y={128} rotate={230} scale={1.2} />
+        <HookThorn x={52} y={108} rotate={255} scale={1.2} />
+        <HookThorn x={46} y={84} rotate={275} scale={1.15} />
+        <HookThorn x={56} y={50} rotate={305} scale={1.15} />
+        <HookThorn x={68} y={26} rotate={-15} scale={1} />
+        <HookThorn x={42} y={26} rotate={-25} scale={1.05} />
+        <HookThorn x={22} y={30} rotate={155} scale={0.95} />
 
         {/* ====================================================================
-            3. FEUILLES DE ROSIER GRAVÉES (Placées comme sur l'image)
+            3. FEUILLAGES DENTELÉS & NERVURÉS
             ==================================================================== */}
-        {/* Feuilles sur la branche libre en haut à gauche */}
-        <ThornLeaf x={10} y={36} scale={0.78} rotate={145} />
-        <ThornLeaf x={34} y={32} scale={0.68} rotate={120} />
-        <ThornLeaf x={82} y={24} scale={0.85} rotate={-155} />
-        <ThornLeaf x={98} y={22} scale={0.75} rotate={-130} />
+        {/* Rameau libre en haut à gauche */}
+        <JaggedLeaf x={8} y={38} scale={0.82} rotate={135} />
+        <JaggedLeaf x={32} y={28} scale={0.72} rotate={115} />
+        <JaggedLeaf x={82} y={24} scale={0.88} rotate={-155} />
+        <JaggedLeaf x={98} y={22} scale={0.76} rotate={-125} />
 
-        {/* Feuilles intérieures gauche et droite */}
-        <ThornLeaf x={108} y={76} scale={0.78} rotate={25} />
-        <ThornLeaf x={106} y={114} scale={0.82} rotate={-55} />
-        <ThornLeaf x={296} y={54} scale={0.72} rotate={150} />
-        <ThornLeaf x={338} y={100} scale={0.72} rotate={-135} />
+        {/* Feuilles internes à gauche et à droite */}
+        <JaggedLeaf x={110} y={76} scale={0.82} rotate={28} />
+        <JaggedLeaf x={114} y={112} scale={0.85} rotate={-58} />
+        <JaggedLeaf x={304} y={54} scale={0.75} rotate={148} />
+        <JaggedLeaf x={346} y={102} scale={0.76} rotate={-138} />
 
-        {/* Bouquets de feuilles en bas */}
-        <ThornLeaf x={136} y={150} scale={0.88} rotate={110} />
-        <ThornLeaf x={152} y={148} scale={0.78} rotate={65} />
-        <ThornLeaf x={212} y={136} scale={0.78} rotate={-75} />
-        <ThornLeaf x={224} y={146} scale={0.75} rotate={35} />
-        <ThornLeaf x={294} y={150} scale={0.85} rotate={115} />
-        <ThornLeaf x={306} y={148} scale={0.85} rotate={45} />
+        {/* Grappes de feuilles sauvages en bas */}
+        <JaggedLeaf x={136} y={154} scale={0.92} rotate={112} />
+        <JaggedLeaf x={152} y={152} scale={0.8} rotate={62} />
+        <JaggedLeaf x={218} y={140} scale={0.82} rotate={-72} />
+        <JaggedLeaf x={230} y={150} scale={0.78} rotate={38} />
+        <JaggedLeaf x={302} y={154} scale={0.88} rotate={118} />
+        <JaggedLeaf x={316} y={150} scale={0.86} rotate={42} />
 
         {/* ====================================================================
-            4. LES 4 ROSES GRAVÉES (Positionnées exactement comme sur ta photo)
+            4. LES ROSES GRAVÉES (Exactement aux positions de la photo)
             ==================================================================== */}
-        {/* Rose 1 : Sommet Centre-Gauche */}
-        <EngravedRose x={198} y={22} scale={0.95} rotate={-8} />
-        {/* Rose 2 : Sommet Centre-Droite (légèrement plus basse, comme sur la photo) */}
-        <EngravedRose x={242} y={36} scale={0.88} rotate={14} />
-        {/* Rose 3 : Flanc Gauche Haut */}
-        <EngravedRose x={74} y={58} scale={0.92} rotate={-18} />
-        {/* Rose 4 : Flanc Gauche Bas (en grappe sous la 3e) */}
-        <EngravedRose x={54} y={86} scale={0.88} rotate={12} />
-        <EngravedRose x={82} y={84} scale={0.78} rotate={-6} />
+        {/* Duo de roses au sommet */}
+        <WoodcutRose x={202} y={22} scale={0.96} rotate={-10} />
+        <WoodcutRose x={248} y={36} scale={0.9} rotate={16} />
+
+        {/* Bouquet de roses sur le flanc gauche */}
+        <WoodcutRose x={76} y={60} scale={0.94} rotate={-20} />
+        <WoodcutRose x={56} y={88} scale={0.88} rotate={14} />
+        <WoodcutRose x={84} y={86} scale={0.8} rotate={-8} />
       </svg>
 
-      {/* TEXTE PARFAITEMENT CENTRÉ À L'INTÉRIEUR DE LA COURONNE DE RONCES */}
+      {/* TEXTE DU BOUTON OU DU TITRE */}
       <span
         style={{
           position: "relative",

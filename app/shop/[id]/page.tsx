@@ -1,64 +1,76 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import LouisXVIFrame from "../../LouisXVIFrame";
+
+const PRODUCT = {
+  id: "-01",
+  name: "Overlayer Jogger -01 — Helmet",
+  price: 150,
+  currency: "€",
+  images: ["/product1.jpg", "/product2.jpg"],
+  sizes: ["1", "2", "3"],
+  specs: [
+    "100% Cotton — Premium fabric woven in Italy",
+    "Handcrafted in France — Made manually in-house at our atelier",
+    "Unique Piece — Multi-layered architectural construction (Edition -01)",
+    "Sizing: Size 1 (S/M) — Size 2 (M/L) — Size 3 (L/XL)",
+  ],
+};
 
 export default function ProductDetailPage() {
-  const [selectedSize, setSelectedSize] = useState("2");
-  const [cartCount, setCartCount] = useState(0);
-  const [openSection, setOpenSection] = useState<string | null>(null);
-
-  const product = {
-    id: "article--01",
-    name: "Article -01 — Helmet",
-    price: 180,
-    image: "/product1.jpg",
-  };
+  const [selectedSize, setSelectedSize] = useState<string>("1");
+  const [activeImage, setActiveImage] = useState<string>(PRODUCT.images[0]);
+  const [cartCount, setCartCount] = useState<number>(0);
+  const [addedMessage, setAddedMessage] = useState<boolean>(false);
 
   useEffect(() => {
-    const raw = localStorage.getItem("cart") || localStorage.getItem("helmet_cart");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setCartCount(parsed.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0));
-        }
-      } catch {}
+    try {
+      const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setCartCount(parsed.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0));
+      }
+    } catch {
+      setCartCount(0);
     }
   }, []);
 
   const handleAddToCart = () => {
-    const raw = localStorage.getItem("cart") || localStorage.getItem("helmet_cart");
-    let currentCart = [];
-    if (raw) {
-      try {
-        currentCart = JSON.parse(raw);
-        if (!Array.isArray(currentCart)) currentCart = [];
-      } catch {
-        currentCart = [];
+    try {
+      const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
+      const currentCart = JSON.parse(raw);
+      const cartArray = Array.isArray(currentCart) ? currentCart : [];
+
+      const existingIndex = cartArray.findIndex(
+        (item: any) => item.id === PRODUCT.id && item.size === selectedSize
+      );
+
+      if (existingIndex > -1) {
+        cartArray[existingIndex].quantity = (Number(cartArray[existingIndex].quantity) || 1) + 1;
+        cartArray[existingIndex].price = PRODUCT.price;
+        cartArray[existingIndex].name = PRODUCT.name;
+      } else {
+        cartArray.push({
+          id: PRODUCT.id,
+          name: PRODUCT.name,
+          price: PRODUCT.price,
+          size: selectedSize,
+          quantity: 1,
+          image: PRODUCT.images[0],
+        });
       }
-    }
 
-    const existingIndex = currentCart.findIndex(
-      (item: any) => item.id === product.id && item.size === selectedSize
-    );
+      const serialized = JSON.stringify(cartArray);
+      localStorage.setItem("helmet_cart", serialized);
+      localStorage.setItem("cart", serialized);
 
-    if (existingIndex > -1) {
-      currentCart[existingIndex].quantity = (Number(currentCart[existingIndex].quantity) || 1) + 1;
-    } else {
-      currentCart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        size: selectedSize,
-        quantity: 1,
-        image: product.image,
-      });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(currentCart));
-    localStorage.setItem("helmet_cart", JSON.stringify(currentCart));
-    setCartCount(currentCart.reduce((acc: number, item: any) => acc + (Number(item.quantity) || 1), 0));
-    window.location.href = "/cart";
+      const newTotal = cartArray.reduce((acc: number, item: any) => acc + (Number(item.quantity) || 1), 0);
+      setCartCount(newTotal);
+      setAddedMessage(true);
+      setTimeout(() => setAddedMessage(false), 2200);
+    } catch {}
   };
 
   return (
@@ -67,10 +79,11 @@ export default function ProductDetailPage() {
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/shop"
+            className="helmet-zoom-link"
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.22em",
               whiteSpace: "nowrap",
             }}
           >
@@ -79,27 +92,31 @@ export default function ProductDetailPage() {
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link
-            href="/"
-            className="font-cancellaresca"
-            style={{
-              fontSize: "clamp(34px, 5vw, 52px)",
-              lineHeight: 1,
-              display: "block",
-            }}
-          >
-            Helmet
+          <Link href="/">
+            <LouisXVIFrame variant="title">
+              <span
+                className="font-cancellaresca"
+                style={{
+                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  lineHeight: 1,
+                  display: "block",
+                }}
+              >
+                Helmet Shop
+              </span>
+            </LouisXVIFrame>
           </Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
+            className="helmet-zoom-link"
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
-              display: "flex",
+              letterSpacing: "0.22em",
+              display: "inline-flex",
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
@@ -120,128 +137,196 @@ export default function ProductDetailPage() {
                 d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
               />
             </svg>
-            <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
+            <span>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
       <div className="helmet-product-grid">
-        <div
-          style={{
-            aspectRatio: "3 / 4",
-            width: "100%",
-            backgroundColor: "#f5f5f5",
-            border: "1px solid #e5e5e5",
-            overflow: "hidden",
-          }}
-        >
-          <img
-            src={product.image}
-            alt={product.name}
-            onError={(e) => {
-              const target = e.currentTarget;
-              if (!target.src.includes("article1.jpg")) {
-                target.src = "/article1.jpg";
-              }
+        {/* COLONNE GAUCHE : VISUELS PRODUIT */}
+        <div>
+          <div
+            className="helmet-image-frame"
+            style={{
+              aspectRatio: "3 / 4",
+              width: "100%",
+              marginBottom: "14px",
             }}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
+          >
+            <img
+              src={activeImage}
+              alt={PRODUCT.name}
+              className="helmet-zoom-img"
+            />
+          </div>
+
+          <div style={{ display: "flex", gap: "12px" }}>
+            {PRODUCT.images.map((img, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveImage(img)}
+                style={{
+                  width: "76px",
+                  aspectRatio: "3 / 4",
+                  padding: 0,
+                  border: activeImage === img ? "1.5px solid #000000" : "1px solid #e5e5e5",
+                  backgroundColor: "#f5f5f5",
+                  cursor: "pointer",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={img}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
+        {/* COLONNE DROITE : INFOS, TAILLES 1/2/3 & AJOUT PANIER */}
         <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-          <div>
-            <h1 className="font-cancellaresca" style={{ fontSize: "clamp(34px, 4vw, 48px)", margin: "0 0 8px 0" }}>
-              Article -01 — Helmet
+          <div style={{ borderBottom: "1px solid #e5e5e5", paddingBottom: "22px" }}>
+            <p
+              style={{
+                fontSize: "10.5px",
+                textTransform: "uppercase",
+                letterSpacing: "0.32em",
+                color: "#737373",
+                margin: "0 0 10px 0",
+              }}
+            >
+              Paris Atelier — Edition -01 / Unique Piece
+            </p>
+            <h1
+              className="font-cancellaresca"
+              style={{
+                fontSize: "clamp(34px, 4.5vw, 48px)",
+                margin: "0 0 12px 0",
+                lineHeight: 1.08,
+              }}
+            >
+              {PRODUCT.name}
             </h1>
-            <p style={{ fontSize: "14px", letterSpacing: "0.18em", color: "#525252", margin: 0 }}>
-              ${product.price}
+            <p
+              style={{
+                fontSize: "16px",
+                letterSpacing: "0.2em",
+                color: "#000000",
+                margin: 0,
+              }}
+            >
+              {PRODUCT.price} {PRODUCT.currency}
             </p>
           </div>
 
+          {/* SÉLECTEUR DE TAILLE : SIZE 1 / 2 / 3 */}
           <div>
-            <p style={{ fontSize: "12px", color: "#737373", marginBottom: "12px" }}>Size</p>
-            <div style={{ display: "flex", gap: "12px" }}>
-              {["1", "2", "3"].map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => setSelectedSize(size)}
-                  style={{
-                    width: "56px",
-                    height: "40px",
-                    fontSize: "12px",
-                    cursor: "pointer",
-                    border: selectedSize === size ? "1px solid #000000" : "1px solid #d4d4d4",
-                    backgroundColor: selectedSize === size ? "#000000" : "#ffffff",
-                    color: selectedSize === size ? "#ffffff" : "#000000",
-                  }}
-                >
-                  {size}
-                </button>
-              ))}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "12px",
+                fontSize: "11px",
+                textTransform: "uppercase",
+                letterSpacing: "0.26em",
+              }}
+            >
+              <span>Select Size</span>
+              <span style={{ color: "#525252" }}>Size {selectedSize}</span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
+              {PRODUCT.sizes.map((size) => {
+                const isSelected = selectedSize === size;
+                return (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    style={{
+                      padding: "14px 0",
+                      fontSize: "12px",
+                      letterSpacing: "0.26em",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      backgroundColor: isSelected ? "#000000" : "#ffffff",
+                      color: isSelected ? "#ffffff" : "#000000",
+                      border: "1px solid #000000",
+                      transition: "all 0.25s ease",
+                    }}
+                  >
+                    Size {size}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <button type="button" onClick={handleAddToCart} className="helmet-btn-black">
-            Add To Cart
-          </button>
+          {/* BOUTON AJOUTER AU PANIER */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="helmet-btn-black"
+            >
+              {addedMessage ? "Added To Cart — View Bag" : `Add To Cart — ${PRODUCT.price} €`}
+            </button>
 
-          <div style={{ borderTop: "1px solid #e5e5e5", paddingTop: "8px" }}>
-            <div style={{ padding: "16px 0", borderBottom: "1px solid #e5e5e5" }}>
-              <button
-                type="button"
-                onClick={() => setOpenSection(openSection === "details" ? null : "details")}
+            {addedMessage && (
+              <Link
+                href="/cart"
                 style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "12px",
-                  letterSpacing: "0.1em",
-                  color: "#404040",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
+                  fontSize: "11px",
+                  letterSpacing: "0.26em",
+                  textTransform: "uppercase",
+                  textAlign: "center",
+                  padding: "12px",
+                  border: "1px solid #000000",
+                  display: "block",
                 }}
               >
-                <span>Product Details</span>
-                <span>{openSection === "details" ? "−" : "+"}</span>
-              </button>
-              {openSection === "details" && (
-                <p style={{ fontSize: "12px", color: "#737373", marginTop: "12px", lineHeight: 1.6 }}>
-                  Paris Atelier — Edition -01. Heavyweight luxury silhouette crafted with custom Helmet Haute Couture detailing.
-                </p>
-              )}
-            </div>
+                Proceed To Checkout →
+              </Link>
+            )}
+          </div>
 
-            <div style={{ padding: "16px 0", borderBottom: "1px solid #e5e5e5" }}>
-              <button
-                type="button"
-                onClick={() => setOpenSection(openSection === "shipping" ? null : "shipping")}
+          {/* FICHE TECHNIQUE & SAVOIR-FAIRE */}
+          <div
+            style={{
+              borderTop: "1px solid #e5e5e5",
+              paddingTop: "24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                margin: "0 0 4px 0",
+              }}
+            >
+              Atelier Specifications
+            </h2>
+            {PRODUCT.specs.map((spec, i) => (
+              <p
+                key={i}
                 style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "12px",
-                  letterSpacing: "0.1em",
-                  color: "#404040",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
+                  fontSize: "13px",
+                  lineHeight: 1.7,
+                  letterSpacing: "0.06em",
+                  color: "#262626",
+                  margin: 0,
                 }}
               >
-                <span>Shipping & Policy</span>
-                <span>{openSection === "shipping" ? "−" : "+"}</span>
-              </button>
-              {openSection === "shipping" && (
-                <p style={{ fontSize: "12px", color: "#737373", marginTop: "12px", lineHeight: 1.6 }}>
-                  Tracked worldwide delivery. All sales are final — no returns or exchanges.
-                </p>
-              )}
-            </div>
+                — {spec}
+              </p>
+            ))}
           </div>
         </div>
       </div>

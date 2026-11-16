@@ -17,58 +17,40 @@ let introPlayedInMemory = false;
 
 const HELMET_FAQ_SECTIONS = [
   {
-    title: "SHIPPING POLICY",
+    title: "ATELIER & PRODUCTION",
     paragraphs: [
-      "Please allow 2-3 weeks for your order to be shipped.",
-      "We are happy to update you through the process or answer any questions about your order by emailing helmetcothes@gmail.com or through our Client Service.",
-      "Helmet Haute Couture is an independent house run out of Paris, France. We have no corporate cosign or external funding. We are using specialized local printers and ateliers, everything is hand-packed in Paris, and we create all the content in-house. Thanks for supporting thoughtful and independent design.",
+      "Helmet Haute Couture is an independent label founded and directed in Paris, France. We have no corporate cosign, external investors, or third-party retailers.",
+      "Every garment is handcrafted in-house in France using premium Italian-woven 100% cotton fabrics. Because each piece is produced manually with strict attention to detail, please allow 2–3 weeks for your order to be prepared and shipped.",
+      "We are happy to update you personally throughout the process or answer any questions about your piece via our Client Service or by emailing helmetcothes@gmail.com.",
     ],
   },
   {
-    title: "EXCHANGE / STORE CREDIT POLICY",
+    title: "UNIQUE PIECES & ARCHIVE POLICY",
     paragraphs: [
-      "Each product page will indicate whether an item is eligible for an exchange or store credit. All printable, screen-printed, and embroidery archive items from Edition -01 are final sale.",
-      "To initiate an exchange or store credit, head to our Client Service Concierge within 7 days of receiving your order.",
-      "If your item arrived damaged, faulty, or you received the wrong product, please start a request through our Client Service and indicate your return reason is due to a fulfillment error. Our Paris atelier will direct you from there.",
+      "All pieces from Edition -01 are handcrafted in strictly limited quantities as unique atelier creations. Unless an item arrives with a fulfillment error or defect, all archive pieces are final sale.",
+      "If there is any issue with your order upon reception, please contact our Client Service within 7 days of receiving your parcel with your order reference so we can assist you directly.",
     ],
   },
   {
-    title: "CHECKOUT+",
+    title: "SHIPPING & TRACKING",
     paragraphs: [
-      "Checkout+ is an optional add-on available at checkout that covers both your return shipping and your package while it is in transit.",
-      "- Free Return Shipping: if you need to send something back for an exchange or store credit, your return shipping label is covered.",
-      "- Package Protection: if your package is lost, stolen, or damaged in transit, you can submit a claim and, upon approval, receive a same-item replacement at no extra cost.",
-      "Checkout+ cannot be cancelled or refunded after purchase and will not be included in store credit amounts. Coverage cannot be added to an order after it has been placed. If Checkout+ was not selected at checkout, you are responsible for the cost of return shipping, and we will not be able to assist with packages that are lost, stolen, or damaged in transit.",
-      "To start a return or file a shipping claim, use our Client Service Concierge.",
-    ],
-  },
-  {
-    title: "INTERNATIONAL RETURNS",
-    paragraphs: [
-      "International customers may initiate a return request through our Client Service portal within 7 days of receiving your order. At the end of the flow you will be asked to arrange and purchase your own return shipping label (if applicable) to send the item back to our Paris Atelier. Approved returns will not include original orders taxes, duties, or shipping costs in the store credit.",
-    ],
-  },
-  {
-    title: "INTERNATIONAL SHIPPING POLICY",
-    paragraphs: [
-      "We do not cover taxes and duties associated with international shipments outside the European Union. Our international carrier will contact you directly regarding any applicable fees. Please make sure to provide a valid email address and telephone number at checkout.",
+      "All orders are hand-packed in Paris and shipped with tracked delivery. You will receive your tracking link by email as soon as your piece leaves our studio.",
+      "Orders shipped within France and the European Union include applicable taxes. For international shipments outside the EU, local customs duties or import taxes may be requested by the carrier upon delivery.",
     ],
   },
   {
     title: "EU CUSTOMER RIGHT TO WITHDRAW",
     paragraphs: [
-      "EU customers, you have the legal right to withdraw from your purchase within 14 days of receiving your order, subject to applicable consumer protection laws.",
-      "In the event you exercise your right to withdraw, return shipping costs are your responsibility and will not be reimbursed.",
-      "If your withdrawal request is approved, you will receive a refund in accordance with applicable EU consumer protection laws. Refunds will be issued using the original payment method unless otherwise agreed.",
-      "If you have any questions regarding your right to withdraw, please contact us at helmetcothes@gmail.com.",
+      "In accordance with European Union consumer protection laws, EU clients have a 14-day legal right to withdraw from a standard order after reception, provided the piece is strictly unworn, unwashed, and returned in its original packaging with all tags intact.",
+      "Return shipping costs to Paris remain the responsibility of the buyer. To contact us regarding an order, reach out via Client Service or at helmetcothes@gmail.com.",
     ],
   },
   {
-    title: "CARE",
+    title: "GARMENT CARE",
     paragraphs: [
-      "We always recommend hand washing all products in cold water or dry cleaning to extend the life of the garment.",
-      "Please make sure to hang dry all products to maintain the quality of the print. Machine drying garments will distress a print over time.",
-      "All of our vintage black garments use a unique pigment black dye that is designed to fade evenly over time. Crocking in the pigment is completely normal and expected for the first few cycles of wears and washes. We advise that you wash these garments alone or with like colors and hang to dry.",
+      "To preserve the structure of our 100% Italian cotton and handcrafted construction, we strongly recommend hand washing in cold water (inside out) or professional dry cleaning.",
+      "Always hang dry away from direct heat. Never machine dry, as high heat will alter the cotton fibers and distress the finish over time.",
+      "Wash dark black garments separately or with similar black pieces during the first cycles.",
     ],
   },
 ];
@@ -253,7 +235,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* FENÊTRE INFO / FAQ */}
+      {/* FENÊTRE INFO / FAQ (SANS CADRE SUR LE TITRE INFO) */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
@@ -264,7 +246,7 @@ export default function Home() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="helmet-faq-overlay"
           >
-            <div style={{ maxWidth: "840px", margin: "0 auto" }}>
+            <div style={{ maxWidth: "780px", margin: "0 auto" }}>
               <header className="helmet-page-header">
                 <div style={{ justifySelf: "start" }}>
                   <button
@@ -286,17 +268,16 @@ export default function Home() {
                 </div>
 
                 <div style={{ justifySelf: "center", textAlign: "center" }}>
-                  <LouisXVIFrame variant="title">
-                    <span
-                      className="font-cancellaresca"
-                      style={{
-                        fontSize: "clamp(28px, 4.2vw, 44px)",
-                        lineHeight: 1,
-                      }}
-                    >
-                      Helmet Info
-                    </span>
-                  </LouisXVIFrame>
+                  <span
+                    className="font-cancellaresca"
+                    style={{
+                      fontSize: "clamp(34px, 4.8vw, 52px)",
+                      lineHeight: 1,
+                      display: "block",
+                    }}
+                  >
+                    Helmet
+                  </span>
                 </div>
 
                 <div style={{ justifySelf: "end" }}>
@@ -319,7 +300,7 @@ export default function Home() {
                 </div>
               </header>
 
-              <div style={{ textAlign: "center", marginBottom: "48px", marginTop: "24px" }}>
+              <div style={{ textAlign: "center", marginBottom: "48px", marginTop: "16px" }}>
                 <p
                   style={{
                     fontSize: "11px",
@@ -339,7 +320,7 @@ export default function Home() {
                     margin: 0,
                   }}
                 >
-                  FAQ & POLICIES
+                  INFO & FAQ
                 </h1>
               </div>
 
@@ -459,7 +440,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER HAUT : Paris — Atelier | Info (Pill Louis XVI) | Cart [0] (Pill Louis XVI) */}
+      {/* HEADER HAUT : Paris — Atelier | Info (SANS CADRE) | Cart [0] (SANS CADRE) */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -479,46 +460,61 @@ export default function Home() {
           </span>
         </div>
 
-        {/* INFO ENCADRÉ AU MILIEU EN HAUT */}
+        {/* INFO AU MILIEU EN HAUT — SANS CADRE */}
         <div style={{ justifySelf: "center" }}>
           <button
             type="button"
             onClick={() => setInfoOpen(true)}
+            className="helmet-zoom-link"
             style={{
               background: "transparent",
               border: "none",
-              padding: 0,
+              padding: "6px 12px",
+              fontSize: "12px",
+              letterSpacing: "0.34em",
+              color: "#000000",
+              textTransform: "uppercase",
+              cursor: "pointer",
             }}
           >
-            <LouisXVIFrame variant="pill" className="text-[11.5px] tracking-[0.3em]">
-              Info
-            </LouisXVIFrame>
+            Info
           </button>
         </div>
 
-        {/* PANIER ENCADRÉ EN HAUT À DROITE */}
+        {/* PETIT PANIER EN HAUT À DROITE — SANS CADRE */}
         <div style={{ justifySelf: "end" }}>
-          <Link href="/cart">
-            <LouisXVIFrame variant="pill" className="text-[11.5px] tracking-[0.24em]">
-              <svg
-                width="14"
-                height="14"
-                style={{ width: "14px", height: "14px", minWidth: "14px", color: "#000000" }}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
-              </svg>
-              <span>[{cartCount}]</span>
-            </LouisXVIFrame>
+          <Link
+            href="/cart"
+            className="helmet-zoom-link"
+            style={{
+              fontSize: "12px",
+              letterSpacing: "0.24em",
+              color: "#000000",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              textTransform: "uppercase",
+              padding: "6px 4px",
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
+            </svg>
+            <span>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      {/* MENU CENTRAL : Les 4 Cadres Louis XVI autour du Logo Helmet */}
+      {/* MENU CENTRAL : Uniquement Shop, Helmet Gallery, Client Service et Cart encadrés */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-sketch-nav">
           {/* GAUCHE : Shop & Helmet Gallery */}
@@ -527,20 +523,28 @@ export default function Home() {
               href="/shop"
               onMouseEnter={() => setHoveredItem("/product1.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
+              style={{
+                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                letterSpacing: "0.26em",
+                textTransform: "uppercase",
+                color: "#000000",
+              }}
             >
-              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.26em]">
-                Shop
-              </LouisXVIFrame>
+              <LouisXVIFrame variant="menu">Shop</LouisXVIFrame>
             </Link>
 
             <Link
               href="/helmet"
               onMouseEnter={() => setHoveredItem("/product2.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
+              style={{
+                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "#000000",
+              }}
             >
-              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.24em]">
-                Helmet Gallery
-              </LouisXVIFrame>
+              <LouisXVIFrame variant="menu">Helmet Gallery</LouisXVIFrame>
             </Link>
           </div>
 
@@ -577,14 +581,28 @@ export default function Home() {
 
           {/* DROITE : Client Service & Cart */}
           <div className="helmet-sketch-right">
-            <Link href="/service">
-              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.24em]">
-                Client Service
-              </LouisXVIFrame>
+            <Link
+              href="/service"
+              style={{
+                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "#000000",
+              }}
+            >
+              <LouisXVIFrame variant="menu">Client Service</LouisXVIFrame>
             </Link>
 
-            <Link href="/cart">
-              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.26em]">
+            <Link
+              href="/cart"
+              style={{
+                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                letterSpacing: "0.26em",
+                textTransform: "uppercase",
+                color: "#000000",
+              }}
+            >
+              <LouisXVIFrame variant="menu">
                 <span>Cart</span>
                 <span>[{cartCount}]</span>
               </LouisXVIFrame>
