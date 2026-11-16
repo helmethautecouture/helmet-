@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import EngravedCartouche from "../EngravedCartouche";
+import LouisXVIFrame from "../LouisXVIFrame";
 import { motion } from "framer-motion";
 
 const galleryItems = [
@@ -45,7 +45,7 @@ export default function HelmetGallery() {
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link href="/"><EngravedCartouche variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Gallery</span></EngravedCartouche></Link>
+          <Link href="/"><LouisXVIFrame variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Gallery</span></LouisXVIFrame></Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>

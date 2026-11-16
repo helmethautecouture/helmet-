@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
-import EngravedCartouche from "../EngravedCartouche";
+import LouisXVIFrame from "../LouisXVIFrame";
 import { useSearchParams } from "next/navigation";
 
 interface CartItem {
@@ -180,7 +180,7 @@ function CartContent() {
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link href="/"><EngravedCartouche variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Cart</span></EngravedCartouche></Link>
+          <Link href="/"><LouisXVIFrame variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Cart</span></LouisXVIFrame></Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>

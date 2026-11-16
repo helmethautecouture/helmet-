@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import EngravedCartouche from "./EngravedCartouche";
+import LouisXVIFrame from "./LouisXVIFrame";
 
 const AUDIO_PATHS = [
   "/ambiante.mp3",
@@ -264,7 +264,7 @@ export default function Home() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="helmet-faq-overlay"
           >
-            <div style={{ maxWidth: "780px", margin: "0 auto" }}>
+            <div style={{ maxWidth: "840px", margin: "0 auto" }}>
               <header className="helmet-page-header">
                 <div style={{ justifySelf: "start" }}>
                   <button
@@ -286,7 +286,7 @@ export default function Home() {
                 </div>
 
                 <div style={{ justifySelf: "center", textAlign: "center" }}>
-                  <EngravedCartouche variant="title">
+                  <LouisXVIFrame variant="title">
                     <span
                       className="font-cancellaresca"
                       style={{
@@ -296,7 +296,7 @@ export default function Home() {
                     >
                       Helmet Info
                     </span>
-                  </EngravedCartouche>
+                  </LouisXVIFrame>
                 </div>
 
                 <div style={{ justifySelf: "end" }}>
@@ -319,7 +319,7 @@ export default function Home() {
                 </div>
               </header>
 
-              <div style={{ textAlign: "center", marginBottom: "48px" }}>
+              <div style={{ textAlign: "center", marginBottom: "48px", marginTop: "24px" }}>
                 <p
                   style={{
                     fontSize: "11px",
@@ -459,7 +459,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* HEADER HAUT : Paris — Atelier | Info (Cartouche) | Cart [0] (Cartouche) */}
+      {/* HEADER HAUT : Paris — Atelier | Info (Pill Louis XVI) | Cart [0] (Pill Louis XVI) */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -488,28 +488,18 @@ export default function Home() {
               background: "transparent",
               border: "none",
               padding: 0,
-              fontSize: "11px",
-              letterSpacing: "0.32em",
-              color: "#000000",
-              textTransform: "uppercase",
             }}
           >
-            <EngravedCartouche variant="pill">Info</EngravedCartouche>
+            <LouisXVIFrame variant="pill" className="text-[11.5px] tracking-[0.3em]">
+              Info
+            </LouisXVIFrame>
           </button>
         </div>
 
         {/* PANIER ENCADRÉ EN HAUT À DROITE */}
         <div style={{ justifySelf: "end" }}>
-          <Link
-            href="/cart"
-            style={{
-              fontSize: "11px",
-              letterSpacing: "0.22em",
-              color: "#000000",
-              textTransform: "uppercase",
-            }}
-          >
-            <EngravedCartouche variant="pill">
+          <Link href="/cart">
+            <LouisXVIFrame variant="pill" className="text-[11.5px] tracking-[0.24em]">
               <svg
                 width="14"
                 height="14"
@@ -523,12 +513,12 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
               </svg>
               <span>[{cartCount}]</span>
-            </EngravedCartouche>
+            </LouisXVIFrame>
           </Link>
         </div>
       </header>
 
-      {/* MENU CENTRAL : Les 4 Cartouches Gravés & Dentelle autour du Logo Helmet */}
+      {/* MENU CENTRAL : Les 4 Cadres Louis XVI autour du Logo Helmet */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-sketch-nav">
           {/* GAUCHE : Shop & Helmet Gallery */}
@@ -537,28 +527,20 @@ export default function Home() {
               href="/shop"
               onMouseEnter={() => setHoveredItem("/product1.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
-              style={{
-                fontSize: "clamp(11.5px, 1.1vw, 13.5px)",
-                letterSpacing: "0.26em",
-                textTransform: "uppercase",
-                color: "#000000",
-              }}
             >
-              <EngravedCartouche variant="menu">Shop</EngravedCartouche>
+              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.26em]">
+                Shop
+              </LouisXVIFrame>
             </Link>
 
             <Link
               href="/helmet"
               onMouseEnter={() => setHoveredItem("/product2.jpg")}
               onMouseLeave={() => setHoveredItem(null)}
-              style={{
-                fontSize: "clamp(11.5px, 1.1vw, 13.5px)",
-                letterSpacing: "0.24em",
-                textTransform: "uppercase",
-                color: "#000000",
-              }}
             >
-              <EngravedCartouche variant="menu">Helmet Gallery</EngravedCartouche>
+              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.24em]">
+                Helmet Gallery
+              </LouisXVIFrame>
             </Link>
           </div>
 
@@ -595,31 +577,17 @@ export default function Home() {
 
           {/* DROITE : Client Service & Cart */}
           <div className="helmet-sketch-right">
-            <Link
-              href="/service"
-              style={{
-                fontSize: "clamp(11.5px, 1.1vw, 13.5px)",
-                letterSpacing: "0.24em",
-                textTransform: "uppercase",
-                color: "#000000",
-              }}
-            >
-              <EngravedCartouche variant="menu">Client Service</EngravedCartouche>
+            <Link href="/service">
+              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.24em]">
+                Client Service
+              </LouisXVIFrame>
             </Link>
 
-            <Link
-              href="/cart"
-              style={{
-                fontSize: "clamp(11.5px, 1.1vw, 13.5px)",
-                letterSpacing: "0.26em",
-                textTransform: "uppercase",
-                color: "#000000",
-              }}
-            >
-              <EngravedCartouche variant="menu">
+            <Link href="/cart">
+              <LouisXVIFrame variant="menu" className="text-[clamp(11.5px,1.2vw,14px)] tracking-[0.26em]">
                 <span>Cart</span>
                 <span>[{cartCount}]</span>
-              </EngravedCartouche>
+              </LouisXVIFrame>
             </Link>
           </div>
         </nav>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import EngravedCartouche from "../EngravedCartouche";
+import LouisXVIFrame from "../LouisXVIFrame";
 
 const SINGLE_PRODUCT = {
   id: "-01",
@@ -45,7 +45,20 @@ export default function Shop() {
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link href="/"><EngravedCartouche variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Shop</span></EngravedCartouche></Link>
+          <Link href="/">
+            <LouisXVIFrame variant="title">
+              <span
+                className="font-cancellaresca"
+                style={{
+                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  lineHeight: 1,
+                  display: "block",
+                }}
+              >
+                Helmet Shop
+              </span>
+            </LouisXVIFrame>
+          </Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>
@@ -62,8 +75,20 @@ export default function Shop() {
               whiteSpace: "nowrap",
             }}
           >
-            <svg width="16" height="16" style={{ width: "16px", height: "16px", minWidth: "16px" }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg
+              width="16"
+              height="16"
+              style={{ width: "16px", height: "16px", minWidth: "16px" }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+              />
             </svg>
             <span>[{cartCount}]</span>
           </Link>
