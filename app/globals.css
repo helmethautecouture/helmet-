@@ -523,3 +523,16 @@ button {
     font-size: 16px !important;
   }
 }
+/* Correctif definitif Couronne de Ronces & Roses Barbelees */
+.helmet-thorn-wrapper {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.helmet-thorn-wrapper:hover {
+  transform: scale(1.05) !important;
+}
+.helmet-thorn-wrapper svg.helmet-ornament-svg {
+  max-width: none !important;
+  max-height: none !important;
+  width: 100% !important;
+  height: 100% !important;
+}
