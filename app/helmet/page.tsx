@@ -10,17 +10,13 @@ const galleryItems = [
   {
     id: "-01",
     title: "Shooting -01 — Paris Atelier",
-    subtitle: "Overlayer Jogger -01 / 100% Italian Cotton",
-    manuscriptCrossed: "étude de volume initiale",
-    manuscriptFinal: "silhouette définitive — coupe superposée à la main",
+    subtitle: "Overlayer Jogger -01 — 100% Italian Cotton",
     image: "/product1.jpg",
   },
   {
     id: "-02",
     title: "Shooting -02 — Archive Studio",
-    subtitle: "Edition -01 / Pièce Unique Faite Main en France",
-    manuscriptCrossed: "prototype atelier n°01",
-    manuscriptFinal: "assemblage manuel — teinture noire & sceau bordeaux",
+    subtitle: "Edition -01 — Handcrafted in France",
     image: "/product2.jpg",
   },
 ];
@@ -43,8 +39,8 @@ export default function HelmetGallery() {
 
   return (
     <div className="helmet-page-container" style={{ overflow: "hidden" }}>
-      {/* ATMOSPHÈRE VIVANTE PLUS PRÉSENTE DANS LA GALERIE */}
-      <AtelierAtmosphere intensity="gallery" />
+      {/* DANS LA GALERIE : LE RONCIER DE ROSES EN DRAPÉ + CHUTE ALÉATOIRE DE ROSES ENTIÈRES */}
+      <AtelierAtmosphere mode="canopy-and-roses" />
 
       <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
         <div style={{ justifySelf: "start" }}>
@@ -102,153 +98,39 @@ export default function HelmetGallery() {
         </div>
       </header>
 
-      {/* INTRODUCTION MANUSCRITE DE LA GALERIE */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        style={{
-          position: "relative",
-          zIndex: 10,
-          textAlign: "center",
-          marginBottom: "56px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "11px",
-            letterSpacing: "0.34em",
-            textTransform: "uppercase",
-            color: "#6B0F1A",
-            margin: "0 0 8px 0",
-          }}
-        >
-          Paris — Atelier / Visual Archive -01
-        </p>
-        <p
-          style={{
-            fontSize: "12px",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "#525252",
-            margin: 0,
-          }}
-        >
-          Helmet Haute Couture — Handcrafted Silhouette Study
-        </p>
-      </motion.div>
-
       <div
         style={{
           position: "relative",
           zIndex: 10,
-          maxWidth: "780px",
+          maxWidth: "768px",
           margin: "0 auto",
           display: "flex",
           flexDirection: "column",
-          gap: "96px",
+          gap: "88px",
         }}
       >
         {galleryItems.map((item, index) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.75, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: "flex", flexDirection: "column", gap: "18px", position: "relative" }}
+            transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
           >
-            {/* Numéro d'archive et note raturée au-dessus du visuel */}
             <div
+              className="helmet-image-frame"
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "baseline",
-                flexWrap: "wrap",
-                gap: "8px",
-                borderBottom: "1px solid #e5e5e5",
-                paddingBottom: "10px",
+                aspectRatio: "4 / 5",
+                width: "100%",
+                border: "1px solid #e5e5e5",
               }}
             >
-              <span
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "#6B0F1A",
-                }}
-              >
-                Archive Plate [{item.id}]
-              </span>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <span
-                  className="font-cancellaresca"
-                  style={{
-                    fontSize: "20px",
-                    color: "#737373",
-                    textDecoration: "line-through",
-                    textDecorationColor: "#6B0F1A",
-                  }}
-                >
-                  {item.manuscriptCrossed}
-                </span>
-                <span
-                  style={{
-                    fontSize: "10px",
-                    letterSpacing: "0.22em",
-                    textTransform: "uppercase",
-                    color: "#171717",
-                  }}
-                >
-                  → {item.manuscriptFinal}
-                </span>
-              </div>
-            </div>
-
-            {/* Cadre Photo avec sarment d'épines décoratif dans l'angle */}
-            <div style={{ position: "relative" }}>
-              <div
-                className="helmet-image-frame"
-                style={{
-                  aspectRatio: "4 / 5",
-                  width: "100%",
-                  border: "1px solid #171717",
-                }}
-              >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="helmet-zoom-img"
-                />
-              </div>
-
-              {/* Rameau d'épines gravé qui enlace le coin du cadre photo */}
-              <svg
-                viewBox="0 0 180 90"
-                className="helmet-ornament-svg"
-                style={{
-                  position: "absolute",
-                  bottom: "-18px",
-                  right: "-14px",
-                  width: "150px",
-                  height: "75px",
-                  pointerEvents: "none",
-                  zIndex: 4,
-                }}
-              >
-                <path
-                  d="M 10,72 L 48,66 L 88,54 L 128,36 L 164,12"
-                  fill="none"
-                  stroke="#000000"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                />
-                <polygon points="44,66 38,52 52,63" fill="#6B0F1A" />
-                <polygon points="72,59 82,72 66,62" fill="#000000" />
-                <polygon points="104,47 98,32 112,43" fill="#6B0F1A" />
-                <polygon points="138,30 150,42 132,34" fill="#000000" />
-              </svg>
+              <img
+                src={item.image}
+                alt={item.title}
+                className="helmet-zoom-img"
+              />
             </div>
 
             <div
@@ -257,12 +139,12 @@ export default function HelmetGallery() {
                 flexDirection: "column",
                 alignItems: "center",
                 gap: "6px",
-                marginTop: "6px",
+                marginTop: "4px",
               }}
             >
               <span
                 className="font-cancellaresca"
-                style={{ fontSize: "32px", letterSpacing: "0.05em", color: "#000000", textAlign: "center" }}
+                style={{ fontSize: "30px", letterSpacing: "0.05em", color: "#000000", textAlign: "center" }}
               >
                 {item.title}
               </span>
@@ -271,7 +153,7 @@ export default function HelmetGallery() {
                   fontSize: "10.5px",
                   letterSpacing: "0.28em",
                   textTransform: "uppercase",
-                  color: "#6B0F1A",
+                  color: "#525252",
                   textAlign: "center",
                 }}
               >

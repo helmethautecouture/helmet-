@@ -53,7 +53,6 @@ export default function ClientServicePage() {
         setEmail("");
         setMessage("");
       } else {
-        /* Fallback automatique vers le client mail si FormSubmit demande la 1ère activation */
         window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
           `[HELMET HAUTE COUTURE] ${subject}`
         )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
@@ -69,7 +68,8 @@ export default function ClientServicePage() {
 
   return (
     <div className="helmet-page-container">
-      <AtelierAtmosphere intensity="subtle" />
+      {/* PÉTALES AU TRAIT FIN QUI TOMBENT ALÉATOIREMENT */}
+      <AtelierAtmosphere mode="petals-only" />
 
       <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
         <div style={{ justifySelf: "start" }}>
@@ -128,36 +128,17 @@ export default function ClientServicePage() {
       </header>
 
       <div style={{ position: "relative", zIndex: 10, maxWidth: "620px", margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+        <div style={{ textAlign: "center", marginBottom: "36px" }}>
           <p
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
               letterSpacing: "0.34em",
-              color: "#6B0F1A",
-              marginBottom: "8px",
-            }}
-          >
-            Paris — Atelier Concierge
-          </p>
-          <p
-            style={{
-              fontSize: "13px",
-              lineHeight: 1.7,
-              letterSpacing: "0.08em",
-              color: "#404040",
+              color: "#737373",
               margin: 0,
             }}
           >
-            Direct line to our Paris studio for sizing advice, custom measurements, or order tracking.
-            All messages are delivered directly to{" "}
-            <a
-              href="mailto:helmetcothes@gmail.com"
-              style={{ textDecoration: "underline", color: "#000000" }}
-            >
-              helmetcothes@gmail.com
-            </a>
-            .
+            Paris — Atelier Concierge
           </p>
         </div>
 
@@ -276,12 +257,12 @@ export default function ClientServicePage() {
                 fontSize: "11px",
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "#6B0F1A",
+                color: "#000000",
                 textAlign: "center",
                 marginTop: "6px",
               }}
             >
-              ✓ Your message has been sent to helmetcothes@gmail.com.
+              ✓ Your message has been transmitted.
             </p>
           )}
         </form>

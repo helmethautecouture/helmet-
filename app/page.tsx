@@ -57,7 +57,7 @@ const HELMET_FAQ_SECTIONS = [
 ];
 
 /* ============================================================================
-   SOUS-COMPOSANTS DE L'INTRO : ROSES GRAVÉES BORDEAUX & PICS BARBELÉS
+   SOUS-COMPOSANTS DE L'INTRO : 100% ENCRE NOIRE SUR FOND BLANC PUR
    ============================================================================ */
 function AnimatedEngravedRose({
   x,
@@ -65,14 +65,12 @@ function AnimatedEngravedRose({
   scale = 1,
   rotate = 0,
   delay = 0,
-  crimson = false,
 }: {
   x: number;
   y: number;
   scale?: number;
   rotate?: number;
   delay?: number;
-  crimson?: boolean;
 }) {
   return (
     <g transform={`translate(${x}, ${y}) scale(${scale}) rotate(${rotate})`}>
@@ -108,7 +106,7 @@ function AnimatedEngravedRose({
       />
       <motion.path
         d="M -9,-8 L -2,-11 L 5,-9 L 2,-6 Z M 7,-3 L 11,2 L 5,8 L 4,3 Z M -10,2 L -5,8 L 1,7 L -4,3 Z"
-        fill={crimson ? "#6B0F1A" : "#000000"}
+        fill="#000000"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: delay + 0.65 }}
@@ -116,7 +114,7 @@ function AnimatedEngravedRose({
       <motion.path
         d="M -6,-1 L -2,-6 L 5,-5 L 7,1 L 2,5 L -4,4 L -5,0 L 0,-2 L 3,0 L 0,2"
         fill="none"
-        stroke={crimson ? "#6B0F1A" : "#000000"}
+        stroke="#000000"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -173,21 +171,19 @@ function AnimatedHookThorn({
   rotate = 0,
   scale = 1,
   delay = 0,
-  crimson = false,
 }: {
   x: number;
   y: number;
   rotate?: number;
   scale?: number;
   delay?: number;
-  crimson?: boolean;
 }) {
   return (
     <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
       <motion.path
         d="M -4,0 C -1,-3 2,-8 6,-13 C 4,-6 3,-2 5,1 Z"
-        fill={crimson ? "#6B0F1A" : "#000000"}
-        stroke={crimson ? "#6B0F1A" : "#000000"}
+        fill="#000000"
+        stroke="#000000"
         strokeWidth="0.7"
         strokeLinejoin="round"
         initial={{ opacity: 0 }}
@@ -340,7 +336,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               fontSize: "10px",
               letterSpacing: "0.3em",
               textTransform: "uppercase",
-              color: "#6B0F1A",
+              color: "#525252",
             }}
           >
             {phase === 0 ? "Paris — Atelier" : "Floraison des Ronces"}
@@ -490,22 +486,22 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
 
               <AnimatedHookThorn x={118} y={22} rotate={-15} scale={1.15} delay={0.7} />
               <AnimatedHookThorn x={136} y={26} rotate={165} scale={0.95} delay={0.75} />
-              <AnimatedHookThorn x={156} y={18} rotate={10} scale={1.2} delay={0.8} crimson />
+              <AnimatedHookThorn x={156} y={18} rotate={10} scale={1.2} delay={0.8} />
               <AnimatedHookThorn x={176} y={28} rotate={195} scale={1} delay={0.85} />
               <AnimatedHookThorn x={232} y={18} rotate={-20} scale={1.1} delay={0.9} />
-              <AnimatedHookThorn x={278} y={21} rotate={15} scale={1.25} delay={0.95} crimson />
+              <AnimatedHookThorn x={278} y={21} rotate={15} scale={1.25} delay={0.95} />
               <AnimatedHookThorn x={296} y={29} rotate={190} scale={1} delay={1.0} />
               <AnimatedHookThorn x={322} y={28} rotate={25} scale={1.2} delay={1.05} />
               <AnimatedHookThorn x={348} y={34} rotate={35} scale={1.15} delay={1.1} />
               <AnimatedHookThorn x={368} y={42} rotate={45} scale={1.2} delay={1.15} />
 
               <AnimatedHookThorn x={302} y={47} rotate={145} scale={0.95} delay={1.2} />
-              <AnimatedHookThorn x={282} y={58} rotate={-45} scale={0.95} delay={1.25} crimson />
+              <AnimatedHookThorn x={282} y={58} rotate={-45} scale={0.95} delay={1.25} />
               <AnimatedHookThorn x={264} y={66} rotate={135} scale={0.9} delay={1.3} />
               <AnimatedHookThorn x={292} y={62} rotate={120} scale={0.85} delay={1.35} />
 
               <AnimatedHookThorn x={392} y={58} rotate={65} scale={1.2} delay={1.4} />
-              <AnimatedHookThorn x={402} y={76} rotate={85} scale={1.25} delay={1.45} crimson />
+              <AnimatedHookThorn x={402} y={76} rotate={85} scale={1.25} delay={1.45} />
               <AnimatedHookThorn x={404} y={96} rotate={100} scale={1.2} delay={1.5} />
               <AnimatedHookThorn x={396} y={114} rotate={115} scale={1.15} delay={1.55} />
               <AnimatedHookThorn x={378} y={74} rotate={-95} scale={1} delay={1.6} />
@@ -515,18 +511,18 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
 
               <AnimatedHookThorn x={380} y={130} rotate={135} scale={1.2} delay={1.8} />
               <AnimatedHookThorn x={356} y={142} rotate={150} scale={1.15} delay={1.85} />
-              <AnimatedHookThorn x={324} y={152} rotate={165} scale={1.2} delay={1.9} crimson />
+              <AnimatedHookThorn x={324} y={152} rotate={165} scale={1.2} delay={1.9} />
               <AnimatedHookThorn x={294} y={144} rotate={-15} scale={1} delay={1.95} />
               <AnimatedHookThorn x={272} y={158} rotate={175} scale={1.25} delay={2.0} />
               <AnimatedHookThorn x={244} y={146} rotate={10} scale={1} delay={2.05} />
               <AnimatedHookThorn x={212} y={160} rotate={185} scale={1.2} delay={2.1} />
-              <AnimatedHookThorn x={182} y={144} rotate={-10} scale={1.05} delay={2.15} crimson />
+              <AnimatedHookThorn x={182} y={144} rotate={-10} scale={1.05} delay={2.15} />
               <AnimatedHookThorn x={158} y={158} rotate={195} scale={1.2} delay={2.2} />
               <AnimatedHookThorn x={126} y={152} rotate={205} scale={1.15} delay={2.25} />
               <AnimatedHookThorn x={96} y={142} rotate={215} scale={1.15} delay={2.3} />
 
               <AnimatedHookThorn x={68} y={128} rotate={230} scale={1.2} delay={2.35} />
-              <AnimatedHookThorn x={52} y={108} rotate={255} scale={1.2} delay={2.4} crimson />
+              <AnimatedHookThorn x={52} y={108} rotate={255} scale={1.2} delay={2.4} />
               <AnimatedHookThorn x={46} y={84} rotate={275} scale={1.15} delay={2.45} />
               <AnimatedHookThorn x={56} y={50} rotate={305} scale={1.15} delay={2.5} />
               <AnimatedHookThorn x={68} y={26} rotate={-15} scale={1} delay={2.55} />
@@ -548,11 +544,11 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedJaggedLeaf x={302} y={154} scale={0.88} rotate={118} delay={2.5} />
               <AnimatedJaggedLeaf x={316} y={150} scale={0.86} rotate={42} delay={2.6} />
 
-              <AnimatedEngravedRose x={202} y={22} scale={0.96} rotate={-10} delay={1.0} crimson />
+              <AnimatedEngravedRose x={202} y={22} scale={0.96} rotate={-10} delay={1.0} />
               <AnimatedEngravedRose x={248} y={36} scale={0.9} rotate={16} delay={1.3} />
-              <AnimatedEngravedRose x={76} y={60} scale={0.94} rotate={-20} delay={1.6} crimson />
+              <AnimatedEngravedRose x={76} y={60} scale={0.94} rotate={-20} delay={1.6} />
               <AnimatedEngravedRose x={56} y={88} scale={0.88} rotate={14} delay={1.85} />
-              <AnimatedEngravedRose x={84} y={86} scale={0.8} rotate={-8} delay={2.1} crimson />
+              <AnimatedEngravedRose x={84} y={86} scale={0.8} rotate={-8} delay={2.1} />
             </svg>
 
             <motion.div
@@ -589,7 +585,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 style={{
                   display: "block",
                   fontSize: "clamp(10px, 1.15vw, 13px)",
-                  color: "#6B0F1A",
+                  color: "#171717",
                   marginTop: "8px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -778,8 +774,8 @@ export default function Home() {
     <main className="helmet-home-shell">
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* MOTEUR D'ANIMATIONS ALÉATOIRES EN ARRIÈRE-PLAN (Pétales Bordeaux, Épines, Notes d'Atelier) */}
-      <AtelierAtmosphere intensity="subtle" />
+      {/* DANS LE MENU : LE RONCIER DE ROSES EN DRAPÉ + CHUTE ALÉATOIRE DE ROSES ENTIÈRES */}
+      <AtelierAtmosphere mode="canopy-and-roses" />
 
       <AnimatePresence>
         {hoveredItem && !infoOpen && (
@@ -883,7 +879,7 @@ export default function Home() {
                     fontSize: "11px",
                     textTransform: "uppercase",
                     letterSpacing: "0.35em",
-                    color: "#6B0F1A",
+                    color: "#737373",
                     marginBottom: "8px",
                   }}
                 >
@@ -970,7 +966,7 @@ export default function Home() {
         >
           <span>Paris — Atelier</span>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#6B0F1A" }}>
+            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#525252" }}>
               Edition -01
             </span>
             <button
@@ -1098,7 +1094,7 @@ export default function Home() {
                   display: "block",
                   fontSize: "clamp(11px, 1.05vw, 13.5px)",
                   letterSpacing: "0.46em",
-                  color: "#6B0F1A",
+                  color: "#171717",
                   marginTop: "6px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -1140,7 +1136,6 @@ export default function Home() {
         </nav>
       </div>
 
-      {/* FOOTER BAS AVEC LE SYMBOLE COPYRIGHT NET ET "HELMET HAUTE COUTURE" */}
       <footer className="helmet-home-footer">
         <div
           style={{
@@ -1163,7 +1158,7 @@ export default function Home() {
           >
             Instagram
           </a>
-          <span style={{ color: "#6B0F1A" }}>/</span>
+          <span style={{ color: "#a3a3a3" }}>/</span>
           <a
             href="https://www.youtube.com"
             target="_blank"
@@ -1220,7 +1215,7 @@ export default function Home() {
                   style={{
                     width: "28px",
                     height: "1.5px",
-                    backgroundColor: "#6B0F1A",
+                    backgroundColor: "#000000",
                     transform: "rotate(45deg)",
                     display: "block",
                   }}
@@ -1244,7 +1239,6 @@ export default function Home() {
             gap: "6px",
           }}
         >
-          {/* Symbole © forcé en police Georgia/Système pour éviter le glyphe cassé de la police 1589 */}
           <span
             style={{
               fontFamily: "Georgia, serif",

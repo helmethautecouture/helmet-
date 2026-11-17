@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import LouisXVIFrame from "../LouisXVIFrame";
+import AtelierAtmosphere from "../AtelierAtmosphere";
 
 const SINGLE_PRODUCT = {
   id: "-01",
@@ -28,7 +29,10 @@ export default function Shop() {
 
   return (
     <div className="helmet-page-container">
-      <header className="helmet-page-header">
+      {/* DANS LE SHOP : UNIQUEMENT QUELQUES PÉTALES AU TRAIT FIN QUI TOMBENT ALÉATOIREMENT */}
+      <AtelierAtmosphere mode="petals-only" />
+
+      <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
@@ -95,13 +99,13 @@ export default function Shop() {
         </div>
       </header>
 
-      <div style={{ textAlign: "center", marginBottom: "40px" }}>
+      <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginBottom: "40px" }}>
         <p style={{ fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.3em", color: "#737373" }}>
           Paris Atelier — Edition -01
         </p>
       </div>
 
-      <div style={{ maxWidth: "440px", margin: "0 auto" }}>
+      <div style={{ position: "relative", zIndex: 10, maxWidth: "440px", margin: "0 auto" }}>
         <Link href="/shop/-01" style={{ display: "block" }}>
           <div
             className="helmet-image-frame"

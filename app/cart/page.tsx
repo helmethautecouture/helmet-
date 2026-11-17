@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import LouisXVIFrame from "../LouisXVIFrame";
-import AtelierAtmosphere from "../AtelierAtmosphere";
 
 interface CartItem {
   id: string;
@@ -94,8 +93,6 @@ export default function CartPage() {
 
   return (
     <div className="helmet-page-container">
-      <AtelierAtmosphere intensity="subtle" />
-
       <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
         <div style={{ justifySelf: "start" }}>
           <Link
@@ -151,7 +148,7 @@ export default function CartPage() {
                 fontSize: "11px",
                 letterSpacing: "0.34em",
                 textTransform: "uppercase",
-                color: "#6B0F1A",
+                color: "#525252",
                 marginBottom: "12px",
               }}
             >
@@ -188,7 +185,6 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="helmet-cart-grid">
-            {/* LISTE DES ARTICLES */}
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
               {items.map((item, idx) => (
                 <div
@@ -222,7 +218,7 @@ export default function CartPage() {
                         fontSize: "11px",
                         letterSpacing: "0.24em",
                         textTransform: "uppercase",
-                        color: "#6B0F1A",
+                        color: "#525252",
                         margin: "0 0 12px 0",
                       }}
                     >
@@ -265,7 +261,6 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* MOYENS DE PAIEMENT & CHECKOUT */}
             <form
               onSubmit={handleCheckout}
               style={{
@@ -290,7 +285,6 @@ export default function CartPage() {
                 Atelier Checkout & Payment
               </h2>
 
-              {/* SÉLECTEUR DE MOYEN DE PAIEMENT */}
               <div>
                 <span
                   style={{
@@ -387,7 +381,7 @@ export default function CartPage() {
                 }}
               >
                 <span>Total (Tax Incl.)</span>
-                <span style={{ color: "#6B0F1A" }}>{subtotal} €</span>
+                <span style={{ color: "#000000" }}>{subtotal} €</span>
               </div>
 
               <button type="submit" disabled={submitting} className="helmet-btn-black">
