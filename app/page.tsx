@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import LouisXVIFrame from "./LouisXVIFrame";
+import AtelierAtmosphere from "./AtelierAtmosphere";
 
 const AUDIO_PATHS = [
   "/ambiante.mp3",
@@ -56,8 +57,7 @@ const HELMET_FAQ_SECTIONS = [
 ];
 
 /* ============================================================================
-   SOUS-COMPOSANTS DE L'INTRO : ROSES GRAVÉES, FEUILLES DENTELÉES & PICS BARBELÉS
-   (100% identiques aux cadrans du menu, animés à l'encre noire sur fond blanc)
+   SOUS-COMPOSANTS DE L'INTRO : ROSES GRAVÉES BORDEAUX & PICS BARBELÉS
    ============================================================================ */
 function AnimatedEngravedRose({
   x,
@@ -65,12 +65,14 @@ function AnimatedEngravedRose({
   scale = 1,
   rotate = 0,
   delay = 0,
+  crimson = false,
 }: {
   x: number;
   y: number;
   scale?: number;
   rotate?: number;
   delay?: number;
+  crimson?: boolean;
 }) {
   return (
     <g transform={`translate(${x}, ${y}) scale(${scale}) rotate(${rotate})`}>
@@ -106,7 +108,7 @@ function AnimatedEngravedRose({
       />
       <motion.path
         d="M -9,-8 L -2,-11 L 5,-9 L 2,-6 Z M 7,-3 L 11,2 L 5,8 L 4,3 Z M -10,2 L -5,8 L 1,7 L -4,3 Z"
-        fill="#000000"
+        fill={crimson ? "#6B0F1A" : "#000000"}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: delay + 0.65 }}
@@ -114,7 +116,7 @@ function AnimatedEngravedRose({
       <motion.path
         d="M -6,-1 L -2,-6 L 5,-5 L 7,1 L 2,5 L -4,4 L -5,0 L 0,-2 L 3,0 L 0,2"
         fill="none"
-        stroke="#000000"
+        stroke={crimson ? "#6B0F1A" : "#000000"}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -171,20 +173,21 @@ function AnimatedHookThorn({
   rotate = 0,
   scale = 1,
   delay = 0,
+  crimson = false,
 }: {
   x: number;
   y: number;
   rotate?: number;
   scale?: number;
   delay?: number;
+  crimson?: boolean;
 }) {
-  /* Positionnement strict dans un <g> parent pour que tous les pics s'affichent au bon endroit */
   return (
     <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
       <motion.path
         d="M -4,0 C -1,-3 2,-8 6,-13 C 4,-6 3,-2 5,1 Z"
-        fill="#000000"
-        stroke="#000000"
+        fill={crimson ? "#6B0F1A" : "#000000"}
+        stroke={crimson ? "#6B0F1A" : "#000000"}
         strokeWidth="0.7"
         strokeLinejoin="round"
         initial={{ opacity: 0 }}
@@ -195,15 +198,7 @@ function AnimatedHookThorn({
   );
 }
 
-/* ============================================================================
-   INTRODUCTION CINÉMATOGRAPHIQUE SUR FOND BLANC PUR (ZÉRO GRAIN, ZÉRO GRILLE)
-   ============================================================================ */
 function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
-  /*
-    Phase 0 (0.0s -> 1.8s) : "Paris — Atelier" au centre sur fond blanc pur
-    Phase 1 (1.8s -> 7.0s) : Floraison de la couronne complète (ronces, 42 pics, feuilles, 5 roses) + Helmet
-    Phase 3 (7.0s -> 8.9s) : Ouverture fluide des deux volets blancs vers la gauche et la droite
-  */
   const [phase, setPhase] = useState<0 | 1 | 3>(0);
   const [counter, setCounter] = useState<number>(0);
   const completedRef = useRef(false);
@@ -260,7 +255,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         userSelect: "none",
       }}
     >
-      {/* VOLET BLANC GAUCHE (S'ouvre à la fin) */}
       <motion.div
         initial={{ x: "0%" }}
         animate={{ x: phase === 3 ? "-102%" : "0%" }}
@@ -275,7 +269,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         }}
       />
 
-      {/* VOLET BLANC DROIT (S'ouvre à la fin) */}
       <motion.div
         initial={{ x: "0%" }}
         animate={{ x: phase === 3 ? "102%" : "0%" }}
@@ -290,7 +283,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         }}
       />
 
-      {/* EN-TÊTE HAUT CENTRÉ : UNIQUEMENT "EDITION -01" AU MILIEU EN HAUT */}
       <motion.div
         animate={{ opacity: phase === 3 ? 0 : 1 }}
         transition={{ duration: 0.45 }}
@@ -321,7 +313,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           Edition -01
         </motion.div>
 
-        {/* Compteur de Floraison en bas à gauche */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -349,7 +340,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               fontSize: "10px",
               letterSpacing: "0.3em",
               textTransform: "uppercase",
-              color: "#525252",
+              color: "#6B0F1A",
             }}
           >
             {phase === 0 ? "Paris — Atelier" : "Floraison des Ronces"}
@@ -357,7 +348,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         </motion.div>
       </motion.div>
 
-      {/* SCÈNE CENTRALE : "PARIS — ATELIER" PUIS COURONNE DE RONCES COMPLÈTE AVEC TOUS LES PICS */}
       <motion.div
         animate={{
           opacity: phase === 3 ? 0 : 1,
@@ -376,7 +366,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           pointerEvents: "none",
         }}
       >
-        {/* Début de l'animation : uniquement "Paris — Atelier" */}
         <AnimatePresence mode="wait">
           {phase === 0 && (
             <motion.div
@@ -397,7 +386,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           )}
         </AnimatePresence>
 
-        {/* Floraison de la Couronne de Ronces Barbelées (Exactement comme les cadrans du menu) */}
         {phase >= 1 && (
           <div
             style={{
@@ -424,7 +412,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 overflow: "visible",
               }}
             >
-              {/* 1. Sarments de ronces noueux et brisés */}
               <g fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round">
                 <motion.path
                   d="M 48,94 L 44,74 L 53,54 L 72,38 L 104,25 L 146,18 L 196,16 L 248,18 L 298,23 L 344,33 L 378,49 L 398,70 L 403,92 L 395,115 L 374,134 L 336,149 L 284,158 L 222,160 L 158,156 L 106,145 L 68,128 L 52,110 Z"
@@ -450,7 +437,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                   transition={{ duration: 2.8, delay: 0.4, ease: "easeInOut" }}
                 />
 
-                {/* Rameaux sauvages et griffes intérieures */}
                 <motion.path
                   d="M 104,35 L 74,27 L 48,25 L 24,29 L 8,37 L 14,46"
                   strokeWidth="2.2"
@@ -502,28 +488,24 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 />
               </g>
 
-              {/* 2. LES 42 PICS ACÉRÉS / BARBELÉS ORGANIQUES (Tous visibles autour des ronces) */}
-              {/* Épines supérieures */}
               <AnimatedHookThorn x={118} y={22} rotate={-15} scale={1.15} delay={0.7} />
               <AnimatedHookThorn x={136} y={26} rotate={165} scale={0.95} delay={0.75} />
-              <AnimatedHookThorn x={156} y={18} rotate={10} scale={1.2} delay={0.8} />
+              <AnimatedHookThorn x={156} y={18} rotate={10} scale={1.2} delay={0.8} crimson />
               <AnimatedHookThorn x={176} y={28} rotate={195} scale={1} delay={0.85} />
               <AnimatedHookThorn x={232} y={18} rotate={-20} scale={1.1} delay={0.9} />
-              <AnimatedHookThorn x={278} y={21} rotate={15} scale={1.25} delay={0.95} />
+              <AnimatedHookThorn x={278} y={21} rotate={15} scale={1.25} delay={0.95} crimson />
               <AnimatedHookThorn x={296} y={29} rotate={190} scale={1} delay={1.0} />
               <AnimatedHookThorn x={322} y={28} rotate={25} scale={1.2} delay={1.05} />
               <AnimatedHookThorn x={348} y={34} rotate={35} scale={1.15} delay={1.1} />
               <AnimatedHookThorn x={368} y={42} rotate={45} scale={1.2} delay={1.15} />
 
-              {/* Épines sur les branches plongeantes intérieures */}
               <AnimatedHookThorn x={302} y={47} rotate={145} scale={0.95} delay={1.2} />
-              <AnimatedHookThorn x={282} y={58} rotate={-45} scale={0.95} delay={1.25} />
+              <AnimatedHookThorn x={282} y={58} rotate={-45} scale={0.95} delay={1.25} crimson />
               <AnimatedHookThorn x={264} y={66} rotate={135} scale={0.9} delay={1.3} />
               <AnimatedHookThorn x={292} y={62} rotate={120} scale={0.85} delay={1.35} />
 
-              {/* Épines du flanc droit */}
               <AnimatedHookThorn x={392} y={58} rotate={65} scale={1.2} delay={1.4} />
-              <AnimatedHookThorn x={402} y={76} rotate={85} scale={1.25} delay={1.45} />
+              <AnimatedHookThorn x={402} y={76} rotate={85} scale={1.25} delay={1.45} crimson />
               <AnimatedHookThorn x={404} y={96} rotate={100} scale={1.2} delay={1.5} />
               <AnimatedHookThorn x={396} y={114} rotate={115} scale={1.15} delay={1.55} />
               <AnimatedHookThorn x={378} y={74} rotate={-95} scale={1} delay={1.6} />
@@ -531,29 +513,26 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedHookThorn x={358} y={78} rotate={-110} scale={0.95} delay={1.7} />
               <AnimatedHookThorn x={360} y={106} rotate={75} scale={0.95} delay={1.75} />
 
-              {/* Épines inférieures */}
               <AnimatedHookThorn x={380} y={130} rotate={135} scale={1.2} delay={1.8} />
               <AnimatedHookThorn x={356} y={142} rotate={150} scale={1.15} delay={1.85} />
-              <AnimatedHookThorn x={324} y={152} rotate={165} scale={1.2} delay={1.9} />
+              <AnimatedHookThorn x={324} y={152} rotate={165} scale={1.2} delay={1.9} crimson />
               <AnimatedHookThorn x={294} y={144} rotate={-15} scale={1} delay={1.95} />
               <AnimatedHookThorn x={272} y={158} rotate={175} scale={1.25} delay={2.0} />
               <AnimatedHookThorn x={244} y={146} rotate={10} scale={1} delay={2.05} />
               <AnimatedHookThorn x={212} y={160} rotate={185} scale={1.2} delay={2.1} />
-              <AnimatedHookThorn x={182} y={144} rotate={-10} scale={1.05} delay={2.15} />
+              <AnimatedHookThorn x={182} y={144} rotate={-10} scale={1.05} delay={2.15} crimson />
               <AnimatedHookThorn x={158} y={158} rotate={195} scale={1.2} delay={2.2} />
               <AnimatedHookThorn x={126} y={152} rotate={205} scale={1.15} delay={2.25} />
               <AnimatedHookThorn x={96} y={142} rotate={215} scale={1.15} delay={2.3} />
 
-              {/* Épines du flanc gauche et du rameau libre */}
               <AnimatedHookThorn x={68} y={128} rotate={230} scale={1.2} delay={2.35} />
-              <AnimatedHookThorn x={52} y={108} rotate={255} scale={1.2} delay={2.4} />
+              <AnimatedHookThorn x={52} y={108} rotate={255} scale={1.2} delay={2.4} crimson />
               <AnimatedHookThorn x={46} y={84} rotate={275} scale={1.15} delay={2.45} />
               <AnimatedHookThorn x={56} y={50} rotate={305} scale={1.15} delay={2.5} />
               <AnimatedHookThorn x={68} y={26} rotate={-15} scale={1} delay={2.55} />
               <AnimatedHookThorn x={42} y={26} rotate={-25} scale={1.05} delay={2.6} />
               <AnimatedHookThorn x={22} y={30} rotate={155} scale={0.95} delay={2.65} />
 
-              {/* 3. Feuillages dentelés et nervurés */}
               <AnimatedJaggedLeaf x={8} y={38} scale={0.82} rotate={135} delay={1.3} />
               <AnimatedJaggedLeaf x={32} y={28} scale={0.72} rotate={115} delay={1.4} />
               <AnimatedJaggedLeaf x={82} y={24} scale={0.88} rotate={-155} delay={1.5} />
@@ -569,15 +548,13 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedJaggedLeaf x={302} y={154} scale={0.88} rotate={118} delay={2.5} />
               <AnimatedJaggedLeaf x={316} y={150} scale={0.86} rotate={42} delay={2.6} />
 
-              {/* 4. Éclosion des 5 Roses Gravées */}
-              <AnimatedEngravedRose x={202} y={22} scale={0.96} rotate={-10} delay={1.0} />
+              <AnimatedEngravedRose x={202} y={22} scale={0.96} rotate={-10} delay={1.0} crimson />
               <AnimatedEngravedRose x={248} y={36} scale={0.9} rotate={16} delay={1.3} />
-              <AnimatedEngravedRose x={76} y={60} scale={0.94} rotate={-20} delay={1.6} />
+              <AnimatedEngravedRose x={76} y={60} scale={0.94} rotate={-20} delay={1.6} crimson />
               <AnimatedEngravedRose x={56} y={88} scale={0.88} rotate={14} delay={1.85} />
-              <AnimatedEngravedRose x={84} y={86} scale={0.8} rotate={-8} delay={2.1} />
+              <AnimatedEngravedRose x={84} y={86} scale={0.8} rotate={-8} delay={2.1} crimson />
             </svg>
 
-            {/* Logo Calligraphique Central 1610 Cancellaresca */}
             <motion.div
               initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -612,7 +589,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 style={{
                   display: "block",
                   fontSize: "clamp(10px, 1.15vw, 13px)",
-                  color: "#171717",
+                  color: "#6B0F1A",
                   marginTop: "8px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -625,7 +602,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         )}
       </motion.div>
 
-      {/* BOUTON "ENTER ATELIER" EN BAS À DROITE */}
       {phase < 3 && (
         <motion.button
           type="button"
@@ -802,6 +778,9 @@ export default function Home() {
     <main className="helmet-home-shell">
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
+      {/* MOTEUR D'ANIMATIONS ALÉATOIRES EN ARRIÈRE-PLAN (Pétales Bordeaux, Épines, Notes d'Atelier) */}
+      <AtelierAtmosphere intensity="subtle" />
+
       <AnimatePresence>
         {hoveredItem && !infoOpen && (
           <motion.div
@@ -813,7 +792,7 @@ export default function Home() {
             style={{
               position: "fixed",
               inset: 0,
-              zIndex: 1,
+              zIndex: 2,
               pointerEvents: "none",
               display: "flex",
               alignItems: "center",
@@ -904,7 +883,7 @@ export default function Home() {
                     fontSize: "11px",
                     textTransform: "uppercase",
                     letterSpacing: "0.35em",
-                    color: "#737373",
+                    color: "#6B0F1A",
                     marginBottom: "8px",
                   }}
                 >
@@ -991,7 +970,7 @@ export default function Home() {
         >
           <span>Paris — Atelier</span>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#525252" }}>
+            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#6B0F1A" }}>
               Edition -01
             </span>
             <button
@@ -1119,7 +1098,7 @@ export default function Home() {
                   display: "block",
                   fontSize: "clamp(11px, 1.05vw, 13.5px)",
                   letterSpacing: "0.46em",
-                  color: "#171717",
+                  color: "#6B0F1A",
                   marginTop: "6px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -1161,6 +1140,7 @@ export default function Home() {
         </nav>
       </div>
 
+      {/* FOOTER BAS AVEC LE SYMBOLE COPYRIGHT NET ET "HELMET HAUTE COUTURE" */}
       <footer className="helmet-home-footer">
         <div
           style={{
@@ -1183,7 +1163,7 @@ export default function Home() {
           >
             Instagram
           </a>
-          <span style={{ color: "#a3a3a3" }}>/</span>
+          <span style={{ color: "#6B0F1A" }}>/</span>
           <a
             href="https://www.youtube.com"
             target="_blank"
@@ -1240,7 +1220,7 @@ export default function Home() {
                   style={{
                     width: "28px",
                     height: "1.5px",
-                    backgroundColor: "#dc2626",
+                    backgroundColor: "#6B0F1A",
                     transform: "rotate(45deg)",
                     display: "block",
                   }}
@@ -1254,15 +1234,30 @@ export default function Home() {
           style={{
             textAlign: "right",
             fontSize: "11px",
-            letterSpacing: "0.26em",
+            letterSpacing: "0.24em",
             color: "#171717",
             justifySelf: "end",
             textTransform: "uppercase",
             whiteSpace: "nowrap",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
           }}
         >
-          <span className="hidden sm:inline">© Helmet All Rights Reserved</span>
-          <span className="sm:hidden">© Helmet</span>
+          {/* Symbole © forcé en police Georgia/Système pour éviter le glyphe cassé de la police 1589 */}
+          <span
+            style={{
+              fontFamily: "Georgia, serif",
+              fontSize: "12px",
+              fontWeight: 400,
+              WebkitTextStroke: "0px transparent",
+              lineHeight: 1,
+            }}
+          >
+            &copy;
+          </span>
+          <span className="hidden sm:inline">Helmet Haute Couture All Rights Reserved</span>
+          <span className="sm:hidden">Helmet Haute Couture</span>
         </div>
       </footer>
     </main>

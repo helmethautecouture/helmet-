@@ -1,69 +1,85 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import LouisXVIFrame from "../LouisXVIFrame";
+import AtelierAtmosphere from "../AtelierAtmosphere";
 
 export default function ClientServicePage() {
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [cartCount, setCartCount] = useState(0);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("Order Inquiry — Overlayer Jogger -01");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   useEffect(() => {
-    const raw = localStorage.getItem("cart") || localStorage.getItem("helmet_cart");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setCartCount(parsed.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0));
-        }
-      } catch {}
+    try {
+      const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setCartCount(parsed.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0));
+      }
+    } catch {
+      setCartCount(0);
     }
   }, []);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
+    if (!email || !message) return;
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    formData.append("_subject", "Nouveau message Client Service - HELMET -01");
-    formData.append("_captcha", "false");
-    formData.append("_template", "table");
+    setStatus("sending");
 
     try {
       const response = await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
         method: "POST",
-        headers: { Accept: "application/json" },
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: `[HELMET HAUTE COUTURE] ${subject}`,
+          Name: name || "Client Atelier",
+          Email: email,
+          Subject: subject,
+          Message: message,
+        }),
       });
 
       if (response.ok) {
-        setStatus("success");
-        form.reset();
+        setStatus("sent");
+        setName("");
+        setEmail("");
+        setMessage("");
       } else {
-        const name = formData.get("Client_Name");
-        const email = formData.get("Client_Email");
-        const topic = formData.get("Subject");
-        const msg = formData.get("Message");
+        /* Fallback automatique vers le client mail si FormSubmit demande la 1ère activation */
         window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
-          `[HELMET -01] ${topic}`
-        )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${msg}`)}`;
-        setStatus("success");
+          `[HELMET HAUTE COUTURE] ${subject}`
+        )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+        setStatus("sent");
       }
     } catch {
-      setStatus("error");
+      window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
+        `[HELMET HAUTE COUTURE] ${subject}`
+      )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+      setStatus("sent");
     }
-  }
+  };
 
   return (
     <div className="helmet-page-container">
-      <header className="helmet-page-header">
+      <AtelierAtmosphere intensity="subtle" />
+
+      <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
+            className="helmet-zoom-link"
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.22em",
               whiteSpace: "nowrap",
             }}
           >
@@ -72,125 +88,201 @@ export default function ClientServicePage() {
         </div>
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link href="/"><LouisXVIFrame variant="title"><span className="font-cancellaresca" style={{ fontSize: "clamp(28px, 4.2vw, 44px)", lineHeight: 1 }}>Helmet Service</span></LouisXVIFrame></Link>
+          <Link href="/">
+            <LouisXVIFrame variant="title">
+              <span
+                className="font-cancellaresca"
+                style={{
+                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  lineHeight: 1,
+                  display: "block",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Helmet Service
+              </span>
+            </LouisXVIFrame>
+          </Link>
         </div>
 
         <div style={{ justifySelf: "end" }}>
           <Link
             href="/cart"
+            className="helmet-zoom-link"
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
-              display: "flex",
+              letterSpacing: "0.22em",
+              display: "inline-flex",
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
             }}
           >
-            <svg
-              width="16"
-              height="16"
-              style={{ width: "16px", height: "16px", minWidth: "16px" }}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-              />
+            <svg width="16" height="16" style={{ width: "16px", height: "16px", minWidth: "16px" }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            <span style={{ fontWeight: 600 }}>[{cartCount}]</span>
+            <span>[{cartCount}]</span>
           </Link>
         </div>
       </header>
 
-      <div style={{ maxWidth: "672px", margin: "0 auto" }}>
-        <div style={{ marginBottom: "36px" }}>
-          <h1 className="font-cancellaresca" style={{ fontSize: "clamp(34px, 4vw, 48px)", margin: "0 0 12px 0" }}>
-            Client Service — Edition -01
-          </h1>
+      <div style={{ position: "relative", zIndex: 10, maxWidth: "620px", margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <p
             style={{
               fontSize: "11px",
-              color: "#737373",
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.34em",
+              color: "#6B0F1A",
+              marginBottom: "8px",
+            }}
+          >
+            Paris — Atelier Concierge
+          </p>
+          <p
+            style={{
+              fontSize: "13px",
               lineHeight: 1.7,
+              letterSpacing: "0.08em",
+              color: "#404040",
               margin: 0,
             }}
           >
-            Paris Atelier — Edition -01. For any inquiries regarding your order, sizing, or garment specifications. All sales are final.
+            Direct line to our Paris studio for sizing advice, custom measurements, or order tracking.
+            All messages are delivered directly to{" "}
+            <a
+              href="mailto:helmetcothes@gmail.com"
+              style={{ textDecoration: "underline", color: "#000000" }}
+            >
+              helmetcothes@gmail.com
+            </a>
+            .
           </p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
-            <div>
-              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
-                Full Name *
-              </label>
-              <input type="text" name="Client_Name" required placeholder="Full Name" className="helmet-input" />
-            </div>
-
-            <div>
-              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
-                Email Address *
-              </label>
-              <input type="email" name="Client_Email" required placeholder="Email Address" className="helmet-input" />
-            </div>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
-            <div>
-              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
-                Order Reference (Optional)
-              </label>
-              <input type="text" name="Order_Reference" placeholder="Order #-01" className="helmet-input" />
-            </div>
-
-            <div>
-              <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
-                Topic *
-              </label>
-              <select name="Subject" required className="helmet-input">
-                <option value="Order Status & Shipping">Order Status & Shipping</option>
-                <option value="Sizing & Garment Specifications">Sizing & Garment Specifications</option>
-                <option value="Payment & Billing">Payment & Billing</option>
-                <option value="Press & Archive">Press & Archive</option>
-                <option value="General Inquiry">General Inquiry</option>
-              </select>
-            </div>
+          <div>
+            <label
+              style={{
+                display: "block",
+                fontSize: "10.5px",
+                textTransform: "uppercase",
+                letterSpacing: "0.26em",
+                marginBottom: "8px",
+              }}
+            >
+              Full Name
+            </label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="YOUR NAME"
+              className="helmet-input"
+            />
           </div>
 
           <div>
-            <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "8px", color: "#737373" }}>
-              Message *
-            </label>
-            <textarea name="Message" rows={6} required placeholder="Write your message..." className="helmet-input" />
-          </div>
-
-          <button type="submit" disabled={status === "loading"} className="helmet-btn-black">
-            {status === "loading" ? "Sending..." : "Submit Inquiry"}
-          </button>
-
-          {status === "success" && (
-            <div
+            <label
               style={{
-                padding: "16px",
-                border: "1px solid #000000",
-                backgroundColor: "#fafafa",
-                fontSize: "11px",
+                display: "block",
+                fontSize: "10.5px",
                 textTransform: "uppercase",
-                letterSpacing: "0.2em",
-                textAlign: "center",
+                letterSpacing: "0.26em",
+                marginBottom: "8px",
               }}
             >
-              Thank you. Your inquiry has been sent to Helmet Client Service.
-            </div>
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="YOUR@EMAIL.COM"
+              className="helmet-input"
+            />
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: "block",
+                fontSize: "10.5px",
+                textTransform: "uppercase",
+                letterSpacing: "0.26em",
+                marginBottom: "8px",
+              }}
+            >
+              Subject
+            </label>
+            <select
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="helmet-input"
+            >
+              <option value="Order Inquiry — Overlayer Jogger -01">
+                ORDER INQUIRY — OVERLAYER JOGGER -01
+              </option>
+              <option value="Sizing & Measurements (Size 1 / 2 / 3)">
+                SIZING & MEASUREMENTS (SIZE 1 / 2 / 3)
+              </option>
+              <option value="Private Appointment / Press">
+                PRIVATE APPOINTMENT / PRESS
+              </option>
+              <option value="Other Atelier Request">OTHER ATELIER REQUEST</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: "block",
+                fontSize: "10.5px",
+                textTransform: "uppercase",
+                letterSpacing: "0.26em",
+                marginBottom: "8px",
+              }}
+            >
+              Message
+            </label>
+            <textarea
+              rows={5}
+              required
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="WRITE YOUR MESSAGE TO OUR PARIS ATELIER..."
+              className="helmet-input"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className="helmet-btn-black"
+          >
+            {status === "sending"
+              ? "Transmitting To Paris Atelier..."
+              : status === "sent"
+              ? "Message Transmitted — Thank You"
+              : "Send Message To Atelier"}
+          </button>
+
+          {status === "sent" && (
+            <p
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#6B0F1A",
+                textAlign: "center",
+                marginTop: "6px",
+              }}
+            >
+              ✓ Your message has been sent to helmetcothes@gmail.com.
+            </p>
           )}
         </form>
       </div>
