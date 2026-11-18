@@ -14,6 +14,16 @@ const AUDIO_PATHS = [
   "/ambiance.mp3.mp3",
 ];
 
+/* Liste des noms possibles pour ta vidéo dans /public */
+const VIDEO_PATHS = [
+  "/menu-bg.mp4",
+  "/video.mp4",
+  "/bg.mp4",
+  "/menu.mp4",
+  "/background.mp4",
+  "/intro.mp4",
+];
+
 let introPlayedInMemory = false;
 
 const HELMET_FAQ_SECTIONS = [
@@ -57,7 +67,7 @@ const HELMET_FAQ_SECTIONS = [
 ];
 
 /* ============================================================================
-   SOUS-COMPOSANTS DE L'INTRO : 100% ENCRE NOIRE SUR FOND BLANC PUR
+   SOUS-COMPOSANTS DE L'INTRO : 100% INVERSÉS (BLANC PUR SUR FOND NOIR #050505)
    ============================================================================ */
 function AnimatedEngravedRose({
   x,
@@ -76,8 +86,8 @@ function AnimatedEngravedRose({
     <g transform={`translate(${x}, ${y}) scale(${scale}) rotate(${rotate})`}>
       <motion.path
         d="M -19,-5 L -16,-16 L -5,-22 L 8,-21 L 19,-14 L 22,-2 L 17,12 L 6,20 L -7,21 L -17,13 L -21,2 Z"
-        fill="#ffffff"
-        stroke="#000000"
+        fill="#050505"
+        stroke="#ffffff"
         strokeWidth="2.4"
         strokeLinejoin="round"
         initial={{ pathLength: 0, opacity: 0 }}
@@ -87,7 +97,7 @@ function AnimatedEngravedRose({
       <motion.path
         d="M -16,-7 C -13,-16 -2,-19 9,-16 C 16,-13 19,-4 16,5 M -17,3 C -14,14 -3,18 8,14 C 15,11 19,2 15,-6"
         fill="none"
-        stroke="#000000"
+        stroke="#ffffff"
         strokeWidth="2.2"
         strokeLinecap="round"
         initial={{ pathLength: 0, opacity: 0 }}
@@ -96,8 +106,8 @@ function AnimatedEngravedRose({
       />
       <motion.path
         d="M -12,-3 L -7,-12 L 4,-13 L 12,-7 L 11,4 L 3,11 L -8,9 L -13,1 Z"
-        fill="#ffffff"
-        stroke="#000000"
+        fill="#050505"
+        stroke="#ffffff"
         strokeWidth="2"
         strokeLinejoin="round"
         initial={{ pathLength: 0, opacity: 0 }}
@@ -106,7 +116,7 @@ function AnimatedEngravedRose({
       />
       <motion.path
         d="M -9,-8 L -2,-11 L 5,-9 L 2,-6 Z M 7,-3 L 11,2 L 5,8 L 4,3 Z M -10,2 L -5,8 L 1,7 L -4,3 Z"
-        fill="#000000"
+        fill="#ffffff"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: delay + 0.65 }}
@@ -114,7 +124,7 @@ function AnimatedEngravedRose({
       <motion.path
         d="M -6,-1 L -2,-6 L 5,-5 L 7,1 L 2,5 L -4,4 L -5,0 L 0,-2 L 3,0 L 0,2"
         fill="none"
-        stroke="#000000"
+        stroke="#ffffff"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -148,15 +158,15 @@ function AnimatedJaggedLeaf({
       >
         <path
           d="M 0,0 L 4,-5 L 6,-3 L 11,-8 L 13,-5 L 19,-7 L 26,0 L 19,7 L 13,5 L 11,8 L 6,3 L 4,5 Z"
-          fill="#ffffff"
-          stroke="#000000"
+          fill="#050505"
+          stroke="#ffffff"
           strokeWidth="1.9"
           strokeLinejoin="round"
         />
         <path
           d="M 1,0 L 23,0 M 6,0 L 10,-4 M 12,0 L 16,-4 M 17,0 L 20,-3 M 6,0 L 10,4 M 12,0 L 16,4 M 17,0 L 20,3"
           fill="none"
-          stroke="#000000"
+          stroke="#ffffff"
           strokeWidth="1.2"
           strokeLinecap="round"
         />
@@ -182,8 +192,8 @@ function AnimatedHookThorn({
     <g transform={`translate(${x}, ${y}) rotate(${rotate}) scale(${scale})`}>
       <motion.path
         d="M -4,0 C -1,-3 2,-8 6,-13 C 4,-6 3,-2 5,1 Z"
-        fill="#000000"
-        stroke="#000000"
+        fill="#ffffff"
+        stroke="#ffffff"
         strokeWidth="0.7"
         strokeLinejoin="round"
         initial={{ opacity: 0 }}
@@ -194,6 +204,9 @@ function AnimatedHookThorn({
   );
 }
 
+/* ============================================================================
+   INTRODUCTION CINÉMATOGRAPHIQUE : FOND NOIR PROFOND & TRACÉ BLANC PUR
+   ============================================================================ */
 function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState<0 | 1 | 3>(0);
   const [counter, setCounter] = useState<number>(0);
@@ -251,6 +264,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         userSelect: "none",
       }}
     >
+      {/* VOLET NOIR GAUCHE (S'écarte pour révéler la vidéo) */}
       <motion.div
         initial={{ x: "0%" }}
         animate={{ x: phase === 3 ? "-102%" : "0%" }}
@@ -261,10 +275,11 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           bottom: 0,
           left: 0,
           width: "50.2%",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#050505",
         }}
       />
 
+      {/* VOLET NOIR DROIT (S'écarte pour révéler la vidéo) */}
       <motion.div
         initial={{ x: "0%" }}
         animate={{ x: phase === 3 ? "102%" : "0%" }}
@@ -275,7 +290,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           bottom: 0,
           right: 0,
           width: "50.2%",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#050505",
         }}
       />
 
@@ -298,7 +313,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
             top: "clamp(26px, 4vw, 44px)",
             left: "50%",
             transform: "translateX(-50%)",
-            color: "#000000",
+            color: "#ffffff",
             fontSize: "11px",
             letterSpacing: "0.32em",
             textTransform: "uppercase",
@@ -317,7 +332,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
             position: "absolute",
             bottom: "clamp(24px, 4vw, 44px)",
             left: "clamp(24px, 4.2vw, 52px)",
-            color: "#000000",
+            color: "#ffffff",
             display: "flex",
             alignItems: "baseline",
             gap: "12px",
@@ -336,7 +351,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               fontSize: "10px",
               letterSpacing: "0.3em",
               textTransform: "uppercase",
-              color: "#525252",
+              color: "rgba(255, 255, 255, 0.7)",
             }}
           >
             {phase === 0 ? "Paris — Atelier" : "Floraison des Ronces"}
@@ -371,7 +386,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               exit={{ opacity: 0, y: -10, transition: { duration: 0.4 } }}
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
               style={{
-                color: "#000000",
+                color: "#ffffff",
                 fontSize: "clamp(12px, 1.4vw, 15px)",
                 textTransform: "uppercase",
                 textAlign: "center",
@@ -408,7 +423,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 overflow: "visible",
               }}
             >
-              <g fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round">
+              <g fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round">
                 <motion.path
                   d="M 48,94 L 44,74 L 53,54 L 72,38 L 104,25 L 146,18 L 196,16 L 248,18 L 298,23 L 344,33 L 378,49 L 398,70 L 403,92 L 395,115 L 374,134 L 336,149 L 284,158 L 222,160 L 158,156 L 106,145 L 68,128 L 52,110 Z"
                   strokeWidth="3"
@@ -568,7 +583,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 className="font-cancellaresca"
                 style={{
                   fontSize: "clamp(72px, 14vw, 185px)",
-                  color: "#000000",
+                  color: "#ffffff",
                   lineHeight: 1.04,
                   display: "block",
                   whiteSpace: "nowrap",
@@ -585,7 +600,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 style={{
                   display: "block",
                   fontSize: "clamp(10px, 1.15vw, 13px)",
-                  color: "#171717",
+                  color: "rgba(255, 255, 255, 0.88)",
                   marginTop: "8px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -603,7 +618,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           type="button"
           onClick={finishIntro}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
+          animate={{ opacity: 0.85 }}
           whileHover={{ opacity: 1, scale: 1.04 }}
           transition={{ duration: 0.4 }}
           style={{
@@ -611,9 +626,9 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
             bottom: "clamp(24px, 4vw, 44px)",
             right: "clamp(24px, 4.2vw, 52px)",
             zIndex: 30,
-            background: "#ffffff",
-            border: "1px solid #000000",
-            color: "#000000",
+            background: "rgba(5, 5, 5, 0.8)",
+            border: "1px solid #ffffff",
+            color: "#ffffff",
             padding: "8px 16px",
             fontSize: "10px",
             letterSpacing: "0.32em",
@@ -629,7 +644,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
 }
 
 /* ============================================================================
-   PAGE D'ACCUEIL PRINCIPALE
+   PAGE D'ACCUEIL PRINCIPALE (VIDÉO PLEIN ÉCRAN EN BOUCLE + MENU EN BLANC PUR)
    ============================================================================ */
 export default function Home() {
   const [showIntro, setShowIntro] = useState(!introPlayedInMemory);
@@ -637,10 +652,12 @@ export default function Home() {
   const [cartCount, setCartCount] = useState(0);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [videoIdx, setVideoIdx] = useState(0);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const isMutedByUserRef = useRef(false);
   const isInitializedRef = useRef(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     try {
@@ -652,6 +669,10 @@ export default function Home() {
       }
     } catch {
       setCartCount(0);
+    }
+
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
     }
 
     let isMounted = true;
@@ -705,6 +726,9 @@ export default function Home() {
     initWebAudio();
 
     const unlockOnInteraction = async () => {
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(() => {});
+      }
       if (!audioCtxRef.current) {
         await initWebAudio();
       }
@@ -770,25 +794,81 @@ export default function Home() {
     setShowIntro(false);
   };
 
+  const handleVideoError = () => {
+    if (videoIdx < VIDEO_PATHS.length - 1) {
+      setVideoIdx((prev) => prev + 1);
+    }
+  };
+
   return (
-    <main className="helmet-home-shell">
+    <main
+      className="helmet-home-shell"
+      style={{
+        backgroundColor: "#050505",
+        color: "#ffffff",
+      }}
+    >
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* DANS LE MENU : LE RONCIER DE ROSES EN DRAPÉ + CHUTE ALÉATOIRE DE ROSES ENTIÈRES */}
-      <AtelierAtmosphere mode="canopy-and-roses" />
+      {/* ====================================================================
+          1. VIDÉO PLEIN ÉCRAN EN BOUCLE (SANS SON, COUVRE 100% DE L'ÉCRAN)
+          ==================================================================== */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          overflow: "hidden",
+          backgroundColor: "#050505",
+          pointerEvents: "none",
+        }}
+      >
+        <video
+          ref={videoRef}
+          key={VIDEO_PATHS[videoIdx]}
+          src={VIDEO_PATHS[videoIdx]}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          onError={handleVideoError}
+          style={{
+            width: "100vw",
+            height: "100dvh",
+            objectFit: "cover",
+            objectPosition: "center",
+            display: "block",
+          }}
+        />
+        {/* Voile subtil pour garantir que les écritures et cadrans blancs ressortent toujours avec netteté */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0, 0, 0, 0.22)",
+          }}
+        />
+      </div>
 
+      {/* ====================================================================
+          2. ROSES BOTANIQUES EN BLANC PUR QUI TOMBENT DEVANT LA VIDÉO
+          ==================================================================== */}
+      <AtelierAtmosphere mode="canopy-and-roses" inverted />
+
+      {/* APERÇU PHOTO AU SURVOL */}
       <AnimatePresence>
         {hoveredItem && !infoOpen && (
           <motion.div
             key={hoveredItem}
             initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 0.22, scale: 1 }}
+            animate={{ opacity: 0.28, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
               inset: 0,
-              zIndex: 2,
+              zIndex: 5,
               pointerEvents: "none",
               display: "flex",
               alignItems: "center",
@@ -802,13 +882,14 @@ export default function Home() {
                 width: "clamp(260px, 28vw, 380px)",
                 height: "clamp(340px, 36vw, 480px)",
                 objectFit: "cover",
-                filter: "grayscale(100%) contrast(1.08)",
+                filter: "grayscale(100%) contrast(1.12)",
               }}
             />
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* FENÊTRE INFO / FAQ */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
@@ -847,6 +928,7 @@ export default function Home() {
                       fontSize: "clamp(34px, 4.8vw, 52px)",
                       lineHeight: 1,
                       display: "block",
+                      color: "#000000",
                     }}
                   >
                     Helmet
@@ -891,6 +973,7 @@ export default function Home() {
                     textTransform: "uppercase",
                     letterSpacing: "0.42em",
                     margin: 0,
+                    color: "#000000",
                   }}
                 >
                   INFO & FAQ
@@ -951,6 +1034,9 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      {/* ====================================================================
+          3. HEADER HAUT EN BLANC PUR SUR LA VIDÉO
+          ==================================================================== */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -959,14 +1045,15 @@ export default function Home() {
             gap: "4px",
             fontSize: "11px",
             letterSpacing: "0.28em",
-            color: "#171717",
+            color: "#ffffff",
             textTransform: "uppercase",
             justifySelf: "start",
+            textShadow: "0 2px 10px rgba(0,0,0,0.8)",
           }}
         >
           <span>Paris — Atelier</span>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "#525252" }}>
+            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "rgba(255,255,255,0.82)" }}>
               Edition -01
             </span>
             <button
@@ -979,7 +1066,7 @@ export default function Home() {
                 padding: 0,
                 fontSize: "9px",
                 letterSpacing: "0.22em",
-                color: "#8a8a8a",
+                color: "rgba(255,255,255,0.7)",
                 textTransform: "uppercase",
                 textDecoration: "underline",
                 cursor: "pointer",
@@ -1002,9 +1089,10 @@ export default function Home() {
               padding: "6px 12px",
               fontSize: "12px",
               letterSpacing: "0.34em",
-              color: "#000000",
+              color: "#ffffff",
               textTransform: "uppercase",
               cursor: "pointer",
+              textShadow: "0 2px 10px rgba(0,0,0,0.8)",
             }}
           >
             Info
@@ -1018,18 +1106,19 @@ export default function Home() {
             style={{
               fontSize: "12px",
               letterSpacing: "0.24em",
-              color: "#000000",
+              color: "#ffffff",
               display: "inline-flex",
               alignItems: "center",
               gap: "6px",
               textTransform: "uppercase",
               padding: "6px 4px",
+              textShadow: "0 2px 10px rgba(0,0,0,0.8)",
             }}
           >
             <svg
               width="16"
               height="16"
-              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#000000" }}
+              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#ffffff" }}
               fill="none"
               stroke="currentColor"
               strokeWidth="1.6"
@@ -1043,6 +1132,9 @@ export default function Home() {
         </div>
       </header>
 
+      {/* ====================================================================
+          4. MENU CENTRAL : LOGO & LES 4 CADRANS EN BLANC PUR (inverted)
+          ==================================================================== */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-sketch-nav">
           <div className="helmet-sketch-left">
@@ -1054,10 +1146,12 @@ export default function Home() {
                 fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
                 letterSpacing: "0.26em",
                 textTransform: "uppercase",
-                color: "#000000",
+                color: "#ffffff",
               }}
             >
-              <LouisXVIFrame variant="menu">Shop</LouisXVIFrame>
+              <LouisXVIFrame variant="menu" inverted>
+                Shop
+              </LouisXVIFrame>
             </Link>
 
             <Link
@@ -1068,10 +1162,12 @@ export default function Home() {
                 fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#000000",
+                color: "#ffffff",
               }}
             >
-              <LouisXVIFrame variant="menu">Helmet Gallery</LouisXVIFrame>
+              <LouisXVIFrame variant="menu" inverted>
+                Helmet Gallery
+              </LouisXVIFrame>
             </Link>
           </div>
 
@@ -1081,10 +1177,11 @@ export default function Home() {
                 className="font-cancellaresca"
                 style={{
                   fontSize: "clamp(66px, 10vw, 142px)",
-                  color: "#000000",
+                  color: "#ffffff",
                   display: "block",
                   lineHeight: 1.06,
                   whiteSpace: "nowrap",
+                  textShadow: "0 4px 20px rgba(0,0,0,0.75)",
                 }}
               >
                 Helmet
@@ -1094,10 +1191,11 @@ export default function Home() {
                   display: "block",
                   fontSize: "clamp(11px, 1.05vw, 13.5px)",
                   letterSpacing: "0.46em",
-                  color: "#171717",
+                  color: "rgba(255, 255, 255, 0.9)",
                   marginTop: "6px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
+                  textShadow: "0 2px 12px rgba(0,0,0,0.85)",
                 }}
               >
                 Haute Couture
@@ -1112,10 +1210,12 @@ export default function Home() {
                 fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#000000",
+                color: "#ffffff",
               }}
             >
-              <LouisXVIFrame variant="menu">Client Service</LouisXVIFrame>
+              <LouisXVIFrame variant="menu" inverted>
+                Client Service
+              </LouisXVIFrame>
             </Link>
 
             <Link
@@ -1124,10 +1224,10 @@ export default function Home() {
                 fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
                 letterSpacing: "0.26em",
                 textTransform: "uppercase",
-                color: "#000000",
+                color: "#ffffff",
               }}
             >
-              <LouisXVIFrame variant="menu">
+              <LouisXVIFrame variant="menu" inverted>
                 <span>Cart</span>
                 <span>[{cartCount}]</span>
               </LouisXVIFrame>
@@ -1136,6 +1236,9 @@ export default function Home() {
         </nav>
       </div>
 
+      {/* ====================================================================
+          5. FOOTER BAS EN BLANC PUR SUR LA VIDÉO
+          ==================================================================== */}
       <footer className="helmet-home-footer">
         <div
           style={{
@@ -1144,10 +1247,11 @@ export default function Home() {
             gap: "12px",
             fontSize: "11px",
             letterSpacing: "0.26em",
-            color: "#171717",
+            color: "#ffffff",
             justifySelf: "start",
             textTransform: "uppercase",
             whiteSpace: "nowrap",
+            textShadow: "0 2px 10px rgba(0,0,0,0.8)",
           }}
         >
           <a
@@ -1158,7 +1262,7 @@ export default function Home() {
           >
             Instagram
           </a>
-          <span style={{ color: "#a3a3a3" }}>/</span>
+          <span style={{ color: "rgba(255,255,255,0.6)" }}>/</span>
           <a
             href="https://www.youtube.com"
             target="_blank"
@@ -1183,7 +1287,8 @@ export default function Home() {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              color: "#171717",
+              color: "#ffffff",
+              filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))",
             }}
             title={isPlaying ? "Sound On (70%)" : "Sound Off"}
           >
@@ -1215,7 +1320,7 @@ export default function Home() {
                   style={{
                     width: "28px",
                     height: "1.5px",
-                    backgroundColor: "#000000",
+                    backgroundColor: "#ffffff",
                     transform: "rotate(45deg)",
                     display: "block",
                   }}
@@ -1230,26 +1335,28 @@ export default function Home() {
             textAlign: "right",
             fontSize: "11px",
             letterSpacing: "0.24em",
-            color: "#171717",
+            color: "#ffffff",
             justifySelf: "end",
             textTransform: "uppercase",
             whiteSpace: "nowrap",
             display: "flex",
             alignItems: "center",
             gap: "6px",
+            textShadow: "0 2px 10px rgba(0,0,0,0.8)",
           }}
         >
-          <span
-            style={{
-              fontFamily: "Georgia, serif",
-              fontSize: "12px",
-              fontWeight: 400,
-              WebkitTextStroke: "0px transparent",
-              lineHeight: 1,
-            }}
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            style={{ width: "13px", height: "13px", minWidth: "13px" }}
           >
-            &copy;
-          </span>
+            <circle cx="12" cy="12" r="9.5" />
+            <path strokeLinecap="round" d="M14.8 9.2a4.2 4.2 0 1 0 0 5.6" />
+          </svg>
           <span className="hidden sm:inline">Helmet Haute Couture All Rights Reserved</span>
           <span className="sm:hidden">Helmet Haute Couture</span>
         </div>

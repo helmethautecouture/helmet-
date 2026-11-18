@@ -6,17 +6,18 @@ import { motion, AnimatePresence } from "framer-motion";
 interface AtmosphereProps {
   mode?: "canopy-and-roses" | "petals-only";
   intensity?: "subtle" | "gallery";
+  inverted?: boolean;
 }
 
 interface FallingRoseInstance {
   id: number;
   archetype: 0 | 1 | 2 | 3;
-  startX: number;        // De 4vw (sous Paris Atelier) à 94vw (sous Cart)
-  startY: number;        // Hauteur de départ variée (-12vh à 18vh)
-  driftX: number;        // Dérive diagonale naturelle pendant la chute
-  swayAmplitude: number; // Amplitude du balancement lent
-  baseAngle: number;     // Inclinaison naturelle de la tige (jamais 100% rigide)
-  swayAngle: number;     // Rotation douce pendant la descente
+  startX: number;
+  startY: number;
+  driftX: number;
+  swayAmplitude: number;
+  baseAngle: number;
+  swayAngle: number;
   scale: number;
   duration: number;
   flipX: boolean;
@@ -24,9 +25,11 @@ interface FallingRoseInstance {
 
 /* ============================================================================
    MODÈLE 1 — LA ROSE ÉPANOUIE SUR TIGE ÉPINEUSE & FEUILLES LARGES
-   Inspirée trait pour trait de image_0e6f9c.png
    ============================================================================ */
-function BotanicalRoseA() {
+function BotanicalRoseA({ inverted = false }: { inverted?: boolean }) {
+  const stroke = inverted ? "#ffffff" : "#141414";
+  const fill = inverted ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+
   return (
     <svg
       viewBox="0 0 220 290"
@@ -38,10 +41,10 @@ function BotanicalRoseA() {
         maxHeight: "none",
         overflow: "visible",
         display: "block",
+        filter: inverted ? "drop-shadow(0 2px 8px rgba(0,0,0,0.65))" : "none",
       }}
     >
-      <g fill="#ffffff" stroke="#141414" strokeLinecap="round" strokeLinejoin="round">
-        {/* Tige principale diagonale noueuse (du calice jusqu'en bas à droite) */}
+      <g fill={fill} stroke={stroke} strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M 88,104 C 102,126 112,154 122,188 C 132,222 142,252 150,278"
           fill="none"
@@ -53,21 +56,18 @@ function BotanicalRoseA() {
           strokeWidth="1.1"
         />
 
-        {/* Épines acérées le long de la tige */}
-        <path d="M 103,124 L 95,129 L 106,130 Z" fill="#141414" />
-        <path d="M 118,168 L 127,164 L 120,174 Z" fill="#141414" />
-        <path d="M 124,196 L 115,200 L 126,202 Z" fill="#141414" />
-        <path d="M 134,222 L 143,219 L 136,228 Z" fill="#141414" />
-        <path d="M 142,248 L 152,242 L 145,254 Z" fill="#141414" />
+        <path d="M 103,124 L 95,129 L 106,130 Z" fill={stroke} />
+        <path d="M 118,168 L 127,164 L 120,174 Z" fill={stroke} />
+        <path d="M 124,196 L 115,200 L 126,202 Z" fill={stroke} />
+        <path d="M 134,222 L 143,219 L 136,228 Z" fill={stroke} />
+        <path d="M 142,248 L 152,242 L 145,254 Z" fill={stroke} />
 
-        {/* Rameau secondaire qui part vers la grande feuille en haut à droite */}
         <path
           d="M 112,132 C 128,112 144,92 162,72"
           fill="none"
           strokeWidth="1.5"
         />
 
-        {/* GRANDE FEUILLE DENTELÉE HAUTE DROITE (image_0e6f9c) */}
         <path
           d="M 148,86 C 142,76 152,66 154,54 C 156,42 164,34 174,26 C 184,18 194,16 202,12 C 204,20 210,24 208,34 C 212,42 208,52 204,60 C 198,70 186,76 174,80 C 164,84 156,90 148,86 Z"
           strokeWidth="1.4"
@@ -78,7 +78,6 @@ function BotanicalRoseA() {
           strokeWidth="1"
         />
 
-        {/* FEUILLE TOMBANTE DROITE */}
         <path
           d="M 138,108 C 154,104 170,112 178,128 C 184,142 182,160 174,172 C 166,162 154,166 144,154 C 134,144 132,122 138,108 Z"
           strokeWidth="1.35"
@@ -89,7 +88,6 @@ function BotanicalRoseA() {
           strokeWidth="0.95"
         />
 
-        {/* BOUQUET DE 3 FEUILLES AU CENTRE SUR LA TIGE */}
         <path
           d="M 110,144 C 92,138 74,140 62,148 C 70,158 84,164 102,158 Z"
           strokeWidth="1.3"
@@ -98,7 +96,6 @@ function BotanicalRoseA() {
           d="M 114,146 C 132,142 148,148 154,162 C 146,172 130,170 116,158 Z"
           strokeWidth="1.3"
         />
-        {/* Feuille dentelée qui descend à gauche de la tige */}
         <path
           d="M 106,150 C 90,158 76,174 68,194 C 66,204 72,210 82,206 C 96,202 110,192 114,174 C 116,164 112,154 106,150 Z"
           strokeWidth="1.45"
@@ -109,7 +106,6 @@ function BotanicalRoseA() {
           strokeWidth="1"
         />
 
-        {/* SÉPALES POINTUS SOUS LA TÊTE DE LA ROSE */}
         <path
           d="M 60,112 C 54,124 48,136 46,144 C 54,134 62,124 68,114 Z"
           strokeWidth="1.3"
@@ -119,31 +115,23 @@ function BotanicalRoseA() {
           strokeWidth="1.3"
         />
 
-        {/* ================================================================
-            GRANDE COROLLE DE LA ROSE (Pétales étagés + ombrages gravés)
-            ================================================================ */}
-        {/* Pétale externe haut-gauche */}
         <path
           d="M 36,56 C 34,38 52,26 70,28 C 78,30 80,38 76,44 C 60,40 44,46 36,56 Z"
           strokeWidth="1.5"
         />
-        {/* Pétale externe gauche anguleux */}
         <path
           d="M 36,56 C 24,62 22,82 26,96 C 20,106 20,114 32,116 C 44,118 52,124 64,118 C 48,108 38,84 36,56 Z"
           strokeWidth="1.55"
         />
-        {/* Grand pétale externe droit */}
         <path
           d="M 74,38 C 88,36 98,52 102,68 C 108,78 106,92 96,102 C 88,112 78,118 64,118 C 78,106 88,88 86,66 C 84,52 80,44 74,38 Z"
           strokeWidth="1.55"
         />
 
-        {/* Deuxième couronne de pétales enveloppants */}
         <path
           d="M 36,64 C 34,46 54,38 72,44 C 86,50 90,72 82,92 C 74,108 54,114 42,102 C 32,92 34,76 36,64 Z"
           strokeWidth="1.5"
         />
-        {/* Plis internes et pétales du cœur */}
         <path
           d="M 44,68 C 44,54 58,46 70,52 C 80,58 82,76 74,88 C 66,98 50,98 44,86 Z"
           strokeWidth="1.45"
@@ -152,16 +140,14 @@ function BotanicalRoseA() {
           d="M 48,70 C 50,58 62,54 70,60 C 76,66 74,78 66,84 C 58,88 48,82 48,70 Z"
           strokeWidth="1.4"
         />
-        {/* Spirale serrée du bouton central */}
         <path
           d="M 53,68 C 55,61 63,60 67,65 C 70,70 65,76 59,75 C 54,74 53,68 58,66 C 61,65 64,68 61,71"
           fill="none"
           strokeWidth="1.5"
         />
-        <path d="M 55,66 C 59,63 64,65 65,70 L 58,72 Z" fill="#141414" />
+        <path d="M 55,66 C 59,63 64,65 65,70 L 58,72 Z" fill={stroke} />
 
-        {/* Ombrages en hachures fines et pointillés de gravure sous les replis des pétales */}
-        <g fill="none" stroke="#141414" strokeWidth="0.85" opacity="0.8">
+        <g fill="none" stroke={stroke} strokeWidth="0.85" opacity="0.8">
           <path d="M 46,38 L 49,35 M 52,36 L 55,33 M 58,35 L 61,32 M 64,36 L 66,33" />
           <path d="M 28,84 L 32,82 M 27,90 L 32,88 M 28,96 L 33,94 M 30,102 L 35,100" />
           <path d="M 46,92 L 52,96 M 50,95 L 56,99 M 55,97 L 62,100 M 60,98 L 67,99" />
@@ -176,9 +162,11 @@ function BotanicalRoseA() {
 
 /* ============================================================================
    MODÈLE 2 — LA ROSE ÉLÉGANTE SUR TIGE COURBÉE FINE
-   Inspirée trait pour trait de image_0e6c3f.png
    ============================================================================ */
-function BotanicalRoseB() {
+function BotanicalRoseB({ inverted = false }: { inverted?: boolean }) {
+  const stroke = inverted ? "#ffffff" : "#141414";
+  const fill = inverted ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+
   return (
     <svg
       viewBox="0 0 180 280"
@@ -190,21 +178,19 @@ function BotanicalRoseB() {
         maxHeight: "none",
         overflow: "visible",
         display: "block",
+        filter: inverted ? "drop-shadow(0 2px 8px rgba(0,0,0,0.65))" : "none",
       }}
     >
-      <g fill="#ffffff" stroke="#141414" strokeLinecap="round" strokeLinejoin="round">
-        {/* Longue tige fine arquée en S doux (exactement la courbe de image_0e6c3f) */}
+      <g fill={fill} stroke={stroke} strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M 82,78 C 102,102 110,136 108,176 C 106,214 112,244 126,268"
           fill="none"
           strokeWidth="2.1"
         />
 
-        {/* Petites épines fines */}
         <path d="M 94,96 L 86,90 L 97,101" fill="none" strokeWidth="1.3" />
         <path d="M 107,212 L 100,202 L 107,218" fill="none" strokeWidth="1.3" />
 
-        {/* Feuille supérieure droite dressée */}
         <path d="M 106,138 C 110,126 114,116 118,108" fill="none" strokeWidth="1.4" />
         <path
           d="M 114,118 C 106,104 110,90 124,78 C 128,92 128,108 114,118 Z"
@@ -216,7 +202,6 @@ function BotanicalRoseB() {
           strokeWidth="0.9"
         />
 
-        {/* Feuille médiane gauche effilée */}
         <path
           d="M 108,158 C 96,144 84,132 72,126 C 80,140 90,152 108,158 Z"
           strokeWidth="1.4"
@@ -227,7 +212,6 @@ function BotanicalRoseB() {
           strokeWidth="0.9"
         />
 
-        {/* Double feuille basse à droite */}
         <path d="M 107,198 L 120,180" fill="none" strokeWidth="1.4" />
         <path
           d="M 118,182 C 114,166 120,152 134,144 C 136,160 132,174 118,182 Z"
@@ -243,42 +227,32 @@ function BotanicalRoseB() {
           strokeWidth="0.9"
         />
 
-        {/* Calice noirci et sépales arqués sous le bouton */}
         <path
           d="M 74,70 C 62,74 54,80 48,82 C 58,74 66,68 74,64 Z"
-          fill="#141414"
+          fill={stroke}
         />
         <path
           d="M 82,72 C 92,68 102,66 110,68 C 98,64 88,64 80,68 Z"
-          fill="#141414"
+          fill={stroke}
         />
-        <path
-          d="M 72,66 L 84,78 L 88,68 Z"
-          fill="#141414"
-        />
+        <path d="M 72,66 L 84,78 L 88,68 Z" fill={stroke} />
 
-        {/* TÊTE DE LA ROSE EN COUPE HAUTE (image_0e6c3f) */}
-        {/* Pétale gauche replié */}
         <path
           d="M 38,52 C 34,42 36,30 44,26 C 48,36 54,48 60,60 C 48,60 36,58 38,52 Z"
           strokeWidth="1.5"
         />
-        {/* Pétale central en dôme */}
         <path
           d="M 42,28 C 46,16 58,10 74,10 C 80,10 82,16 78,24 C 66,22 52,24 42,28 Z"
           strokeWidth="1.5"
         />
-        {/* Pétale externe droit dressé */}
         <path
           d="M 76,14 C 86,12 94,18 94,32 C 96,44 92,56 84,66 C 76,54 76,34 76,14 Z"
           strokeWidth="1.5"
         />
-        {/* Grand pétale avant enveloppant */}
         <path
           d="M 42,32 C 54,30 68,32 76,26 C 82,38 80,54 72,66 C 60,66 48,56 42,32 Z"
           strokeWidth="1.55"
         />
-        {/* Cœur tourbillonnant en haut de la coupe */}
         <path
           d="M 48,26 C 52,18 64,16 72,22 C 66,28 54,28 48,26 Z"
           strokeWidth="1.4"
@@ -288,7 +262,6 @@ function BotanicalRoseB() {
           fill="none"
           strokeWidth="1.2"
         />
-        {/* Hachures d'ombrage sous la lèvre du pétale avant */}
         <path
           d="M 48,35 L 52,40 M 53,35 L 57,41 M 58,35 L 61,40 M 63,34 L 66,39 M 68,33 L 70,38 M 62,56 L 66,63 M 66,54 L 70,62"
           fill="none"
@@ -302,9 +275,11 @@ function BotanicalRoseB() {
 
 /* ============================================================================
    MODÈLE 3 — LA ROSE GRAVURE BAROQUE & RONCE EN CROCHET
-   Inspirée trait pour trait de image_0e6bbe.png
    ============================================================================ */
-function BotanicalRoseC() {
+function BotanicalRoseC({ inverted = false }: { inverted?: boolean }) {
+  const stroke = inverted ? "#ffffff" : "#141414";
+  const fill = inverted ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+
   return (
     <svg
       viewBox="0 0 260 190"
@@ -316,15 +291,14 @@ function BotanicalRoseC() {
         maxHeight: "none",
         overflow: "visible",
         display: "block",
+        filter: inverted ? "drop-shadow(0 2px 8px rgba(0,0,0,0.65))" : "none",
       }}
     >
-      <g fill="#ffffff" stroke="#141414" strokeLinecap="round" strokeLinejoin="round">
-        {/* Grosse tige boisée hachurée qui s'enroule à droite (image_0e6bbe) */}
+      <g fill={fill} stroke={stroke} strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M 96,52 C 138,48 178,56 208,78 C 228,94 242,116 252,138 L 244,142 C 234,120 220,98 200,84 C 172,64 134,56 96,58 Z"
           strokeWidth="1.8"
         />
-        {/* Boucle de ronce inférieure qui revient vers la gauche */}
         <path
           d="M 164,44 C 154,68 160,96 184,104 C 204,110 220,98 224,88"
           fill="none"
@@ -336,15 +310,12 @@ function BotanicalRoseC() {
           strokeWidth="2.5"
         />
 
-        {/* Épines de ronce le long de la boucle */}
-        <path d="M 142,50 L 140,40 L 148,50 Z" fill="#141414" />
-        <path d="M 168,100 L 162,108 L 173,103 Z" fill="#141414" />
-        <path d="M 226,78 L 232,68 L 231,82 Z" fill="#141414" />
-        <path d="M 180,162 L 184,172 L 174,164 Z" fill="#141414" />
-        <path d="M 138,168 L 134,178 L 144,169 Z" fill="#141414" />
+        <path d="M 142,50 L 140,40 L 148,50 Z" fill={stroke} />
+        <path d="M 168,100 L 162,108 L 173,103 Z" fill={stroke} />
+        <path d="M 226,78 L 232,68 L 231,82 Z" fill={stroke} />
+        <path d="M 180,162 L 184,172 L 174,164 Z" fill={stroke} />
+        <path d="M 138,168 L 134,178 L 144,169 Z" fill={stroke} />
 
-        {/* Feuilles gravées à hachures parallèles (style woodcut de image_0e6bbe) */}
-        {/* Feuille haute gauche */}
         <path
           d="M 88,58 C 78,42 80,24 90,12 C 104,22 112,38 106,56 C 102,62 94,62 88,58 Z"
           strokeWidth="1.6"
@@ -355,7 +326,6 @@ function BotanicalRoseC() {
           strokeWidth="0.9"
         />
 
-        {/* Feuille centrale pendante */}
         <path
           d="M 118,68 C 132,62 150,72 162,90 C 144,96 124,96 114,84 C 110,78 112,72 118,68 Z"
           strokeWidth="1.6"
@@ -366,7 +336,6 @@ function BotanicalRoseC() {
           strokeWidth="0.9"
         />
 
-        {/* Feuille haute droite */}
         <path
           d="M 182,58 C 176,46 184,32 200,34 C 212,36 220,48 214,62 C 204,54 192,54 182,58 Z"
           strokeWidth="1.6"
@@ -377,23 +346,18 @@ function BotanicalRoseC() {
           strokeWidth="0.9"
         />
 
-        {/* GRANDE ROSE LOURDE INCLINÉE À GAUCHE (image_0e6bbe) */}
-        {/* Grand pétale supérieur déployé */}
         <path
           d="M 52,66 C 42,50 48,36 68,36 C 84,36 96,48 94,68 C 96,84 88,96 74,94 C 60,92 56,78 52,66 Z"
           strokeWidth="1.65"
         />
-        {/* Cœur froissé et pétales tombants à gauche */}
         <path
           d="M 56,68 C 38,66 20,76 12,68 C 6,82 10,104 22,114 C 18,128 28,142 46,138 C 60,136 66,118 64,98 C 62,82 60,72 56,68 Z"
           strokeWidth="1.65"
         />
-        {/* Pétale inférieur droit recourbé */}
         <path
           d="M 64,94 C 72,112 86,116 98,104 C 92,122 78,134 62,130 C 58,120 60,106 64,94 Z"
           strokeWidth="1.6"
         />
-        {/* Plis internes complexes et hachures de gravure */}
         <path
           d="M 24,94 C 32,82 48,82 54,96 C 58,108 50,124 36,122 C 24,120 20,106 24,94 Z"
           strokeWidth="1.4"
@@ -403,7 +367,7 @@ function BotanicalRoseC() {
           fill="none"
           strokeWidth="1.3"
         />
-        <g fill="none" stroke="#141414" strokeWidth="0.85" opacity="0.8">
+        <g fill="none" stroke={stroke} strokeWidth="0.85" opacity="0.8">
           <path d="M 58,46 C 66,44 74,48 78,56 M 68,78 C 76,82 84,82 88,76" />
           <path d="M 66,108 L 74,116 M 70,106 L 78,114 M 74,104 L 82,111" />
           <path d="M 18,82 L 26,80 M 16,88 L 24,86 M 16,94 L 23,92" />
@@ -415,9 +379,11 @@ function BotanicalRoseC() {
 
 /* ============================================================================
    MODÈLE 4 — LA TIGE EN S À VRILLES ÉPINEUSES & DOUBLE ROSE
-   Inspirée trait pour trait de image_0e6b5d.png
    ============================================================================ */
-function BotanicalRoseD() {
+function BotanicalRoseD({ inverted = false }: { inverted?: boolean }) {
+  const stroke = inverted ? "#ffffff" : "#1c1c1c";
+  const fill = inverted ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+
   return (
     <svg
       viewBox="0 0 210 310"
@@ -429,40 +395,35 @@ function BotanicalRoseD() {
         maxHeight: "none",
         overflow: "visible",
         display: "block",
+        filter: inverted ? "drop-shadow(0 2px 8px rgba(0,0,0,0.65))" : "none",
       }}
     >
-      <g fill="#ffffff" stroke="#1c1c1c" strokeLinecap="round" strokeLinejoin="round">
-        {/* Tige sinueuse en S avec vrilles enroulées (image_0e6b5d) */}
+      <g fill={fill} stroke={stroke} strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M 102,58 C 84,72 86,98 106,116 C 126,134 128,168 112,196 C 102,214 92,226 84,234"
           fill="none"
           strokeWidth="2"
         />
-        {/* Vrille enroulée haute gauche */}
         <path
           d="M 92,98 C 94,116 84,132 72,128 C 64,126 66,116 74,116"
           fill="none"
           strokeWidth="1.5"
         />
-        {/* Vrille enroulée droite */}
         <path
           d="M 118,128 C 126,108 148,108 152,128 C 154,142 142,152 134,144 C 128,138 132,128 138,128"
           fill="none"
           strokeWidth="1.5"
         />
-        {/* Vrille enroulée centre-gauche */}
         <path
           d="M 120,162 C 106,146 84,152 84,170 C 84,182 98,186 102,176"
           fill="none"
           strokeWidth="1.5"
         />
 
-        {/* Épines le long de la tige en S */}
-        <path d="M 108,124 L 102,130 L 112,130 Z" fill="#1c1c1c" />
-        <path d="M 124,164 L 132,166 L 123,172 Z" fill="#1c1c1c" />
-        <path d="M 108,202 L 100,204 L 105,210 Z" fill="#1c1c1c" />
+        <path d="M 108,124 L 102,130 L 112,130 Z" fill={stroke} />
+        <path d="M 124,164 L 132,166 L 123,172 Z" fill={stroke} />
+        <path d="M 108,202 L 100,204 L 105,210 Z" fill={stroke} />
 
-        {/* Petites feuilles dentelées le long des vrilles */}
         <path
           d="M 88,92 C 74,90 62,82 56,72 C 70,74 82,80 88,92 Z"
           strokeWidth="1.3"
@@ -476,7 +437,6 @@ function BotanicalRoseD() {
           strokeWidth="1.3"
         />
 
-        {/* BOUTON DE ROSE ALLONGÉ EN HAUT DE LA TIGE (image_0e6b5d) */}
         <path
           d="M 104,48 C 110,36 126,32 146,36 C 150,42 152,50 148,56 C 132,66 114,64 104,48 Z"
           strokeWidth="1.5"
@@ -486,7 +446,6 @@ function BotanicalRoseD() {
           fill="none"
           strokeWidth="1.1"
         />
-        {/* Sépales du bouton supérieur */}
         <path
           d="M 104,48 C 96,42 88,40 82,42 C 90,46 96,50 102,54 Z"
           strokeWidth="1.3"
@@ -496,22 +455,18 @@ function BotanicalRoseD() {
           strokeWidth="1.3"
         />
 
-        {/* GRANDE ROSE GÉOMÉTRIQUE OUVERTE EN BAS AVEC SES 2 FEUILLES (image_0e6b5d) */}
-        {/* Feuille basse gauche */}
         <path
           d="M 68,248 C 48,248 34,262 26,276 C 46,282 66,278 78,266 Z"
           strokeWidth="1.4"
         />
         <path d="M 70,256 L 32,273 M 54,264 L 46,256 M 50,266 L 56,274" fill="none" strokeWidth="0.9" />
 
-        {/* Feuille basse droite */}
         <path
           d="M 126,248 C 146,252 162,248 176,238 C 168,258 150,270 124,266 Z"
           strokeWidth="1.4"
         />
         <path d="M 126,258 L 168,243 M 144,252 L 138,246 M 148,251 L 152,260" fill="none" strokeWidth="0.9" />
 
-        {/* Pétales anguleux de la rose basse */}
         <path
           d="M 66,244 L 78,216 L 102,222 L 122,216 L 134,242 L 120,274 L 96,276 L 72,272 Z"
           strokeWidth="1.55"
@@ -528,7 +483,6 @@ function BotanicalRoseD() {
           d="M 92,246 C 94,238 104,238 106,246 C 106,252 96,254 92,246 Z"
           strokeWidth="1.35"
         />
-        {/* Hachures fines au pied des pétales */}
         <path
           d="M 78,262 L 82,267 M 84,262 L 87,267 M 106,262 L 110,267 M 112,260 L 116,266"
           fill="none"
@@ -541,11 +495,11 @@ function BotanicalRoseD() {
 }
 
 /* ============================================================================
-   COMPOSANT PRINCIPAL : CHUTE NATURELLE, ALÉATOIRE & ÉPURÉE (1 À 2 ROSES MAX)
-   Sur toute la largeur de l'écran (de Paris Atelier à gauche jusqu'à Cart à droite)
+   COMPOSANT PRINCIPAL
    ============================================================================ */
 export default function AtelierAtmosphere({
   mode = "canopy-and-roses",
+  inverted = false,
 }: AtmosphereProps) {
   const [roses, setRoses] = useState<FallingRoseInstance[]>([]);
   const nextIdRef = useRef(1);
@@ -555,14 +509,6 @@ export default function AtelierAtmosphere({
     let isMounted = true;
     let timerId: NodeJS.Timeout;
 
-    /*
-      5 grandes bandes horizontales couvrant 100% de la largeur de la fenêtre :
-      Zone 0 : Extrême gauche (4vw - 20vw, sous Paris — Atelier / Edition -01)
-      Zone 1 : Centre-gauche (21vw - 38vw, au-dessus de Shop / Helmet Gallery)
-      Zone 2 : Centre (39vw - 60vw, au-dessus de Info / Helmet)
-      Zone 3 : Centre-droit (61vw - 78vw, au-dessus de Client Service / Cart)
-      Zone 4 : Extrême droite (79vw - 93vw, sous le Cart [0] en haut à droite)
-    */
     const ZONES = [
       { min: 4, max: 19 },
       { min: 21, max: 37 },
@@ -574,7 +520,6 @@ export default function AtelierAtmosphere({
     const spawnSingleRose = () => {
       if (!isMounted) return;
 
-      /* Tire au sort une bande différente de la précédente pour ne jamais tomber au même endroit */
       let zoneIdx = Math.floor(Math.random() * ZONES.length);
       if (zoneIdx === lastZoneRef.current) {
         zoneIdx = (zoneIdx + 1 + Math.floor(Math.random() * (ZONES.length - 1))) % ZONES.length;
@@ -583,16 +528,12 @@ export default function AtelierAtmosphere({
 
       const zone = ZONES[zoneIdx];
       const startX = zone.min + Math.random() * (zone.max - zone.min);
-
-      /* Hauteur d'apparition variée (parfois tout en haut, parfois un peu plus bas dans le cadre) */
       const startY = -12 + Math.random() * 24;
 
-      /* Dérive diagonale naturelle (comme une vraie fleur portée par un courant d'air) */
       const direction = startX > 82 ? -1 : startX < 18 ? 1 : Math.random() > 0.5 ? 1 : -1;
       const driftX = direction * (45 + Math.random() * 85);
       const swayAmplitude = (Math.random() > 0.5 ? 1 : -1) * (18 + Math.random() * 26);
 
-      /* Angle naturel de la rose (jamais raide à 0°) */
       const baseAngle = (Math.random() - 0.5) * 38;
       const swayAngle = (Math.random() > 0.5 ? 1 : -1) * (16 + Math.random() * 22);
 
@@ -614,7 +555,6 @@ export default function AtelierAtmosphere({
         flipX: Math.random() > 0.5,
       };
 
-      /* Maximum 2 roses visibles simultanément à l'écran (pas d'abondance, ultra-sélect) */
       setRoses((prev) => [...prev.slice(-1), newRose]);
 
       setTimeout(() => {
@@ -622,12 +562,10 @@ export default function AtelierAtmosphere({
         setRoses((prev) => prev.filter((r) => r.id !== id));
       }, duration * 1000);
 
-      /* Une nouvelle rose tombe toutes les 5.5 à 9.5 secondes de façon irrégulière */
       const nextDelay = 5500 + Math.random() * 4000;
       timerId = setTimeout(spawnSingleRose, nextDelay);
     };
 
-    /* Première rose dès l'ouverture (après 0.6s) */
     const firstTimer = setTimeout(spawnSingleRose, 600);
 
     return () => {
@@ -643,7 +581,7 @@ export default function AtelierAtmosphere({
         position: "fixed",
         inset: 0,
         pointerEvents: "none",
-        zIndex: 2,
+        zIndex: 12,
         overflow: "hidden",
       }}
       aria-hidden="true"
@@ -661,14 +599,13 @@ export default function AtelierAtmosphere({
             }}
             animate={{
               top: "108vh",
-              /* Trajectoire diagonale fluide avec un léger bercement naturel */
               x: [
                 0,
                 rose.driftX * 0.35 + rose.swayAmplitude,
                 rose.driftX * 0.7 - rose.swayAmplitude * 0.6,
                 rose.driftX,
               ],
-              opacity: [0, 0.76, 0.72, 0],
+              opacity: [0, inverted ? 0.85 : 0.76, inverted ? 0.8 : 0.72, 0],
               rotate: [
                 rose.baseAngle,
                 rose.baseAngle + rose.swayAngle * 0.6,
@@ -688,10 +625,10 @@ export default function AtelierAtmosphere({
               willChange: "transform, top, opacity",
             }}
           >
-            {rose.archetype === 0 && <BotanicalRoseA />}
-            {rose.archetype === 1 && <BotanicalRoseB />}
-            {rose.archetype === 2 && <BotanicalRoseC />}
-            {rose.archetype === 3 && <BotanicalRoseD />}
+            {rose.archetype === 0 && <BotanicalRoseA inverted={inverted} />}
+            {rose.archetype === 1 && <BotanicalRoseB inverted={inverted} />}
+            {rose.archetype === 2 && <BotanicalRoseC inverted={inverted} />}
+            {rose.archetype === 3 && <BotanicalRoseD inverted={inverted} />}
           </motion.div>
         ))}
       </AnimatePresence>
