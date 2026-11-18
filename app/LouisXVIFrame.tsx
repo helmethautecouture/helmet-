@@ -14,8 +14,8 @@ function WoodcutRose({
   y,
   scale = 1,
   rotate = 0,
-  strokeColor = "#000000",
-  fillColor = "#ffffff",
+  strokeColor = "#ffffff",
+  fillColor = "#080808",
 }: {
   x: number;
   y: number;
@@ -68,8 +68,8 @@ function JaggedLeaf({
   y,
   scale = 1,
   rotate = 0,
-  strokeColor = "#000000",
-  fillColor = "#ffffff",
+  strokeColor = "#ffffff",
+  fillColor = "#080808",
 }: {
   x: number;
   y: number;
@@ -103,7 +103,7 @@ function HookThorn({
   y,
   rotate = 0,
   scale = 1,
-  color = "#000000",
+  color = "#ffffff",
 }: {
   x: number;
   y: number;
@@ -126,24 +126,24 @@ function HookThorn({
 export default function LouisXVIFrame({
   children,
   variant = "menu",
-  inverted = false,
+  inverted = true,
   className = "",
 }: FrameProps) {
   const isTitle = variant === "title";
 
-  /* En mode inversé (sur la vidéo du menu) : traits blancs purs et intérieur des roses sombre */
   const strokeColor = inverted ? "#ffffff" : "#000000";
-  const fillColor = inverted ? "rgba(8, 8, 8, 0.72)" : "#ffffff";
+  const fillColor = inverted ? "rgba(8, 8, 8, 0.78)" : "#ffffff";
 
+  /* Cadrans agrandis sur PC et parfaitement calibrés sur Mobile */
   const containerStyle: React.CSSProperties = isTitle
     ? {
         position: "relative",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: "clamp(280px, 35vw, 400px)",
-        minHeight: "clamp(92px, 10vw, 122px)",
-        padding: "24px 62px 20px 68px",
+        minWidth: "clamp(230px, 36vw, 420px)",
+        minHeight: "clamp(78px, 10vw, 126px)",
+        padding: "clamp(16px, 2.2vw, 26px) clamp(34px, 5vw, 68px)",
         cursor: "pointer",
         verticalAlign: "middle",
       }
@@ -152,9 +152,9 @@ export default function LouisXVIFrame({
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: "clamp(190px, 17.5vw, 242px)",
-        height: "clamp(70px, 6.4vw, 84px)",
-        padding: "15px 38px 13px 44px",
+        minWidth: "clamp(158px, 19.5vw, 276px)",
+        height: "clamp(64px, 7.2vw, 98px)",
+        padding: "clamp(12px, 1.5vw, 18px) clamp(22px, 3.4vw, 48px)",
         cursor: "pointer",
         verticalAlign: "middle",
       };
@@ -177,7 +177,7 @@ export default function LouisXVIFrame({
           overflow: "visible",
           display: "block",
           zIndex: 1,
-          filter: inverted ? "drop-shadow(0 2px 10px rgba(0,0,0,0.65))" : "none",
+          filter: inverted ? "drop-shadow(0 2px 10px rgba(0,0,0,0.75))" : "none",
         }}
       >
         <g fill="none" stroke={strokeColor} strokeLinecap="round" strokeLinejoin="round">

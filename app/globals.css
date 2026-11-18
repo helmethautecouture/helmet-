@@ -30,8 +30,8 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+  --background: #050505;
+  --foreground: #ffffff;
   --font-helmet-script: var(--font-script-1610), "HelmetScript1610", Georgia, serif;
   --font-primary: var(--font-bordeaux-1589), "HelmetBordeaux1589", Georgia, serif;
 }
@@ -53,11 +53,11 @@ body {
   max-width: 100vw !important;
   min-height: 100vh;
   overflow-x: hidden !important;
-  background-color: #ffffff !important;
-  color: #000000 !important;
+  background-color: #050505 !important;
+  color: #ffffff !important;
   font-family: var(--font-primary) !important;
   font-weight: 600 !important;
-  -webkit-text-stroke: 0.22px currentColor;
+  -webkit-text-stroke: 0.2px currentColor;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -88,19 +88,18 @@ label,
 .font-bordeaux {
   font-family: var(--font-primary) !important;
   font-weight: 600 !important;
-  -webkit-text-stroke: 0.22px currentColor;
+  -webkit-text-stroke: 0.2px currentColor;
 }
 
 input::placeholder,
 textarea::placeholder {
   font-family: var(--font-primary) !important;
   font-weight: 500 !important;
-  -webkit-text-stroke: 0.12px currentColor;
+  -webkit-text-stroke: 0.1px currentColor;
   color: #737373;
   opacity: 1;
 }
 
-/* Exception : Police 1610 Cancellaresca pour le logo Helmet et les titres calligraphiques */
 .font-cancellaresca,
 .font-helmet,
 .font-cancellaresca *,
@@ -123,7 +122,7 @@ a:active {
 }
 
 /* ==========================================================================
-   3. SYSTÈME DE CARTOUCHES GRAVÉS (4D0FDF + 4D0F08 + 4D619F)
+   3. ICÔNES, CADRANS DE RONCES & EFFETS DE ZOOM NETS
    ========================================================================== */
 
 svg:not(.helmet-ornament-svg) {
@@ -137,8 +136,6 @@ svg:not(.helmet-ornament-svg) {
 svg.helmet-ornament-svg {
   max-width: none !important;
   max-height: none !important;
-  position: absolute !important;
-  inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
   pointer-events: none !important;
@@ -146,75 +143,18 @@ svg.helmet-ornament-svg {
   overflow: visible !important;
 }
 
-.helmet-cartouche-label {
-  position: relative;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  white-space: nowrap;
-  line-height: 1;
-}
-
-/* 1. Cartouche des 4 boutons du Menu (Shop, Helmet Gallery, Client Service, Cart) */
-.helmet-cartouche-menu {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: clamp(148px, 14vw, 188px);
-  height: clamp(48px, 4.5vw, 56px);
-  padding: 0 28px !important;
-  cursor: pointer;
+.helmet-thorn-wrapper {
   transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.helmet-cartouche-menu:hover {
-  transform: scale(1.04) !important;
-}
-
-.helmet-cartouche-menu:active {
-  transform: scale(0.98) !important;
-}
-
-/* 2. Petit Cartouche pour Info (Haut Milieu) et Cart [0] (Haut Droite) */
-.helmet-cartouche-pill {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 96px;
-  height: 40px;
-  padding: 0 22px !important;
-  cursor: pointer;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.helmet-cartouche-pill:hover {
+.helmet-thorn-wrapper:hover {
   transform: scale(1.045) !important;
 }
 
-/* 3. Grand Cartouche des Titres 1610 en haut des pages (Helmet Shop, Helmet Gallery, etc.) */
-.helmet-cartouche-title,
-.helmet-title-frame {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: clamp(220px, 28vw, 320px);
-  min-height: clamp(64px, 7vw, 82px);
-  padding: 16px 44px 12px 44px !important;
-  cursor: pointer;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+.helmet-thorn-wrapper:active {
+  transform: scale(0.98) !important;
 }
 
-.helmet-cartouche-title:hover,
-.helmet-title-frame:hover {
-  transform: scale(1.03) !important;
-}
-
-/* Liens simples & Logo central avec micro-zoom net (sans flou) */
 .helmet-zoom-link {
   display: inline-flex;
   align-items: center;
@@ -226,7 +166,7 @@ svg.helmet-ornament-svg {
 
 .helmet-zoom-link:hover {
   transform: scale(1.04) !important;
-  opacity: 0.94;
+  opacity: 0.92;
 }
 
 .helmet-logo-zoom {
@@ -241,12 +181,11 @@ svg.helmet-ornament-svg {
   transform: scale(1.03) !important;
 }
 
-/* Zoom photo dans Shop & Gallery */
 .helmet-image-frame {
   position: relative;
   overflow: hidden !important;
-  background-color: #f5f5f5;
-  border: 1px solid #e5e5e5;
+  background-color: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .helmet-zoom-img {
@@ -264,16 +203,16 @@ a:hover .helmet-zoom-img {
 }
 
 /* ==========================================================================
-   4. ARCHITECTURE DU MENU ET DES PAGES
+   4. STRUCTURE DU MENU (PC & MOBILE ANTI-TASSEMENT)
    ========================================================================== */
 
 .helmet-home-shell {
   position: relative;
-  height: 100dvh;
+  min-height: 100dvh;
   width: 100%;
-  overflow: hidden;
-  background-color: #ffffff;
-  color: #000000;
+  overflow-x: hidden;
+  background-color: #050505;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -285,13 +224,15 @@ a:hover .helmet-zoom-img {
   z-index: 35;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 22px 20px 0 20px;
+  align-items: start;
+  padding: 18px 16px 0 16px;
   width: 100%;
+  gap: 8px;
 }
 
 @media (min-width: 768px) {
   .helmet-home-topbar {
+    align-items: center;
     padding: 34px 52px 0 52px;
   }
 }
@@ -303,34 +244,33 @@ a:hover .helmet-zoom-img {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
+  padding: 24px 12px;
   width: 100%;
 }
 
 .helmet-sketch-nav {
   width: 100%;
-  max-width: 1340px;
+  max-width: 1480px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
+  gap: 28px;
 }
 
-@media (min-width: 980px) {
-  .helmet-sketch-nav {
-    grid-template-columns: 1fr auto 1fr;
-    gap: 28px;
-  }
+.helmet-sketch-left,
+.helmet-sketch-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+  max-width: 430px;
+  justify-items: center;
+  align-items: center;
 }
 
 .helmet-sketch-left {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
   order: 2;
 }
 
@@ -341,35 +281,46 @@ a:hover .helmet-zoom-img {
   justify-content: center;
   text-align: center;
   order: 1;
-  padding: 0 10px;
+  padding: 12px 10px;
 }
 
 .helmet-sketch-right {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
   order: 3;
 }
 
-@media (min-width: 980px) {
+/* Sur PC : Tout aligné sur la même ligne horizontale avec bel espacement */
+@media (min-width: 1060px) {
+  .helmet-sketch-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 36px;
+    align-items: center;
+  }
+
   .helmet-sketch-left {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: none;
+    width: auto;
     justify-self: end;
     justify-content: flex-end;
-    gap: 18px;
+    gap: 32px;
     order: 1;
   }
 
   .helmet-sketch-center {
     order: 2;
-    padding: 0 20px;
+    padding: 0 24px;
   }
 
   .helmet-sketch-right {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: none;
+    width: auto;
     justify-self: start;
     justify-content: flex-start;
-    gap: 18px;
+    gap: 32px;
     order: 3;
   }
 }
@@ -380,8 +331,9 @@ a:hover .helmet-zoom-img {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 18px 20px 24px 20px;
+  padding: 16px 16px 22px 16px;
   width: 100%;
+  gap: 8px;
 }
 
 @media (min-width: 768px) {
@@ -390,18 +342,22 @@ a:hover .helmet-zoom-img {
   }
 }
 
+/* ==========================================================================
+   5. PAGES INTÉRIEURES (FOND NOIR #050505 & ÉCRITURES BLANCHES)
+   ========================================================================== */
+
 .helmet-page-container {
   min-height: 100vh;
   width: 100%;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #050505;
+  color: #ffffff;
   padding: 20px 16px 110px 16px;
   position: relative;
 }
 
 @media (min-width: 768px) {
   .helmet-page-container {
-    padding: 32px 80px 130px 80px;
+    padding: 34px 72px 130px 72px;
   }
 }
 
@@ -409,21 +365,22 @@ a:hover .helmet-zoom-img {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  border-bottom: 1px solid #e5e5e5;
-  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  padding-bottom: 20px;
   margin-bottom: 42px;
   width: 100%;
+  gap: 8px;
 }
 
 @media (min-width: 768px) {
   .helmet-page-header {
-    padding-bottom: 24px;
+    padding-bottom: 26px;
     margin-bottom: 56px;
   }
 }
 
 .helmet-product-grid {
-  max-width: 1024px;
+  max-width: 1040px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
@@ -439,7 +396,7 @@ a:hover .helmet-zoom-img {
 }
 
 .helmet-cart-grid {
-  max-width: 1152px;
+  max-width: 1180px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
@@ -449,33 +406,34 @@ a:hover .helmet-zoom-img {
 
 @media (min-width: 1024px) {
   .helmet-cart-grid {
-    grid-template-columns: 7fr 5fr;
+    grid-template-columns: 6fr 6fr;
     gap: 52px;
   }
 }
 
 .helmet-input {
   width: 100%;
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border: 1px solid #d4d4d4 !important;
-  padding: 14px 16px !important;
-  font-size: 13px !important;
+  background-color: #0a0a0a !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  padding: 13px 14px !important;
+  font-size: 12.5px !important;
   letter-spacing: 0.14em;
   outline: none !important;
-  transition: border-color 0.25s ease;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .helmet-input:focus {
-  border-color: #000000 !important;
+  border-color: #ffffff !important;
+  background-color: #121212 !important;
 }
 
 .helmet-btn-black {
   display: inline-block;
   width: 100%;
-  background-color: #000000 !important;
-  color: #ffffff !important;
-  border: 1px solid #000000 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ffffff !important;
   padding: 16px 28px !important;
   font-size: 12px !important;
   text-transform: uppercase;
@@ -486,7 +444,7 @@ a:hover .helmet-zoom-img {
 }
 
 .helmet-btn-black:hover {
-  background-color: #1f1f1f !important;
+  background-color: #e5e5e5 !important;
   transform: scale(1.015);
 }
 
@@ -494,16 +452,16 @@ a:hover .helmet-zoom-img {
   position: fixed;
   inset: 0;
   z-index: 80;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #050505;
+  color: #ffffff;
   overflow-y: auto;
-  padding: 24px 20px 120px 20px;
+  padding: 20px 16px 120px 16px;
   -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 768px) {
   .helmet-faq-overlay {
-    padding: 40px 80px 140px 80px;
+    padding: 36px 72px 140px 72px;
   }
 }
 
@@ -522,17 +480,4 @@ button {
   textarea {
     font-size: 16px !important;
   }
-}
-/* Correctif definitif Couronne de Ronces & Roses Barbelees */
-.helmet-thorn-wrapper {
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-.helmet-thorn-wrapper:hover {
-  transform: scale(1.05) !important;
-}
-.helmet-thorn-wrapper svg.helmet-ornament-svg {
-  max-width: none !important;
-  max-height: none !important;
-  width: 100% !important;
-  height: 100% !important;
 }

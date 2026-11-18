@@ -14,7 +14,6 @@ const AUDIO_PATHS = [
   "/ambiance.mp3.mp3",
 ];
 
-/* Liste des noms possibles pour ta vidéo dans /public */
 const VIDEO_PATHS = [
   "/menu-bg.mp4",
   "/video.mp4",
@@ -66,9 +65,6 @@ const HELMET_FAQ_SECTIONS = [
   },
 ];
 
-/* ============================================================================
-   SOUS-COMPOSANTS DE L'INTRO : 100% INVERSÉS (BLANC PUR SUR FOND NOIR #050505)
-   ============================================================================ */
 function AnimatedEngravedRose({
   x,
   y,
@@ -204,9 +200,6 @@ function AnimatedHookThorn({
   );
 }
 
-/* ============================================================================
-   INTRODUCTION CINÉMATOGRAPHIQUE : FOND NOIR PROFOND & TRACÉ BLANC PUR
-   ============================================================================ */
 function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState<0 | 1 | 3>(0);
   const [counter, setCounter] = useState<number>(0);
@@ -264,7 +257,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         userSelect: "none",
       }}
     >
-      {/* VOLET NOIR GAUCHE (S'écarte pour révéler la vidéo) */}
       <motion.div
         initial={{ x: "0%" }}
         animate={{ x: phase === 3 ? "-102%" : "0%" }}
@@ -279,7 +271,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         }}
       />
 
-      {/* VOLET NOIR DROIT (S'écarte pour révéler la vidéo) */}
       <motion.div
         initial={{ x: "0%" }}
         animate={{ x: phase === 3 ? "102%" : "0%" }}
@@ -331,19 +322,14 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           style={{
             position: "absolute",
             bottom: "clamp(24px, 4vw, 44px)",
-            left: "clamp(24px, 4.2vw, 52px)",
+            left: "clamp(20px, 4.2vw, 52px)",
             color: "#ffffff",
             display: "flex",
             alignItems: "baseline",
             gap: "12px",
           }}
         >
-          <span
-            style={{
-              fontSize: "clamp(18px, 2.2vw, 26px)",
-              letterSpacing: "0.18em",
-            }}
-          >
+          <span style={{ fontSize: "clamp(16px, 2.2vw, 26px)", letterSpacing: "0.18em" }}>
             [{formattedCounter}]
           </span>
           <span
@@ -402,7 +388,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
             style={{
               position: "relative",
               width: "min(92vw, 760px)",
-              height: "clamp(250px, 42vw, 360px)",
+              height: "clamp(220px, 42vw, 360px)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -431,7 +417,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                   animate={{ pathLength: 1, opacity: 1 }}
                   transition={{ duration: 2.8, ease: [0.16, 1, 0.3, 1] }}
                 />
-
                 <motion.path
                   d="M 56,80 L 66,55 L 94,35 L 138,24 L 192,23 L 252,27 L 312,26 L 362,38 L 392,58 L 406,84 L 398,108 L 378,126 L 342,142 L 292,150 L 234,151 L 172,161 L 116,152 L 76,136 L 54,114 L 50,95 Z"
                   strokeWidth="2.3"
@@ -439,7 +424,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                   animate={{ pathLength: 1, opacity: 1 }}
                   transition={{ duration: 3.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                 />
-
                 <motion.path
                   d="M 68,102 L 65,78 L 78,56 L 112,38 L 164,29 L 226,28 L 286,32 L 338,44 L 370,64 L 380,88 L 372,114 L 346,133 L 298,144 L 238,146 L 176,144 L 122,136 L 84,121 Z"
                   strokeWidth="1.8"
@@ -447,56 +431,13 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                   animate={{ pathLength: 1, opacity: 1 }}
                   transition={{ duration: 2.8, delay: 0.4, ease: "easeInOut" }}
                 />
-
-                <motion.path
-                  d="M 104,35 L 74,27 L 48,25 L 24,29 L 8,37 L 14,46"
-                  strokeWidth="2.2"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.4, delay: 0.9 }}
-                />
-                <motion.path
-                  d="M 344,33 L 316,42 L 290,54 L 266,68 L 252,67 L 246,62"
-                  strokeWidth="2"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.4, delay: 1.05 }}
-                />
-                <motion.path
-                  d="M 314,43 L 296,58 L 282,72"
-                  strokeWidth="1.6"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.2, delay: 1.2 }}
-                />
-                <motion.path
-                  d="M 352,142 L 362,116 L 360,88 L 348,64 L 332,48"
-                  strokeWidth="2.1"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 1.1 }}
-                />
-                <motion.path
-                  d="M 116,145 L 154,134 L 204,132 L 258,138 L 308,152 L 338,162"
-                  strokeWidth="2"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 1.25 }}
-                />
-                <motion.path
-                  d="M 82,134 L 106,154 L 136,164 M 228,151 L 202,164 L 178,168"
-                  strokeWidth="1.7"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.3, delay: 1.35 }}
-                />
-                <motion.path
-                  d="M 84,98 L 106,108 L 122,104 L 120,96 M 92,122 L 116,118 L 132,126"
-                  strokeWidth="1.7"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.3, delay: 1.4 }}
-                />
+                <motion.path d="M 104,35 L 74,27 L 48,25 L 24,29 L 8,37 L 14,46" strokeWidth="2.2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 0.9 }} />
+                <motion.path d="M 344,33 L 316,42 L 290,54 L 266,68 L 252,67 L 246,62" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1.05 }} />
+                <motion.path d="M 314,43 L 296,58 L 282,72" strokeWidth="1.6" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.2, delay: 1.2 }} />
+                <motion.path d="M 352,142 L 362,116 L 360,88 L 348,64 L 332,48" strokeWidth="2.1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 1.1 }} />
+                <motion.path d="M 116,145 L 154,134 L 204,132 L 258,138 L 308,152 L 338,162" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 1.25 }} />
+                <motion.path d="M 82,134 L 106,154 L 136,164 M 228,151 L 202,164 L 178,168" strokeWidth="1.7" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.3, delay: 1.35 }} />
+                <motion.path d="M 84,98 L 106,108 L 122,104 L 120,96 M 92,122 L 116,118 L 132,126" strokeWidth="1.7" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.3, delay: 1.4 }} />
               </g>
 
               <AnimatedHookThorn x={118} y={22} rotate={-15} scale={1.15} delay={0.7} />
@@ -509,12 +450,10 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedHookThorn x={322} y={28} rotate={25} scale={1.2} delay={1.05} />
               <AnimatedHookThorn x={348} y={34} rotate={35} scale={1.15} delay={1.1} />
               <AnimatedHookThorn x={368} y={42} rotate={45} scale={1.2} delay={1.15} />
-
               <AnimatedHookThorn x={302} y={47} rotate={145} scale={0.95} delay={1.2} />
               <AnimatedHookThorn x={282} y={58} rotate={-45} scale={0.95} delay={1.25} />
               <AnimatedHookThorn x={264} y={66} rotate={135} scale={0.9} delay={1.3} />
               <AnimatedHookThorn x={292} y={62} rotate={120} scale={0.85} delay={1.35} />
-
               <AnimatedHookThorn x={392} y={58} rotate={65} scale={1.2} delay={1.4} />
               <AnimatedHookThorn x={402} y={76} rotate={85} scale={1.25} delay={1.45} />
               <AnimatedHookThorn x={404} y={96} rotate={100} scale={1.2} delay={1.5} />
@@ -523,7 +462,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedHookThorn x={376} y={98} rotate={-80} scale={1.05} delay={1.65} />
               <AnimatedHookThorn x={358} y={78} rotate={-110} scale={0.95} delay={1.7} />
               <AnimatedHookThorn x={360} y={106} rotate={75} scale={0.95} delay={1.75} />
-
               <AnimatedHookThorn x={380} y={130} rotate={135} scale={1.2} delay={1.8} />
               <AnimatedHookThorn x={356} y={142} rotate={150} scale={1.15} delay={1.85} />
               <AnimatedHookThorn x={324} y={152} rotate={165} scale={1.2} delay={1.9} />
@@ -535,7 +473,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedHookThorn x={158} y={158} rotate={195} scale={1.2} delay={2.2} />
               <AnimatedHookThorn x={126} y={152} rotate={205} scale={1.15} delay={2.25} />
               <AnimatedHookThorn x={96} y={142} rotate={215} scale={1.15} delay={2.3} />
-
               <AnimatedHookThorn x={68} y={128} rotate={230} scale={1.2} delay={2.35} />
               <AnimatedHookThorn x={52} y={108} rotate={255} scale={1.2} delay={2.4} />
               <AnimatedHookThorn x={46} y={84} rotate={275} scale={1.15} delay={2.45} />
@@ -582,7 +519,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(72px, 14vw, 185px)",
+                  fontSize: "clamp(64px, 14vw, 185px)",
                   color: "#ffffff",
                   lineHeight: 1.04,
                   display: "block",
@@ -624,7 +561,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           style={{
             position: "absolute",
             bottom: "clamp(24px, 4vw, 44px)",
-            right: "clamp(24px, 4.2vw, 52px)",
+            right: "clamp(20px, 4.2vw, 52px)",
             zIndex: 30,
             background: "rgba(5, 5, 5, 0.8)",
             border: "1px solid #ffffff",
@@ -643,14 +580,10 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-/* ============================================================================
-   PAGE D'ACCUEIL PRINCIPALE (VIDÉO PLEIN ÉCRAN EN BOUCLE + MENU EN BLANC PUR)
-   ============================================================================ */
 export default function Home() {
   const [showIntro, setShowIntro] = useState(!introPlayedInMemory);
   const [isPlaying, setIsPlaying] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const [videoIdx, setVideoIdx] = useState(0);
 
@@ -810,9 +743,7 @@ export default function Home() {
     >
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* ====================================================================
-          1. VIDÉO PLEIN ÉCRAN EN BOUCLE (SANS SON, COUVRE 100% DE L'ÉCRAN)
-          ==================================================================== */}
+      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE */}
       <div
         style={{
           position: "fixed",
@@ -841,67 +772,36 @@ export default function Home() {
             display: "block",
           }}
         />
-        {/* Voile subtil pour garantir que les écritures et cadrans blancs ressortent toujours avec netteté */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            background: "rgba(0, 0, 0, 0.22)",
+            background: "rgba(0, 0, 0, 0.24)",
           }}
         />
       </div>
 
-      {/* ====================================================================
-          2. ROSES BOTANIQUES EN BLANC PUR QUI TOMBENT DEVANT LA VIDÉO
-          ==================================================================== */}
+      {/* 2. ROSES BOTANIQUES EN BLANC PUR (1 à 4 max par vagues décalées) */}
       <AtelierAtmosphere mode="canopy-and-roses" inverted />
 
-      {/* APERÇU PHOTO AU SURVOL */}
-      <AnimatePresence>
-        {hoveredItem && !infoOpen && (
-          <motion.div
-            key={hoveredItem}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 0.28, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 5,
-              pointerEvents: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={hoveredItem}
-              alt=""
-              style={{
-                width: "clamp(260px, 28vw, 380px)",
-                height: "clamp(340px, 36vw, 480px)",
-                objectFit: "cover",
-                filter: "grayscale(100%) contrast(1.12)",
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* FENÊTRE INFO / FAQ */}
+      {/* 3. FENÊTRE HELMET INFO (En Noir & Blanc Inversé, avec Cadran Helmet Info cliquable pour revenir au Menu) */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
             key="faq-overlay"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
             className="helmet-faq-overlay"
           >
-            <div style={{ maxWidth: "780px", margin: "0 auto" }}>
-              <header className="helmet-page-header">
+            <div style={{ maxWidth: "820px", margin: "0 auto", position: "relative", zIndex: 10 }}>
+              <motion.header
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                className="helmet-page-header"
+              >
                 <div style={{ justifySelf: "start" }}>
                   <button
                     type="button"
@@ -910,11 +810,11 @@ export default function Home() {
                     style={{
                       background: "transparent",
                       border: "none",
-                      fontSize: "12px",
+                      fontSize: "11px",
                       textTransform: "uppercase",
-                      letterSpacing: "0.24em",
+                      letterSpacing: "0.22em",
                       padding: 0,
-                      color: "#000000",
+                      color: "#ffffff",
                     }}
                   >
                     ← Back To Menu
@@ -922,17 +822,32 @@ export default function Home() {
                 </div>
 
                 <div style={{ justifySelf: "center", textAlign: "center" }}>
-                  <span
-                    className="font-cancellaresca"
+                  <button
+                    type="button"
+                    onClick={() => setInfoOpen(false)}
                     style={{
-                      fontSize: "clamp(34px, 4.8vw, 52px)",
-                      lineHeight: 1,
-                      display: "block",
-                      color: "#000000",
+                      background: "transparent",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                      color: "#ffffff",
                     }}
+                    title="Return To Menu"
                   >
-                    Helmet
-                  </span>
+                    <LouisXVIFrame variant="title" inverted>
+                      <span
+                        className="font-cancellaresca"
+                        style={{
+                          fontSize: "clamp(26px, 4.2vw, 44px)",
+                          lineHeight: 1,
+                          display: "block",
+                          color: "#ffffff",
+                        }}
+                      >
+                        Helmet Info
+                      </span>
+                    </LouisXVIFrame>
+                  </button>
                 </div>
 
                 <div style={{ justifySelf: "end" }}>
@@ -943,25 +858,30 @@ export default function Home() {
                     style={{
                       background: "transparent",
                       border: "none",
-                      fontSize: "12px",
+                      fontSize: "11px",
                       textTransform: "uppercase",
-                      letterSpacing: "0.24em",
+                      letterSpacing: "0.22em",
                       padding: 0,
-                      color: "#000000",
+                      color: "#ffffff",
                     }}
                   >
                     Close [X]
                   </button>
                 </div>
-              </header>
+              </motion.header>
 
-              <div style={{ textAlign: "center", marginBottom: "48px", marginTop: "16px" }}>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                style={{ textAlign: "center", marginBottom: "48px", marginTop: "16px" }}
+              >
                 <p
                   style={{
                     fontSize: "11px",
                     textTransform: "uppercase",
                     letterSpacing: "0.35em",
-                    color: "#737373",
+                    color: "rgba(255,255,255,0.65)",
                     marginBottom: "8px",
                   }}
                 >
@@ -969,24 +889,31 @@ export default function Home() {
                 </p>
                 <h1
                   style={{
-                    fontSize: "16px",
+                    fontSize: "15px",
                     textTransform: "uppercase",
                     letterSpacing: "0.42em",
                     margin: 0,
-                    color: "#000000",
+                    color: "#ffffff",
                   }}
                 >
                   INFO & FAQ
                 </h1>
-              </div>
+              </motion.div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "38px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
                 {HELMET_FAQ_SECTIONS.map((sec, idx) => (
-                  <section
+                  <motion.section
                     key={idx}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.38,
+                      delay: 0.14 + idx * 0.06,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                     style={{
-                      borderBottom: "1px solid #e5e5e5",
-                      paddingBottom: "30px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.16)",
+                      paddingBottom: "28px",
                     }}
                   >
                     <h2
@@ -994,7 +921,7 @@ export default function Home() {
                         fontSize: "13px",
                         letterSpacing: "0.28em",
                         textTransform: "uppercase",
-                        color: "#000000",
+                        color: "#ffffff",
                         marginBottom: "14px",
                       }}
                     >
@@ -1008,7 +935,7 @@ export default function Home() {
                             fontSize: "13.5px",
                             lineHeight: 1.8,
                             letterSpacing: "0.06em",
-                            color: "#262626",
+                            color: "rgba(255, 255, 255, 0.82)",
                             margin: 0,
                           }}
                         >
@@ -1016,11 +943,16 @@ export default function Home() {
                         </p>
                       ))}
                     </div>
-                  </section>
+                  </motion.section>
                 ))}
               </div>
 
-              <div style={{ marginTop: "48px", textAlign: "center" }}>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.42 }}
+                style={{ marginTop: "48px", textAlign: "center" }}
+              >
                 <Link
                   href="/service"
                   className="helmet-btn-black"
@@ -1028,23 +960,21 @@ export default function Home() {
                 >
                   Contact Client Service
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ====================================================================
-          3. HEADER HAUT EN BLANC PUR SUR LA VIDÉO
-          ==================================================================== */}
+      {/* 4. HEADER HAUT (Espacé proprement sur Mobile pour éviter tout conflit entre [Intro] et Info) */}
       <header className="helmet-home-topbar">
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: "4px",
-            fontSize: "11px",
-            letterSpacing: "0.28em",
+            fontSize: "clamp(10px, 1.1vw, 11.5px)",
+            letterSpacing: "0.24em",
             color: "#ffffff",
             textTransform: "uppercase",
             justifySelf: "start",
@@ -1052,30 +982,30 @@ export default function Home() {
           }}
         >
           <span>Paris — Atelier</span>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "10px", letterSpacing: "0.24em", color: "rgba(255,255,255,0.82)" }}>
-              Edition -01
-            </span>
-            <button
-              type="button"
-              onClick={() => setShowIntro(true)}
-              className="helmet-zoom-link"
-              style={{
-                background: "transparent",
-                border: "none",
-                padding: 0,
-                fontSize: "9px",
-                letterSpacing: "0.22em",
-                color: "rgba(255,255,255,0.7)",
-                textTransform: "uppercase",
-                textDecoration: "underline",
-                cursor: "pointer",
-              }}
-              title="Rejouer l'animation d'ouverture"
-            >
-              [Intro]
-            </button>
-          </div>
+          <span style={{ fontSize: "9.5px", letterSpacing: "0.22em", color: "rgba(255,255,255,0.8)" }}>
+            Edition -01
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowIntro(true)}
+            className="helmet-zoom-link"
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: "2px 0",
+              fontSize: "9px",
+              letterSpacing: "0.22em",
+              color: "rgba(255,255,255,0.68)",
+              textTransform: "uppercase",
+              textDecoration: "underline",
+              cursor: "pointer",
+              justifyContent: "flex-start",
+              width: "fit-content",
+            }}
+            title="Rejouer l'animation d'ouverture"
+          >
+            [Intro]
+          </button>
         </div>
 
         <div style={{ justifySelf: "center" }}>
@@ -1086,7 +1016,7 @@ export default function Home() {
             style={{
               background: "transparent",
               border: "none",
-              padding: "6px 12px",
+              padding: "8px 16px",
               fontSize: "12px",
               letterSpacing: "0.34em",
               color: "#ffffff",
@@ -1132,19 +1062,16 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ====================================================================
-          4. MENU CENTRAL : LOGO & LES 4 CADRANS EN BLANC PUR (inverted)
-          ==================================================================== */}
+      {/* 5. MENU CENTRAL : CADRANS AGRANDIS & ESPACÉS, TEXTE "SHOP" PLUS GRAND, ZÉRO BUG D'IMAGE AU SURVOL */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-sketch-nav">
           <div className="helmet-sketch-left">
             <Link
               href="/shop"
-              onMouseEnter={() => setHoveredItem("/product1.jpg")}
-              onMouseLeave={() => setHoveredItem(null)}
               style={{
-                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
-                letterSpacing: "0.26em",
+                /* Police de SHOP augmentée comme demandé, tout en restant bien dans son cadre */
+                fontSize: "clamp(14px, 1.55vw, 18.5px)",
+                letterSpacing: "0.3em",
                 textTransform: "uppercase",
                 color: "#ffffff",
               }}
@@ -1156,10 +1083,8 @@ export default function Home() {
 
             <Link
               href="/helmet"
-              onMouseEnter={() => setHoveredItem("/product2.jpg")}
-              onMouseLeave={() => setHoveredItem(null)}
               style={{
-                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                fontSize: "clamp(11px, 1.2vw, 14px)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "#ffffff",
@@ -1176,7 +1101,7 @@ export default function Home() {
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(66px, 10vw, 142px)",
+                  fontSize: "clamp(64px, 10.5vw, 148px)",
                   color: "#ffffff",
                   display: "block",
                   lineHeight: 1.06,
@@ -1189,7 +1114,7 @@ export default function Home() {
               <span
                 style={{
                   display: "block",
-                  fontSize: "clamp(11px, 1.05vw, 13.5px)",
+                  fontSize: "clamp(10.5px, 1.05vw, 13.5px)",
                   letterSpacing: "0.46em",
                   color: "rgba(255, 255, 255, 0.9)",
                   marginTop: "6px",
@@ -1207,7 +1132,7 @@ export default function Home() {
             <Link
               href="/service"
               style={{
-                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                fontSize: "clamp(11px, 1.2vw, 14px)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "#ffffff",
@@ -1221,7 +1146,7 @@ export default function Home() {
             <Link
               href="/cart"
               style={{
-                fontSize: "clamp(11.5px, 1.15vw, 13.5px)",
+                fontSize: "clamp(11.5px, 1.25vw, 14.5px)",
                 letterSpacing: "0.26em",
                 textTransform: "uppercase",
                 color: "#ffffff",
@@ -1236,17 +1161,15 @@ export default function Home() {
         </nav>
       </div>
 
-      {/* ====================================================================
-          5. FOOTER BAS EN BLANC PUR SUR LA VIDÉO
-          ==================================================================== */}
+      {/* 6. FOOTER BAS */}
       <footer className="helmet-home-footer">
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "12px",
-            fontSize: "11px",
-            letterSpacing: "0.26em",
+            gap: "10px",
+            fontSize: "clamp(10px, 1vw, 11px)",
+            letterSpacing: "0.24em",
             color: "#ffffff",
             justifySelf: "start",
             textTransform: "uppercase",
@@ -1333,8 +1256,8 @@ export default function Home() {
         <div
           style={{
             textAlign: "right",
-            fontSize: "11px",
-            letterSpacing: "0.24em",
+            fontSize: "clamp(10px, 1vw, 11px)",
+            letterSpacing: "0.22em",
             color: "#ffffff",
             justifySelf: "end",
             textTransform: "uppercase",

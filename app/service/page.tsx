@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
 import AtelierAtmosphere from "../AtelierAtmosphere";
 
@@ -68,10 +69,15 @@ export default function ClientServicePage() {
 
   return (
     <div className="helmet-page-container">
-      {/* PÉTALES AU TRAIT FIN QUI TOMBENT ALÉATOIREMENT */}
-      <AtelierAtmosphere mode="petals-only" />
+      <AtelierAtmosphere mode="petals-only" inverted />
 
-      <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
+      <motion.header
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+        className="helmet-page-header"
+        style={{ position: "relative", zIndex: 10 }}
+      >
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
@@ -81,6 +87,7 @@ export default function ClientServicePage() {
               textTransform: "uppercase",
               letterSpacing: "0.22em",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             ← Back To Home
@@ -89,14 +96,15 @@ export default function ClientServicePage() {
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link href="/">
-            <LouisXVIFrame variant="title">
+            <LouisXVIFrame variant="title" inverted>
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  fontSize: "clamp(26px, 4.2vw, 44px)",
                   lineHeight: 1,
                   display: "block",
                   whiteSpace: "nowrap",
+                  color: "#ffffff",
                 }}
               >
                 Helmet Service
@@ -117,6 +125,7 @@ export default function ClientServicePage() {
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             <svg width="16" height="16" style={{ width: "16px", height: "16px", minWidth: "16px" }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -125,24 +134,35 @@ export default function ClientServicePage() {
             <span>[{cartCount}]</span>
           </Link>
         </div>
-      </header>
+      </motion.header>
 
       <div style={{ position: "relative", zIndex: 10, maxWidth: "620px", margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: "36px" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.36, delay: 0.08 }}
+          style={{ textAlign: "center", marginBottom: "36px" }}
+        >
           <p
             style={{
               fontSize: "11px",
               textTransform: "uppercase",
               letterSpacing: "0.34em",
-              color: "#737373",
+              color: "rgba(255,255,255,0.68)",
               margin: 0,
             }}
           >
             Paris — Atelier Concierge
           </p>
-        </div>
+        </motion.div>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <motion.form
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.14 }}
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+        >
           <div>
             <label
               style={{
@@ -257,7 +277,7 @@ export default function ClientServicePage() {
                 fontSize: "11px",
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "#000000",
+                color: "#ffffff",
                 textAlign: "center",
                 marginTop: "6px",
               }}
@@ -265,7 +285,7 @@ export default function ClientServicePage() {
               ✓ Your message has been transmitted.
             </p>
           )}
-        </form>
+        </motion.form>
       </div>
     </div>
   );

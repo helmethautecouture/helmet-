@@ -39,10 +39,15 @@ export default function HelmetGallery() {
 
   return (
     <div className="helmet-page-container" style={{ overflow: "hidden" }}>
-      {/* DANS LA GALERIE : LE RONCIER DE ROSES EN DRAPÉ + CHUTE ALÉATOIRE DE ROSES ENTIÈRES */}
-      <AtelierAtmosphere mode="canopy-and-roses" />
+      <AtelierAtmosphere mode="canopy-and-roses" inverted />
 
-      <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
+      <motion.header
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+        className="helmet-page-header"
+        style={{ position: "relative", zIndex: 10 }}
+      >
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
@@ -52,6 +57,7 @@ export default function HelmetGallery() {
               textTransform: "uppercase",
               letterSpacing: "0.22em",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             ← Back To Home
@@ -60,14 +66,15 @@ export default function HelmetGallery() {
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link href="/">
-            <LouisXVIFrame variant="title">
+            <LouisXVIFrame variant="title" inverted>
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  fontSize: "clamp(26px, 4.2vw, 44px)",
                   lineHeight: 1,
                   display: "block",
                   whiteSpace: "nowrap",
+                  color: "#ffffff",
                 }}
               >
                 Helmet Gallery
@@ -88,6 +95,7 @@ export default function HelmetGallery() {
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             <svg width="16" height="16" style={{ width: "16px", height: "16px", minWidth: "16px" }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -96,7 +104,7 @@ export default function HelmetGallery() {
             <span>[{cartCount}]</span>
           </Link>
         </div>
-      </header>
+      </motion.header>
 
       <div
         style={{
@@ -112,10 +120,9 @@ export default function HelmetGallery() {
         {galleryItems.map((item, index) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.42, delay: 0.1 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{ display: "flex", flexDirection: "column", gap: "16px" }}
           >
             <div
@@ -123,7 +130,6 @@ export default function HelmetGallery() {
               style={{
                 aspectRatio: "4 / 5",
                 width: "100%",
-                border: "1px solid #e5e5e5",
               }}
             >
               <img
@@ -144,7 +150,7 @@ export default function HelmetGallery() {
             >
               <span
                 className="font-cancellaresca"
-                style={{ fontSize: "30px", letterSpacing: "0.05em", color: "#000000", textAlign: "center" }}
+                style={{ fontSize: "30px", letterSpacing: "0.05em", color: "#ffffff", textAlign: "center" }}
               >
                 {item.title}
               </span>
@@ -153,7 +159,7 @@ export default function HelmetGallery() {
                   fontSize: "10.5px",
                   letterSpacing: "0.28em",
                   textTransform: "uppercase",
-                  color: "#525252",
+                  color: "rgba(255,255,255,0.68)",
                   textAlign: "center",
                 }}
               >

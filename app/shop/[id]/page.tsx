@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import LouisXVIFrame from "../../LouisXVIFrame";
+import AtelierAtmosphere from "../../AtelierAtmosphere";
 
 const PRODUCT = {
   id: "-01",
@@ -75,7 +77,15 @@ export default function ProductDetailPage() {
 
   return (
     <div className="helmet-page-container">
-      <header className="helmet-page-header">
+      <AtelierAtmosphere mode="petals-only" inverted />
+
+      <motion.header
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+        className="helmet-page-header"
+        style={{ position: "relative", zIndex: 10 }}
+      >
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/shop"
@@ -85,6 +95,7 @@ export default function ProductDetailPage() {
               textTransform: "uppercase",
               letterSpacing: "0.22em",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             ← Back To Shop
@@ -93,13 +104,14 @@ export default function ProductDetailPage() {
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link href="/">
-            <LouisXVIFrame variant="title">
+            <LouisXVIFrame variant="title" inverted>
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  fontSize: "clamp(26px, 4.2vw, 44px)",
                   lineHeight: 1,
                   display: "block",
+                  color: "#ffffff",
                 }}
               >
                 Helmet Shop
@@ -120,6 +132,7 @@ export default function ProductDetailPage() {
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             <svg
@@ -140,11 +153,14 @@ export default function ProductDetailPage() {
             <span>[{cartCount}]</span>
           </Link>
         </div>
-      </header>
+      </motion.header>
 
-      <div className="helmet-product-grid">
-        {/* COLONNE GAUCHE : VISUELS PRODUIT */}
-        <div>
+      <div className="helmet-product-grid" style={{ position: "relative", zIndex: 10 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div
             className="helmet-image-frame"
             style={{
@@ -170,8 +186,8 @@ export default function ProductDetailPage() {
                   width: "76px",
                   aspectRatio: "3 / 4",
                   padding: 0,
-                  border: activeImage === img ? "1.5px solid #000000" : "1px solid #e5e5e5",
-                  backgroundColor: "#f5f5f5",
+                  border: activeImage === img ? "1.5px solid #ffffff" : "1px solid rgba(255,255,255,0.22)",
+                  backgroundColor: "#0d0d0d",
                   cursor: "pointer",
                   overflow: "hidden",
                 }}
@@ -184,17 +200,21 @@ export default function ProductDetailPage() {
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* COLONNE DROITE : INFOS, TAILLES 1/2/3 & AJOUT PANIER */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-          <div style={{ borderBottom: "1px solid #e5e5e5", paddingBottom: "22px" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: "flex", flexDirection: "column", gap: "28px" }}
+        >
+          <div style={{ borderBottom: "1px solid rgba(255,255,255,0.16)", paddingBottom: "22px" }}>
             <p
               style={{
                 fontSize: "10.5px",
                 textTransform: "uppercase",
                 letterSpacing: "0.32em",
-                color: "#737373",
+                color: "rgba(255,255,255,0.65)",
                 margin: "0 0 10px 0",
               }}
             >
@@ -206,6 +226,7 @@ export default function ProductDetailPage() {
                 fontSize: "clamp(34px, 4.5vw, 48px)",
                 margin: "0 0 12px 0",
                 lineHeight: 1.08,
+                color: "#ffffff",
               }}
             >
               {PRODUCT.name}
@@ -214,7 +235,7 @@ export default function ProductDetailPage() {
               style={{
                 fontSize: "16px",
                 letterSpacing: "0.2em",
-                color: "#000000",
+                color: "#ffffff",
                 margin: 0,
               }}
             >
@@ -222,7 +243,6 @@ export default function ProductDetailPage() {
             </p>
           </div>
 
-          {/* SÉLECTEUR DE TAILLE : SIZE 1 / 2 / 3 */}
           <div>
             <div
               style={{
@@ -235,7 +255,7 @@ export default function ProductDetailPage() {
               }}
             >
               <span>Select Size</span>
-              <span style={{ color: "#525252" }}>Size {selectedSize}</span>
+              <span style={{ color: "rgba(255,255,255,0.7)" }}>Size {selectedSize}</span>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
@@ -252,9 +272,9 @@ export default function ProductDetailPage() {
                       letterSpacing: "0.26em",
                       textTransform: "uppercase",
                       cursor: "pointer",
-                      backgroundColor: isSelected ? "#000000" : "#ffffff",
-                      color: isSelected ? "#ffffff" : "#000000",
-                      border: "1px solid #000000",
+                      backgroundColor: isSelected ? "#ffffff" : "#050505",
+                      color: isSelected ? "#000000" : "#ffffff",
+                      border: "1px solid #ffffff",
                       transition: "all 0.25s ease",
                     }}
                   >
@@ -265,7 +285,6 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* BOUTON AJOUTER AU PANIER */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <button
               type="button"
@@ -284,7 +303,8 @@ export default function ProductDetailPage() {
                   textTransform: "uppercase",
                   textAlign: "center",
                   padding: "12px",
-                  border: "1px solid #000000",
+                  border: "1px solid #ffffff",
+                  color: "#ffffff",
                   display: "block",
                 }}
               >
@@ -293,10 +313,9 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          {/* FICHE TECHNIQUE & SAVOIR-FAIRE */}
           <div
             style={{
-              borderTop: "1px solid #e5e5e5",
+              borderTop: "1px solid rgba(255,255,255,0.16)",
               paddingTop: "24px",
               display: "flex",
               flexDirection: "column",
@@ -309,6 +328,7 @@ export default function ProductDetailPage() {
                 letterSpacing: "0.3em",
                 textTransform: "uppercase",
                 margin: "0 0 4px 0",
+                color: "#ffffff",
               }}
             >
               Atelier Specifications
@@ -320,7 +340,7 @@ export default function ProductDetailPage() {
                   fontSize: "13px",
                   lineHeight: 1.7,
                   letterSpacing: "0.06em",
-                  color: "#262626",
+                  color: "rgba(255,255,255,0.8)",
                   margin: 0,
                 }}
               >
@@ -328,7 +348,7 @@ export default function ProductDetailPage() {
               </p>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

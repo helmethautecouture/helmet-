@@ -1,6 +1,8 @@
 ﻿"use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
 import AtelierAtmosphere from "../AtelierAtmosphere";
 
@@ -29,10 +31,16 @@ export default function Shop() {
 
   return (
     <div className="helmet-page-container">
-      {/* DANS LE SHOP : UNIQUEMENT QUELQUES PÉTALES AU TRAIT FIN QUI TOMBENT ALÉATOIREMENT */}
-      <AtelierAtmosphere mode="petals-only" />
+      {/* ROSES BLANCHES QUI TOMBENT PAR VAGUES ALÉATOIRES (MAX 4) */}
+      <AtelierAtmosphere mode="petals-only" inverted />
 
-      <header className="helmet-page-header" style={{ position: "relative", zIndex: 10 }}>
+      <motion.header
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+        className="helmet-page-header"
+        style={{ position: "relative", zIndex: 10 }}
+      >
         <div style={{ justifySelf: "start" }}>
           <Link
             href="/"
@@ -42,6 +50,7 @@ export default function Shop() {
               textTransform: "uppercase",
               letterSpacing: "0.22em",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             ← Back To Home
@@ -50,13 +59,14 @@ export default function Shop() {
 
         <div style={{ justifySelf: "center", textAlign: "center" }}>
           <Link href="/">
-            <LouisXVIFrame variant="title">
+            <LouisXVIFrame variant="title" inverted>
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(28px, 4.2vw, 44px)",
+                  fontSize: "clamp(26px, 4.2vw, 44px)",
                   lineHeight: 1,
                   display: "block",
+                  color: "#ffffff",
                 }}
               >
                 Helmet Shop
@@ -77,6 +87,7 @@ export default function Shop() {
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
+              color: "#ffffff",
             }}
           >
             <svg
@@ -97,15 +108,25 @@ export default function Shop() {
             <span>[{cartCount}]</span>
           </Link>
         </div>
-      </header>
+      </motion.header>
 
-      <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginBottom: "40px" }}>
-        <p style={{ fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.3em", color: "#737373" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.36, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: "relative", zIndex: 10, textAlign: "center", marginBottom: "40px" }}
+      >
+        <p style={{ fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.3em", color: "rgba(255,255,255,0.68)" }}>
           Paris Atelier — Edition -01
         </p>
-      </div>
+      </motion.div>
 
-      <div style={{ position: "relative", zIndex: 10, maxWidth: "440px", margin: "0 auto" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: "relative", zIndex: 10, maxWidth: "440px", margin: "0 auto" }}
+      >
         <Link href="/shop/-01" style={{ display: "block" }}>
           <div
             className="helmet-image-frame"
@@ -123,10 +144,10 @@ export default function Shop() {
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "12px" }}>
-            <h2 className="font-cancellaresca" style={{ fontSize: "28px", margin: 0 }}>
+            <h2 className="font-cancellaresca" style={{ fontSize: "28px", margin: 0, color: "#ffffff" }}>
               {SINGLE_PRODUCT.name}
             </h2>
-            <span style={{ fontSize: "13px", letterSpacing: "0.18em", color: "#171717", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: "13px", letterSpacing: "0.18em", color: "#ffffff", whiteSpace: "nowrap" }}>
               150 €
             </span>
           </div>
@@ -136,14 +157,14 @@ export default function Shop() {
               fontSize: "10.5px",
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#737373",
+              color: "rgba(255,255,255,0.65)",
               marginTop: "6px",
             }}
           >
             100% Italian Cotton — Handcrafted in France — Unique Piece
           </p>
         </Link>
-      </div>
+      </motion.div>
     </div>
   );
 }
