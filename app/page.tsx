@@ -285,66 +285,29 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         }}
       />
 
+      {/* HAUT CENTRÉ : EDITION -01 */}
       <motion.div
         animate={{ opacity: phase === 3 ? 0 : 1 }}
         transition={{ duration: 0.45 }}
         style={{
           position: "absolute",
-          inset: 0,
-          zIndex: 4,
+          top: "clamp(24px, 4vw, 44px)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 10,
+          color: "#ffffff",
+          fontSize: "11px",
+          letterSpacing: "0.32em",
+          textTransform: "uppercase",
+          whiteSpace: "nowrap",
+          textAlign: "center",
           pointerEvents: "none",
         }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.15 }}
-          style={{
-            position: "absolute",
-            top: "clamp(26px, 4vw, 44px)",
-            left: "50%",
-            transform: "translateX(-50%)",
-            color: "#ffffff",
-            fontSize: "11px",
-            letterSpacing: "0.32em",
-            textTransform: "uppercase",
-            whiteSpace: "nowrap",
-            textAlign: "center",
-          }}
-        >
-          Edition -01
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.25 }}
-          style={{
-            position: "absolute",
-            bottom: "clamp(24px, 4vw, 44px)",
-            left: "clamp(20px, 4.2vw, 52px)",
-            color: "#ffffff",
-            display: "flex",
-            alignItems: "baseline",
-            gap: "12px",
-          }}
-        >
-          <span style={{ fontSize: "clamp(16px, 2.2vw, 26px)", letterSpacing: "0.18em" }}>
-            [{formattedCounter}]
-          </span>
-          <span
-            style={{
-              fontSize: "10px",
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "rgba(255, 255, 255, 0.7)",
-            }}
-          >
-            {phase === 0 ? "Paris — Atelier" : "Floraison des Ronces"}
-          </span>
-        </motion.div>
+        Edition -01
       </motion.div>
 
+      {/* SCÈNE CENTRALE */}
       <motion.div
         animate={{
           opacity: phase === 3 ? 0 : 1,
@@ -550,31 +513,74 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         )}
       </motion.div>
 
+      {/* BARRE INFÉRIEURE DE L'INTRO : COMPTEUR À GAUCHE & BOUTON ENTER ATELIER À DROITE (SANS CHEVAUCHEMENT SUR MOBILE) */}
       {phase < 3 && (
-        <motion.button
-          type="button"
-          onClick={finishIntro}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.85 }}
-          whileHover={{ opacity: 1, scale: 1.04 }}
+        <motion.div
+          animate={{ opacity: phase === 3 ? 0 : 1 }}
           transition={{ duration: 0.4 }}
           style={{
             position: "absolute",
-            bottom: "clamp(24px, 4vw, 44px)",
-            right: "clamp(20px, 4.2vw, 52px)",
+            bottom: "clamp(18px, 3.8vw, 44px)",
+            left: 0,
+            right: 0,
+            padding: "0 clamp(16px, 4vw, 52px)",
             zIndex: 30,
-            background: "rgba(5, 5, 5, 0.8)",
-            border: "1px solid #ffffff",
-            color: "#ffffff",
-            padding: "8px 16px",
-            fontSize: "10px",
-            letterSpacing: "0.32em",
-            textTransform: "uppercase",
-            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
           }}
         >
-          Enter Atelier →
-        </motion.button>
+          <div
+            style={{
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "baseline",
+              gap: "8px",
+              pointerEvents: "none",
+              minWidth: 0,
+            }}
+          >
+            <span style={{ fontSize: "clamp(14px, 2.2vw, 24px)", letterSpacing: "0.14em" }}>
+              [{formattedCounter}]
+            </span>
+            <span
+              className="hidden sm:inline"
+              style={{
+                fontSize: "10px",
+                letterSpacing: "0.28em",
+                textTransform: "uppercase",
+                color: "rgba(255, 255, 255, 0.7)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {phase === 0 ? "Paris — Atelier" : "Floraison des Ronces"}
+            </span>
+          </div>
+
+          <motion.button
+            type="button"
+            onClick={finishIntro}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.9 }}
+            whileHover={{ opacity: 1, scale: 1.04 }}
+            transition={{ duration: 0.4 }}
+            style={{
+              background: "rgba(5, 5, 5, 0.85)",
+              border: "1px solid #ffffff",
+              color: "#ffffff",
+              padding: "8px 12px",
+              fontSize: "9.5px",
+              letterSpacing: "0.26em",
+              textTransform: "uppercase",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+            }}
+          >
+            Enter Atelier →
+          </motion.button>
+        </motion.div>
       )}
     </div>
   );
@@ -586,11 +592,13 @@ export default function Home() {
   const [cartCount, setCartCount] = useState(0);
   const [infoOpen, setInfoOpen] = useState(false);
   const [videoIdx, setVideoIdx] = useState(0);
+  const [mobileSlideIndex, setMobileSlideIndex] = useState(0);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const isMutedByUserRef = useRef(false);
   const isInitializedRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const swipeTrackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     try {
@@ -733,6 +741,32 @@ export default function Home() {
     }
   };
 
+  const handleMobileScroll = () => {
+    const el = swipeTrackRef.current;
+    if (!el || el.clientWidth === 0) return;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    if (idx !== mobileSlideIndex) {
+      setMobileSlideIndex(idx);
+    }
+  };
+
+  const scrollToMobileSlide = (idx: number) => {
+    const el = swipeTrackRef.current;
+    if (!el) return;
+    el.scrollTo({
+      left: idx * el.clientWidth,
+      behavior: "smooth",
+    });
+    setMobileSlideIndex(idx);
+  };
+
+  const mobileNavSlides = [
+    { href: "/shop", label: "Shop", isShop: true },
+    { href: "/helmet", label: "Helmet Gallery", isShop: false },
+    { href: "/service", label: "Client Service", isShop: false },
+    { href: "/cart", label: `Cart [${cartCount}]`, isShop: false },
+  ];
+
   return (
     <main
       className="helmet-home-shell"
@@ -743,7 +777,7 @@ export default function Home() {
     >
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE */}
+      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE CONTINUE (S'ÉTEND SUR TOUTE LA HAUTEUR DE L'ÉCRAN) */}
       <div
         style={{
           position: "fixed",
@@ -781,10 +815,10 @@ export default function Home() {
         />
       </div>
 
-      {/* 2. ROSES BOTANIQUES EN BLANC PUR (1 à 4 max par vagues décalées) */}
+      {/* 2. ROSES BOTANIQUES EN BLANC PUR */}
       <AtelierAtmosphere mode="canopy-and-roses" inverted />
 
-      {/* 3. FENÊTRE HELMET INFO (En Noir & Blanc Inversé, avec Cadran Helmet Info cliquable pour revenir au Menu) */}
+      {/* 3. FENÊTRE HELMET INFO */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
@@ -966,7 +1000,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* 4. HEADER HAUT (Espacé proprement sur Mobile pour éviter tout conflit entre [Intro] et Info) */}
+      {/* 4. HEADER HAUT */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -1062,14 +1096,14 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 5. MENU CENTRAL : CADRANS AGRANDIS & ESPACÉS, TEXTE "SHOP" PLUS GRAND, ZÉRO BUG D'IMAGE AU SURVOL */}
+      {/* 5. SCÈNE CENTRALE : VERSION PC INTACTE + VERSION MOBILE SWIPE */}
       <div className="helmet-sketch-stage">
-        <nav className="helmet-sketch-nav">
+        {/* A. NAVIGATION PC (>= 1060px) — 100% INCHANGÉE */}
+        <nav className="helmet-desktop-nav">
           <div className="helmet-sketch-left">
             <Link
               href="/shop"
               style={{
-                /* Police de SHOP augmentée comme demandé, tout en restant bien dans son cadre */
                 fontSize: "clamp(14px, 1.55vw, 18.5px)",
                 letterSpacing: "0.3em",
                 textTransform: "uppercase",
@@ -1159,6 +1193,93 @@ export default function Home() {
             </Link>
           </div>
         </nav>
+
+        {/* B. NAVIGATION MOBILE (< 1060px) — LOGO HELMET HAUTE COUTURE AGRANDI + SWIPE TACTILE */}
+        <div className="helmet-mobile-nav">
+          {/* Logo Helmet Haute Couture agrandi au centre */}
+          <div style={{ textAlign: "center", padding: "0 16px" }}>
+            <Link href="/helmet" className="helmet-logo-zoom">
+              <span
+                className="font-cancellaresca"
+                style={{
+                  fontSize: "clamp(88px, 23vw, 136px)",
+                  color: "#ffffff",
+                  display: "block",
+                  lineHeight: 1.02,
+                  whiteSpace: "nowrap",
+                  textShadow: "0 4px 24px rgba(0,0,0,0.85)",
+                }}
+              >
+                Helmet
+              </span>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "clamp(12px, 3.2vw, 15px)",
+                  letterSpacing: "0.48em",
+                  color: "rgba(255, 255, 255, 0.94)",
+                  marginTop: "8px",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                  textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+                }}
+              >
+                Haute Couture
+              </span>
+            </Link>
+          </div>
+
+          {/* Rail de Swipe Horizontal : Shop -> Helmet Gallery -> Client Service -> Cart */}
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
+            <div
+              ref={swipeTrackRef}
+              onScroll={handleMobileScroll}
+              className="helmet-mobile-swipe-track"
+            >
+              {mobileNavSlides.map((slide, idx) => (
+                <div key={idx} className="helmet-mobile-swipe-slide">
+                  <Link
+                    href={slide.href}
+                    style={{
+                      fontSize: slide.isShop ? "22px" : "15.5px",
+                      letterSpacing: slide.isShop ? "0.34em" : "0.24em",
+                      textTransform: "uppercase",
+                      color: "#ffffff",
+                    }}
+                  >
+                    <LouisXVIFrame variant="menu" inverted>
+                      {slide.label}
+                    </LouisXVIFrame>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            {/* Indicateurs de swipe discrets (points + flèche swipe) */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {mobileNavSlides.map((slide, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => scrollToMobileSlide(idx)}
+                  aria-label={slide.label}
+                  style={{
+                    width: mobileSlideIndex === idx ? "22px" : "6px",
+                    height: "3px",
+                    padding: 0,
+                    border: "none",
+                    backgroundColor:
+                      mobileSlideIndex === idx
+                        ? "#ffffff"
+                        : "rgba(255, 255, 255, 0.35)",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 6. FOOTER BAS */}

@@ -20,7 +20,7 @@
   font-family: "HelmetBordeaux1589";
   src: url("/fonts/1589-humane-bordeaux-regular.ttf") format("truetype"),
        url("/1589-humane-bordeaux-regular.ttf") format("truetype"),
-       url("/fonts/1589-humane-bordeaux-regular.otf") format("opentype"),
+       url("/1589-humane-bordeaux-regular.otf") format("opentype"),
        local("1589 Humane Bordeaux Regular"),
        local("1589-humane-bordeaux-regular"),
        local("1589 Humane Bordeaux");
@@ -203,14 +203,15 @@ a:hover .helmet-zoom-img {
 }
 
 /* ==========================================================================
-   4. STRUCTURE DU MENU (PC & MOBILE ANTI-TASSEMENT)
+   4. STRUCTURE DU MENU — VERSION PC INCHANGÉE & VERSION MOBILE SWIPE
    ========================================================================== */
 
 .helmet-home-shell {
   position: relative;
+  height: 100dvh;
   min-height: 100dvh;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   background-color: #050505;
   color: #ffffff;
   display: flex;
@@ -244,84 +245,104 @@ a:hover .helmet-zoom-img {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 12px;
+  padding: 12px 0;
   width: 100%;
+  overflow: hidden;
 }
 
-.helmet-sketch-nav {
-  width: 100%;
-  max-width: 1480px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
+/* --- AFFICHAGE PC (>= 1060px) : STRICTEMENT IDENTIQUE --- */
+.helmet-desktop-nav {
+  display: none;
 }
 
-.helmet-sketch-left,
-.helmet-sketch-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  width: 100%;
-  max-width: 430px;
-  justify-items: center;
-  align-items: center;
-}
-
-.helmet-sketch-left {
-  order: 2;
-}
-
-.helmet-sketch-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  order: 1;
-  padding: 12px 10px;
-}
-
-.helmet-sketch-right {
-  order: 3;
-}
-
-/* Sur PC : Tout aligné sur la même ligne horizontale avec bel espacement */
 @media (min-width: 1060px) {
-  .helmet-sketch-nav {
+  .helmet-desktop-nav {
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     gap: 36px;
     align-items: center;
+    padding: 0 24px;
   }
 
   .helmet-sketch-left {
     display: flex;
     flex-wrap: nowrap;
-    max-width: none;
-    width: auto;
     justify-self: end;
     justify-content: flex-end;
     gap: 32px;
-    order: 1;
   }
 
   .helmet-sketch-center {
-    order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     padding: 0 24px;
   }
 
   .helmet-sketch-right {
     display: flex;
     flex-wrap: nowrap;
-    max-width: none;
-    width: auto;
     justify-self: start;
     justify-content: flex-start;
     gap: 32px;
-    order: 3;
+  }
+}
+
+/* --- AFFICHAGE MOBILE (< 1060px) : LOGO AGRANDI + SWIPE HORIZONTAL --- */
+.helmet-mobile-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+  padding: 6px 0;
+}
+
+@media (min-width: 1060px) {
+  .helmet-mobile-nav {
+    display: none !important;
+  }
+}
+
+.helmet-mobile-swipe-track {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  width: 100%;
+  padding: 14px 0;
+}
+
+.helmet-mobile-swipe-track::-webkit-scrollbar {
+  display: none;
+}
+
+.helmet-mobile-swipe-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+}
+
+/* Sur mobile, le cadran dans le swipe prend une taille généreuse et lisible */
+@media (max-width: 1059px) {
+  .helmet-mobile-swipe-slide .helmet-thorn-wrapper {
+    min-width: min(78vw, 310px) !important;
+    height: 92px !important;
+    padding: 18px 44px !important;
   }
 }
 
@@ -331,7 +352,7 @@ a:hover .helmet-zoom-img {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 16px 16px 22px 16px;
+  padding: 14px 16px 20px 16px;
   width: 100%;
   gap: 8px;
 }
