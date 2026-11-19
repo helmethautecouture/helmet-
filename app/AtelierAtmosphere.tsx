@@ -222,9 +222,6 @@ function BotanicalRoseD({ inverted = true }: { inverted?: boolean }) {
   );
 }
 
-/* ============================================================================
-   MOTEUR DE SPAWN PAR VAGUES DÉCALÉES ALÉATOIRES (1 À 4 ROSES MAX PAR FRAME)
-   ============================================================================ */
 export default function AtelierAtmosphere({
   mode = "canopy-and-roses",
   inverted = true,
@@ -236,6 +233,9 @@ export default function AtelierAtmosphere({
   useEffect(() => {
     let isMounted = true;
     const timeouts: NodeJS.Timeout[] = [];
+
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 1060;
+    const maxRosesOnScreen = isMobile ? 2 : 4;
 
     const ZONES = [
       { min: 3, max: 18 },
@@ -263,8 +263,8 @@ export default function AtelierAtmosphere({
       const startY = -14 + Math.random() * 22;
 
       const direction = startX > 80 ? -1 : startX < 20 ? 1 : Math.random() > 0.5 ? 1 : -1;
-      const driftX = direction * (40 + Math.random() * 80);
-      const swayAmplitude = (Math.random() > 0.5 ? 1 : -1) * (16 + Math.random() * 24);
+      const driftX = direction * (isMobile ? 24 + Math.random() * 42 : 40 + Math.random() * 80);
+      const swayAmplitude = (Math.random() > 0.5 ? 1 : -1) * (isMobile ? 10 + Math.random() * 14 : 16 + Math.random() * 24);
 
       const baseAngle = (Math.random() - 0.5) * 36;
       const swayAngle = (Math.random() > 0.5 ? 1 : -1) * (15 + Math.random() * 20);
@@ -282,15 +282,14 @@ export default function AtelierAtmosphere({
         swayAmplitude,
         baseAngle,
         swayAngle,
-        scale: 0.74 + Math.random() * 0.34,
+        scale: isMobile ? 0.65 + Math.random() * 0.25 : 0.74 + Math.random() * 0.34,
         duration,
         flipX: Math.random() > 0.5,
       };
 
-      /* Plafond strict à 4 fleurs maximum simultanément sur l'écran */
       setRoses((prev) => {
-        if (prev.length >= 4) {
-          return [...prev.slice(-(3)), newRose];
+        if (prev.length >= maxRosesOnScreen) {
+          return [...prev.slice(-(maxRosesOnScreen - 1)), newRose];
         }
         return [...prev, newRose];
       });
@@ -302,20 +301,29 @@ export default function AtelierAtmosphere({
       timeouts.push(removeTimer);
     };
 
-    /* Planifie des vagues organiques : parfois 1 seule, parfois 2 ou 3 décalées de 350ms à 1400ms */
     const scheduleNextWave = () => {
       if (!isMounted) return;
 
       const r = Math.random();
-      const waveCount = r < 0.25 ? 1 : r < 0.7 ? 2 : 3;
+      /* Sur mobile : cadence beaucoup plus espacée (1 seule rose la plupart du temps, rarement 2) */
+      const waveCount = isMobile
+        ? r < 0.78
+          ? 1
+          : 2
+        : r < 0.25
+        ? 1
+        : r < 0.7
+        ? 2
+        : 3;
 
-      /* Mélange les zones pour que les roses d'une même vague apparaissent dans des coins opposés */
       const availableZones = [0, 1, 2, 3, 4].sort(() => Math.random() - 0.5);
 
       let cumulativeStagger = 0;
       for (let i = 0; i < waveCount; i++) {
         if (i > 0) {
-          cumulativeStagger += 350 + Math.random() * 1150;
+          cumulativeStagger += isMobile
+            ? 1400 + Math.random() * 1600
+            : 350 + Math.random() * 1150;
         }
         const z = availableZones[i % availableZones.length];
         const t = setTimeout(() => {
@@ -324,16 +332,21 @@ export default function AtelierAtmosphere({
         timeouts.push(t);
       }
 
-      const nextWaveDelay = 3400 + Math.random() * 3400;
+      /* Cadence ralentie sur mobile (7s à 11.5s) vs PC (3.4s à 6.8s) */
+      const nextWaveDelay = isMobile
+        ? 7000 + Math.random() * 4500
+        : 3400 + Math.random() * 3400;
       const nextTimer = setTimeout(scheduleNextWave, nextWaveDelay);
       timeouts.push(nextTimer);
     };
 
-    /* Lancement initial dès l'arrivée sur la page */
     createOneRose(0);
-    const initStagger = setTimeout(() => createOneRose(3), 520);
-    const waveStarter = setTimeout(scheduleNextWave, 2800);
-    timeouts.push(initStagger, waveStarter);
+    if (!isMobile) {
+      const initStagger = setTimeout(() => createOneRose(3), 520);
+      timeouts.push(initStagger);
+    }
+    const waveStarter = setTimeout(scheduleNextWave, isMobile ? 5500 : 2800);
+    timeouts.push(waveStarter);
 
     return () => {
       isMounted = false;

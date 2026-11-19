@@ -502,3 +502,12 @@ button {
     font-size: 16px !important;
   }
 }
+/* Recadrage vidéo légèrement vers la gauche sur mobile pour voir le port */
+.helmet-bg-video {
+  object-position: 30% center;
+}
+@media (min-width: 1060px) {
+  .helmet-bg-video {
+    object-position: center center;
+  }
+}

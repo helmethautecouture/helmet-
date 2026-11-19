@@ -797,12 +797,11 @@ export default function Home() {
           muted
           playsInline
           preload="auto"
-          onError={handleVideoError}
+          onError={handleVideoError} className="helmet-bg-video"
           style={{
             width: "100vw",
             height: "100dvh",
             objectFit: "cover",
-            objectPosition: "center",
             display: "block",
           }}
         />
