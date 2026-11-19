@@ -79,36 +79,21 @@ export default function ProductDetailPage() {
     <div className="helmet-page-container">
       <AtelierAtmosphere mode="petals-only" inverted />
 
+      {/* HEADER PRODUIT : CADRAN HELMET SHOP À GAUCHE (RETOUR MENU) + PETIT LOGO PANIER À DROITE */}
       <motion.header
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
-        className="helmet-page-header"
+        className="helmet-shop-header"
         style={{ position: "relative", zIndex: 10 }}
       >
-        <div style={{ justifySelf: "start" }}>
-          <Link
-            href="/shop"
-            className="helmet-zoom-link"
-            style={{
-              fontSize: "11px",
-              textTransform: "uppercase",
-              letterSpacing: "0.22em",
-              whiteSpace: "nowrap",
-              color: "#ffffff",
-            }}
-          >
-            ← Back To Shop
-          </Link>
-        </div>
-
-        <div style={{ justifySelf: "center", textAlign: "center" }}>
-          <Link href="/">
+        <div>
+          <Link href="/" title="Return To Menu">
             <LouisXVIFrame variant="title" inverted>
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(26px, 4.2vw, 44px)",
+                  fontSize: "clamp(26px, 4vw, 42px)",
                   lineHeight: 1,
                   display: "block",
                   color: "#ffffff",
@@ -120,35 +105,33 @@ export default function ProductDetailPage() {
           </Link>
         </div>
 
-        <div style={{ justifySelf: "end" }}>
+        <div>
           <Link
             href="/cart"
             className="helmet-zoom-link"
             style={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "uppercase",
-              letterSpacing: "0.22em",
+              letterSpacing: "0.24em",
               display: "inline-flex",
               alignItems: "center",
               gap: "6px",
               whiteSpace: "nowrap",
               color: "#ffffff",
+              padding: "8px 4px",
             }}
           >
             <svg
-              width="16"
-              height="16"
-              style={{ width: "16px", height: "16px", minWidth: "16px" }}
+              width="17"
+              height="17"
+              style={{ width: "17px", height: "17px", minWidth: "17px" }}
               fill="none"
               stroke="currentColor"
-              strokeWidth="1.5"
+              strokeWidth="1.6"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
             </svg>
             <span>[{cartCount}]</span>
           </Link>

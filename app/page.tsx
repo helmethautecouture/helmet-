@@ -23,6 +23,8 @@ const VIDEO_PATHS = [
   "/intro.mp4",
 ];
 
+const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@HELMETPRODUCTION-s8c";
+
 let introPlayedInMemory = false;
 
 const HELMET_FAQ_SECTIONS = [
@@ -285,7 +287,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         }}
       />
 
-      {/* HAUT CENTRÉ : EDITION -01 */}
       <motion.div
         animate={{ opacity: phase === 3 ? 0 : 1 }}
         transition={{ duration: 0.45 }}
@@ -307,7 +308,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         Edition -01
       </motion.div>
 
-      {/* SCÈNE CENTRALE */}
       <motion.div
         animate={{
           opacity: phase === 3 ? 0 : 1,
@@ -513,22 +513,22 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         )}
       </motion.div>
 
-      {/* BARRE INFÉRIEURE DE L'INTRO : COMPTEUR À GAUCHE & BOUTON ENTER ATELIER À DROITE (SANS CHEVAUCHEMENT SUR MOBILE) */}
+      {/* BARRE INFÉRIEURE DE L'INTRO : "FLORAISON DES RONCES" VISIBLE SUR MOBILE + BOUTON COMPACT À DROITE */}
       {phase < 3 && (
         <motion.div
           animate={{ opacity: phase === 3 ? 0 : 1 }}
           transition={{ duration: 0.4 }}
           style={{
             position: "absolute",
-            bottom: "clamp(18px, 3.8vw, 44px)",
+            bottom: "clamp(16px, 3.8vw, 44px)",
             left: 0,
             right: 0,
-            padding: "0 clamp(16px, 4vw, 52px)",
+            padding: "0 clamp(14px, 4vw, 52px)",
             zIndex: 30,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            gap: "12px",
+            gap: "8px",
           }}
         >
           <div
@@ -536,22 +536,24 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               color: "#ffffff",
               display: "flex",
               alignItems: "baseline",
-              gap: "8px",
+              gap: "6px",
               pointerEvents: "none",
               minWidth: 0,
+              overflow: "hidden",
             }}
           >
-            <span style={{ fontSize: "clamp(14px, 2.2vw, 24px)", letterSpacing: "0.14em" }}>
+            <span style={{ fontSize: "clamp(13px, 2.2vw, 24px)", letterSpacing: "0.1em", flexShrink: 0 }}>
               [{formattedCounter}]
             </span>
             <span
-              className="hidden sm:inline"
               style={{
-                fontSize: "10px",
-                letterSpacing: "0.28em",
+                fontSize: "clamp(8.5px, 2.1vw, 10px)",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                color: "rgba(255, 255, 255, 0.7)",
+                color: "rgba(255, 255, 255, 0.78)",
                 whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {phase === 0 ? "Paris — Atelier" : "Floraison des Ronces"}
@@ -569,9 +571,9 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               background: "rgba(5, 5, 5, 0.85)",
               border: "1px solid #ffffff",
               color: "#ffffff",
-              padding: "8px 12px",
-              fontSize: "9.5px",
-              letterSpacing: "0.26em",
+              padding: "6px 10px",
+              fontSize: "8.5px",
+              letterSpacing: "0.2em",
               textTransform: "uppercase",
               cursor: "pointer",
               whiteSpace: "nowrap",
@@ -612,9 +614,18 @@ export default function Home() {
       setCartCount(0);
     }
 
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
+    /* Force la lecture automatique de la vidéo sur iOS / Android sans bouton Play */
+    const startBgVideo = () => {
+      const vid = videoRef.current;
+      if (!vid) return;
+      vid.muted = true;
+      vid.defaultMuted = true;
+      vid.playsInline = true;
+      vid.setAttribute("playsinline", "");
+      vid.setAttribute("webkit-playsinline", "");
+      vid.play().catch(() => {});
+    };
+    startBgVideo();
 
     let isMounted = true;
 
@@ -667,9 +678,7 @@ export default function Home() {
     initWebAudio();
 
     const unlockOnInteraction = async () => {
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current.play().catch(() => {});
-      }
+      startBgVideo();
       if (!audioCtxRef.current) {
         await initWebAudio();
       }
@@ -687,8 +696,9 @@ export default function Home() {
       }
     };
 
-    window.addEventListener("click", unlockOnInteraction, { once: true });
-    window.addEventListener("touchstart", unlockOnInteraction, { once: true });
+    window.addEventListener("click", unlockOnInteraction);
+    window.addEventListener("touchstart", unlockOnInteraction, { passive: true });
+    window.addEventListener("pointerdown", unlockOnInteraction);
 
     const handleVisibility = () => {
       const ctx = audioCtxRef.current;
@@ -696,11 +706,14 @@ export default function Home() {
       if (document.hidden || document.visibilityState === "hidden") {
         ctx.suspend().catch(() => {});
         setIsPlaying(false);
-      } else if (!isMutedByUserRef.current) {
-        ctx
-          .resume()
-          .then(() => setIsPlaying(true))
-          .catch(() => {});
+      } else {
+        startBgVideo();
+        if (!isMutedByUserRef.current) {
+          ctx
+            .resume()
+            .then(() => setIsPlaying(true))
+            .catch(() => {});
+        }
       }
     };
 
@@ -710,13 +723,14 @@ export default function Home() {
       isMounted = false;
       window.removeEventListener("click", unlockOnInteraction);
       window.removeEventListener("touchstart", unlockOnInteraction);
+      window.removeEventListener("pointerdown", unlockOnInteraction);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 
   const toggleAudio = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const ctx = audioCtxRef.current;
+    let ctx = audioCtxRef.current;
     if (!ctx) return;
 
     if (isPlaying) {
@@ -733,6 +747,9 @@ export default function Home() {
   const handleIntroComplete = () => {
     introPlayedInMemory = true;
     setShowIntro(false);
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
   };
 
   const handleVideoError = () => {
@@ -777,7 +794,7 @@ export default function Home() {
     >
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE CONTINUE (S'ÉTEND SUR TOUTE LA HAUTEUR DE L'ÉCRAN) */}
+      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE CONTINUE (SANS CONTRÔLES NI BOUTON PAUSE SUR MOBILE) */}
       <div
         style={{
           position: "fixed",
@@ -796,13 +813,19 @@ export default function Home() {
           loop
           muted
           playsInline
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
           preload="auto"
-          onError={handleVideoError} className="helmet-bg-video"
+          onLoadedData={() => videoRef.current?.play().catch(() => {})}
+          onError={handleVideoError}
+          className="helmet-bg-video"
           style={{
             width: "100vw",
             height: "100dvh",
             objectFit: "cover",
             display: "block",
+            pointerEvents: "none",
           }}
         />
         <div
@@ -810,6 +833,7 @@ export default function Home() {
             position: "absolute",
             inset: 0,
             background: "rgba(0, 0, 0, 0.24)",
+            pointerEvents: "none",
           }}
         />
       </div>
@@ -1095,16 +1119,16 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 5. SCÈNE CENTRALE : VERSION PC INTACTE + VERSION MOBILE SWIPE */}
+      {/* 5. SCÈNE CENTRALE : PC CENTRÉ STRICT & MOBILE SWIPE */}
       <div className="helmet-sketch-stage">
-        {/* A. NAVIGATION PC (>= 1060px) — 100% INCHANGÉE */}
+        {/* A. NAVIGATION PC (>= 1060px) — LOGO CENTRÉ STRICTEMENT */}
         <nav className="helmet-desktop-nav">
           <div className="helmet-sketch-left">
             <Link
               href="/shop"
               style={{
-                fontSize: "clamp(14px, 1.55vw, 18.5px)",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(14px, 1.45vw, 18px)",
+                letterSpacing: "0.28em",
                 textTransform: "uppercase",
                 color: "#ffffff",
               }}
@@ -1117,7 +1141,7 @@ export default function Home() {
             <Link
               href="/helmet"
               style={{
-                fontSize: "clamp(11px, 1.2vw, 14px)",
+                fontSize: "clamp(11px, 1.15vw, 13.5px)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "#ffffff",
@@ -1134,7 +1158,7 @@ export default function Home() {
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(64px, 10.5vw, 148px)",
+                  fontSize: "clamp(64px, 10vw, 144px)",
                   color: "#ffffff",
                   display: "block",
                   lineHeight: 1.06,
@@ -1147,7 +1171,7 @@ export default function Home() {
               <span
                 style={{
                   display: "block",
-                  fontSize: "clamp(10.5px, 1.05vw, 13.5px)",
+                  fontSize: "clamp(10.5px, 1vw, 13px)",
                   letterSpacing: "0.46em",
                   color: "rgba(255, 255, 255, 0.9)",
                   marginTop: "6px",
@@ -1165,7 +1189,7 @@ export default function Home() {
             <Link
               href="/service"
               style={{
-                fontSize: "clamp(11px, 1.2vw, 14px)",
+                fontSize: "clamp(11px, 1.15vw, 13.5px)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "#ffffff",
@@ -1179,7 +1203,7 @@ export default function Home() {
             <Link
               href="/cart"
               style={{
-                fontSize: "clamp(11.5px, 1.25vw, 14.5px)",
+                fontSize: "clamp(11.5px, 1.2vw, 14px)",
                 letterSpacing: "0.26em",
                 textTransform: "uppercase",
                 color: "#ffffff",
@@ -1193,9 +1217,8 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* B. NAVIGATION MOBILE (< 1060px) — LOGO HELMET HAUTE COUTURE AGRANDI + SWIPE TACTILE */}
+        {/* B. NAVIGATION MOBILE (< 1060px) */}
         <div className="helmet-mobile-nav">
-          {/* Logo Helmet Haute Couture agrandi au centre */}
           <div style={{ textAlign: "center", padding: "0 16px" }}>
             <Link href="/helmet" className="helmet-logo-zoom">
               <span
@@ -1228,7 +1251,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Rail de Swipe Horizontal : Shop -> Helmet Gallery -> Client Service -> Cart */}
           <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
             <div
               ref={swipeTrackRef}
@@ -1254,7 +1276,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Indicateurs de swipe discrets (points + flèche swipe) */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               {mobileNavSlides.map((slide, idx) => (
                 <button
@@ -1281,15 +1302,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 6. FOOTER BAS */}
+      {/* 6. FOOTER BAS : LIEN YOUTUBE EXACT & CASQUE PARFAITEMENT CENTRÉ */}
       <footer className="helmet-home-footer">
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "10px",
-            fontSize: "clamp(10px, 1vw, 11px)",
-            letterSpacing: "0.24em",
+            gap: "6px",
+            fontSize: "clamp(9px, 2.3vw, 11px)",
+            letterSpacing: "0.18em",
             color: "#ffffff",
             justifySelf: "start",
             textTransform: "uppercase",
@@ -1307,7 +1328,7 @@ export default function Home() {
           </a>
           <span style={{ color: "rgba(255,255,255,0.6)" }}>/</span>
           <a
-            href="https://www.youtube.com"
+            href={YOUTUBE_CHANNEL_URL}
             target="_blank"
             rel="noreferrer"
             className="helmet-zoom-link"
@@ -1316,7 +1337,7 @@ export default function Home() {
           </a>
         </div>
 
-        <div style={{ justifySelf: "center" }}>
+        <div style={{ justifySelf: "center", display: "flex", justifyContent: "center" }}>
           <button
             type="button"
             onClick={toggleAudio}
@@ -1336,9 +1357,9 @@ export default function Home() {
             title={isPlaying ? "Sound On (70%)" : "Sound Off"}
           >
             <svg
-              width="26"
-              height="26"
-              style={{ width: "26px", height: "26px", minWidth: "26px" }}
+              width="24"
+              height="24"
+              style={{ width: "24px", height: "24px", minWidth: "24px" }}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -1361,7 +1382,7 @@ export default function Home() {
               >
                 <span
                   style={{
-                    width: "28px",
+                    width: "26px",
                     height: "1.5px",
                     backgroundColor: "#ffffff",
                     transform: "rotate(45deg)",
@@ -1376,26 +1397,27 @@ export default function Home() {
         <div
           style={{
             textAlign: "right",
-            fontSize: "clamp(10px, 1vw, 11px)",
-            letterSpacing: "0.22em",
+            fontSize: "clamp(8.5px, 2.1vw, 11px)",
+            letterSpacing: "0.16em",
             color: "#ffffff",
             justifySelf: "end",
             textTransform: "uppercase",
             whiteSpace: "nowrap",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            justifyContent: "flex-end",
+            gap: "4px",
             textShadow: "0 2px 10px rgba(0,0,0,0.8)",
           }}
         >
           <svg
-            width="13"
-            height="13"
+            width="12"
+            height="12"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
-            style={{ width: "13px", height: "13px", minWidth: "13px" }}
+            style={{ width: "12px", height: "12px", minWidth: "12px" }}
           >
             <circle cx="12" cy="12" r="9.5" />
             <path strokeLinecap="round" d="M14.8 9.2a4.2 4.2 0 1 0 0 5.6" />
