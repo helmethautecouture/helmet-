@@ -351,7 +351,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
             style={{
               position: "relative",
               width: "min(92vw, 760px)",
-              height: "clamp(220px, 42vw, 360px)",
+              height: "clamp(230px, 42vw, 360px)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -466,6 +466,7 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedEngravedRose x={84} y={86} scale={0.8} rotate={-8} delay={2.1} />
             </svg>
 
+            {/* LOGO HELMET HAUTE COUTURE CALIBRÉ POUR TENIR PILE AU MILIEU DU CADRAN */}
             <motion.div
               initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -477,14 +478,16 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                justifyContent: "center",
+                padding: "0 18%",
               }}
             >
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(64px, 14vw, 185px)",
+                  fontSize: "clamp(42px, 7.6vw, 98px)",
                   color: "#ffffff",
-                  lineHeight: 1.04,
+                  lineHeight: 0.98,
                   display: "block",
                   whiteSpace: "nowrap",
                   letterSpacing: "0.03em",
@@ -494,14 +497,14 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               </span>
 
               <motion.span
-                initial={{ opacity: 0, letterSpacing: "0.75em" }}
-                animate={{ opacity: 1, letterSpacing: "0.42em" }}
+                initial={{ opacity: 0, letterSpacing: "0.55em" }}
+                animate={{ opacity: 1, letterSpacing: "0.34em" }}
                 transition={{ duration: 1.6, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 style={{
                   display: "block",
-                  fontSize: "clamp(11px, 1.2vw, 14px)",
+                  fontSize: "clamp(8.5px, 0.95vw, 11.5px)",
                   color: "#ffffff",
-                  marginTop: "8px",
+                  marginTop: "4px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
                 }}
@@ -639,7 +642,6 @@ export default function Home() {
     };
     tryPlayAudio();
 
-    /* Déblocage immédiat du son & vidéo au moindre toucher sur iPhone/Android */
     const unlockOnGesture = () => {
       startBgVideo();
       tryPlayAudio();
@@ -751,7 +753,6 @@ export default function Home() {
         color: "#ffffff",
       }}
     >
-      {/* LECTEUR AUDIO HTML5 NATIF (100% COMPATIBLE SAFARI IOS & ANDROID) */}
       <audio
         ref={audioRef}
         key={AUDIO_PATHS[audioIdx]}
@@ -767,7 +768,6 @@ export default function Home() {
 
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE */}
       <div
         style={{
           position: "fixed",
@@ -811,10 +811,8 @@ export default function Home() {
         />
       </div>
 
-      {/* 2. ROSES BOTANIQUES EN BLANC PUR */}
       <AtelierAtmosphere mode="canopy-and-roses" inverted />
 
-      {/* 3. FENÊTRE HELMET INFO (POLICE AGRANDIE & ULTRA-LISIBLE) */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
@@ -987,7 +985,6 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* 4. HEADER HAUT */}
       <header className="helmet-home-topbar">
         <div
           style={{
@@ -1083,7 +1080,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 5. SCÈNE CENTRALE */}
       <div className="helmet-sketch-stage">
         <nav className="helmet-desktop-nav">
           <div className="helmet-sketch-left">
@@ -1264,7 +1260,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 6. FOOTER BAS */}
       <footer className="helmet-home-footer">
         <div
           style={{

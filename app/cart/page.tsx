@@ -1,16 +1,50 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
 
 /* ============================================================================
-   CONFIGURATION ENCAISSEMENT RÉEL (STRIPE PAYMENT LINK)
-   Colle ton lien Stripe Checkout (ex: "https://buy.stripe.com/...") ci-dessous
-   pour que le client soit redirigé vers Stripe et que l'argent arrive sur ton compte.
+   CONFIGURATION DE TES ENCAISSEMENTS RÉELS (À RENSEIGNER QUAND TU ES PRÊT)
+   1. STRIPE_PAYMENT_LINK : Colle ici ton lien Stripe (ex: "https://buy.stripe.com/...")
+      -> Encaisse Carte Bancaire + Apple Pay + 3D Secure directement sur ton IBAN.
+   2. PAYPAL_ME_LINK      : Colle ici ton lien PayPal.me (ex: "https://paypal.me/tonpseudo")
+      -> Redirige directement vers PayPal avec le montant exact de la commande.
    ============================================================================ */
-const STRIPE_PAYMENT_LINK: string = "";
+const STRIPE_PAYMENT_LINK: string = "https://buy.stripe.com/cNi6oG44y2Zw32B167co000";
+const PAYPAL_ME_LINK: string = "";
+
+const COUNTRY_CODES = [
+  { code: "+33", label: "FR (+33)", country: "France" },
+  { code: "+1", label: "US/CA (+1)", country: "United States" },
+  { code: "+44", label: "UK (+44)", country: "United Kingdom" },
+  { code: "+32", label: "BE (+32)", country: "Belgium" },
+  { code: "+41", label: "CH (+41)", country: "Switzerland" },
+  { code: "+352", label: "LU (+352)", country: "Luxembourg" },
+  { code: "+39", label: "IT (+39)", country: "Italy" },
+  { code: "+34", label: "ES (+34)", country: "Spain" },
+  { code: "+49", label: "DE (+49)", country: "Germany" },
+  { code: "+31", label: "NL (+31)", country: "Netherlands" },
+  { code: "+351", label: "PT (+351)", country: "Portugal" },
+  { code: "+81", label: "JP (+81)", country: "Japan" },
+  { code: "+82", label: "KR (+82)", country: "South Korea" },
+  { code: "+971", label: "AE (+971)", country: "United Arab Emirates" },
+  { code: "+212", label: "MA (+212)", country: "Morocco" },
+  { code: "+213", label: "DZ (+213)", country: "Algeria" },
+  { code: "+216", label: "TN (+216)", country: "Tunisia" },
+  { code: "+221", label: "SN (+221)", country: "Senegal" },
+  { code: "+225", label: "CI (+225)", country: "Côte d'Ivoire" },
+];
+
+interface AddressSuggestion {
+  id: string;
+  label: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  country: string;
+}
 
 interface CartItem {
   id: string;
@@ -21,21 +55,80 @@ interface CartItem {
   image: string;
 }
 
+/* ============================================================================
+   FONCTIONS DE VALIDATION STRICTES (EMPÊCHE LES FAUSSES INFOS / FAUSSES CARTES)
+   ============================================================================ */
+function isValidHumanName(val: string): boolean {
+  const clean = val.trim();
+  if (clean.length < 2) return false;
+  if (/\d/.test(clean)) return false;
+  if (/(.)\1{3,}/i.test(clean)) return false;
+  return /^[a-zA-ZÀ-ÿ\s'-]+$/.test(clean);
+}
+
+function isValidEmailAddress(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email.trim());
+}
+
+function isValidPhoneDigits(phone: string): boolean {
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 7 && digits.length <= 15 && !/^(\d)\1+$/.test(digits);
+}
+
+/* Algorithme officiel de Luhn utilisé par Visa / Mastercard / Amex */
+function isValidCardLuhn(cardNum: string): boolean {
+  const digits = cardNum.replace(/\D/g, "");
+  if (digits.length < 13 || digits.length > 19) return false;
+  if (/^(\d)\1+$/.test(digits)) return false;
+
+  let sum = 0;
+  let shouldDouble = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let digit = parseInt(digits.charAt(i), 10);
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+  return sum % 10 === 0;
+}
+
+function isValidExpiry(exp: string): boolean {
+  const match = exp.trim().match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+  if (!match) return false;
+  const month = parseInt(match[1], 10);
+  const year = 2000 + parseInt(match[2], 10);
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  if (year < currentYear || year > currentYear + 15) return false;
+  if (year === currentYear && month < currentMonth) return false;
+  return true;
+}
+
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
-
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "applepay" | "paypal">("card");
+  const [formError, setFormError] = useState<string>("");
 
-  /* Étape 1 : Coordonnées de livraison */
+  /* Étape 1 : Livraison & Indicatif Téléphonique */
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+  const [phonePrefix, setPhonePrefix] = useState("+33");
   const [phone, setPhone] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("France");
+
+  /* Autocomplétion d'adresse en direct */
+  const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /* Étape 2 : Détails Carte */
   const [cardName, setCardName] = useState("");
@@ -43,7 +136,7 @@ export default function CartPage() {
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
 
-  /* Étape 3 : Reçu & Bordereau d'expédition */
+  /* Étape 3 : Bordereau d'expédition & Reçu officiel */
   const [orderReference, setOrderReference] = useState("");
   const [orderDate, setOrderDate] = useState("");
   const [purchasedItems, setPurchasedItems] = useState<CartItem[]>([]);
@@ -65,7 +158,6 @@ export default function CartPage() {
         setItems(parsed);
       }
 
-      /* Si le client revient depuis Stripe Checkout (?paid=1), on affiche automatiquement son reçu */
       if (typeof window !== "undefined") {
         const params = new URLSearchParams(window.location.search);
         if (params.get("paid") === "1") {
@@ -80,6 +172,7 @@ export default function CartPage() {
             setPostalCode(o.postalCode || "");
             setCity(o.city || "");
             setCountry(o.country || "");
+            setPhonePrefix(o.phonePrefix || "+33");
             setPhone(o.phone || "");
             setPurchasedItems(o.items || []);
             setPurchasedTotal(o.total || 150);
@@ -93,6 +186,92 @@ export default function CartPage() {
       setItems([]);
     }
   }, []);
+
+  /* Recherche automatique d'adresses réelles (France & International) pendant la frappe */
+  const handleStreetInput = (value: string) => {
+    setStreetAddress(value);
+    setFormError("");
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (value.trim().length < 4) {
+      setAddressSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const results: AddressSuggestion[] = [];
+
+        /* 1. API Nationale Française (ultra-rapide et précise pour toutes les rues de France) */
+        const frRes = await fetch(
+          `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&limit=4`
+        );
+        if (frRes.ok) {
+          const frData = await frRes.json();
+          if (Array.isArray(frData.features)) {
+            for (const f of frData.features) {
+              const props = f.properties || {};
+              if (props.name && props.postcode && props.city) {
+                results.push({
+                  id: `fr-${props.id || Math.random()}`,
+                  label: `${props.name}, ${props.postcode} ${props.city}, France`,
+                  street: props.name,
+                  postalCode: props.postcode,
+                  city: props.city,
+                  country: "France",
+                });
+              }
+            }
+          }
+        }
+
+        /* 2. API Internationale Photon (OpenStreetMap) pour l'étranger */
+        if (results.length < 3) {
+          const intlRes = await fetch(
+            `https://photon.komoot.io/api/?q=${encodeURIComponent(value)}&limit=4`
+          );
+          if (intlRes.ok) {
+            const intlData = await intlRes.json();
+            if (Array.isArray(intlData.features)) {
+              for (const f of intlData.features) {
+                const p = f.properties || {};
+                const streetLine = [p.housenumber, p.street || p.name].filter(Boolean).join(" ");
+                const cityVal = p.city || p.town || p.village || "";
+                const postVal = p.postcode || "";
+                const countryVal = p.country || "";
+                if (streetLine && cityVal && countryVal && countryVal !== "France") {
+                  results.push({
+                    id: `intl-${p.osm_id || Math.random()}`,
+                    label: `${streetLine}, ${postVal} ${cityVal}, ${countryVal}`,
+                    street: streetLine,
+                    postalCode: postVal,
+                    city: cityVal,
+                    country: countryVal,
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        setAddressSuggestions(results.slice(0, 5));
+        setShowSuggestions(results.length > 0);
+      } catch {}
+    }, 300);
+  };
+
+  const selectAddressSuggestion = (s: AddressSuggestion) => {
+    setStreetAddress(s.street);
+    setPostalCode(s.postalCode);
+    setCity(s.city);
+    setCountry(s.country);
+    setShowSuggestions(false);
+    setAddressSuggestions([]);
+  };
 
   const updateQty = (index: number, delta: number) => {
     const copy = [...items];
@@ -110,17 +289,79 @@ export default function CartPage() {
     0
   );
 
+  /* Validation rigoureuse de l'Étape 1 avant de passer au paiement */
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName || !lastName || !customerEmail || !phone || !streetAddress || !postalCode || !city || !country) {
+    setFormError("");
+
+    if (!isValidHumanName(firstName) || !isValidHumanName(lastName)) {
+      setFormError("Please enter a valid First Name and Last Name (letters only).");
       return;
     }
+    if (!isValidEmailAddress(customerEmail)) {
+      setFormError("Please enter a valid email address (example@domain.com).");
+      return;
+    }
+    if (!isValidPhoneDigits(phone)) {
+      setFormError("Please enter a valid phone number (digits only).");
+      return;
+    }
+    if (streetAddress.trim().length < 5 || !/\d/.test(streetAddress)) {
+      setFormError("Please enter a complete street address including street number.");
+      return;
+    }
+    if (postalCode.trim().length < 3 || city.trim().length < 2 || country.trim().length < 2) {
+      setFormError("Please complete your Postal Code, City and Country.");
+      return;
+    }
+
     setCheckoutStep(2);
   };
 
+  /* Formatage automatique du numéro de carte (0000 0000 0000 0000) */
+  const handleCardNumberChange = (val: string) => {
+    setFormError("");
+    const digits = val.replace(/\D/g, "").slice(0, 16);
+    const formatted = digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+    setCardNumber(formatted);
+  };
+
+  /* Formatage automatique de la date d'expiration (MM/YY) */
+  const handleCardExpiryChange = (val: string) => {
+    setFormError("");
+    const digits = val.replace(/\D/g, "").slice(0, 4);
+    if (digits.length >= 3) {
+      setCardExpiry(`${digits.slice(0, 2)}/${digits.slice(2)}`);
+    } else {
+      setCardExpiry(digits);
+    }
+  };
+
+  /* Validation rigoureuse de l'Étape 2 + Encaissement + Génération du bordereau */
   const handleCompletePayment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError("");
     if (items.length === 0) return;
+
+    if (paymentMethod === "card") {
+      if (!isValidHumanName(cardName)) {
+        setFormError("Please enter the full Cardholder Name as printed on your card.");
+        return;
+      }
+      if (!isValidCardLuhn(cardNumber)) {
+        setFormError("Invalid Card Number. Please verify the 16 digits of your card.");
+        return;
+      }
+      if (!isValidExpiry(cardExpiry)) {
+        setFormError("Invalid or expired card date. Use MM/YY format.");
+        return;
+      }
+      const cleanCvc = cardCvc.replace(/\D/g, "");
+      if (cleanCvc.length < 3 || cleanCvc.length > 4) {
+        setFormError("Invalid Security Code (CVC must be 3 or 4 digits).");
+        return;
+      }
+    }
 
     setSubmitting(true);
 
@@ -131,13 +372,13 @@ export default function CartPage() {
       year: "numeric",
     });
 
+    const fullPhone = `${phonePrefix} ${phone.trim()}`;
     const orderSummary = items
       .map((i) => `${i.name} (Size ${i.size}) x${i.quantity} — ${i.price * i.quantity} €`)
       .join("\n");
 
-    const formattedAddress = `${firstName} ${lastName}\n${streetAddress}\n${postalCode} ${city}\n${country}\nTel: ${phone}`;
+    const formattedAddress = `${firstName} ${lastName}\n${streetAddress}\n${postalCode} ${city}\n${country}\nTel: ${fullPhone}`;
 
-    /* Sauvegarde locale du reçu pour l'impression et le retour Stripe */
     localStorage.setItem(
       "helmet_last_order",
       JSON.stringify({
@@ -149,6 +390,7 @@ export default function CartPage() {
         postalCode,
         city,
         country,
+        phonePrefix,
         phone,
         items,
         total: subtotal,
@@ -156,7 +398,7 @@ export default function CartPage() {
       })
     );
 
-    /* Envoi immédiat de la commande complète + bordereau sur ta boîte helmetcothes@gmail.com */
+    /* Envoi du bordereau complet sur helmetcothes@gmail.com */
     try {
       await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
         method: "POST",
@@ -165,12 +407,12 @@ export default function CartPage() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          _subject: `[NOUVELLE COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} €`,
+          _subject: `[COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} € (${paymentMethod.toUpperCase()})`,
           Numero_Commande: generatedRef,
           Date: todayStr,
           Client: `${firstName} ${lastName}`,
           Email_Client: customerEmail,
-          Telephone: phone,
+          Telephone: fullPhone,
           Moyen_Paiement: paymentMethod.toUpperCase(),
           Adresse_Livraison: formattedAddress,
           Articles: orderSummary,
@@ -179,7 +421,14 @@ export default function CartPage() {
       });
     } catch {}
 
-    /* Si tu as renseigné ton lien Stripe en haut du fichier, redirige vers Stripe pour débiter le client */
+    /* Redirection vers PayPal si PAYPAL_ME_LINK est renseigné */
+    if (paymentMethod === "paypal" && PAYPAL_ME_LINK.trim().startsWith("http")) {
+      const cleanPaypal = PAYPAL_ME_LINK.trim().replace(/\/$/, "");
+      window.location.href = `${cleanPaypal}/${subtotal}EUR`;
+      return;
+    }
+
+    /* Redirection vers Stripe (Carte Bancaire / Apple Pay) si STRIPE_PAYMENT_LINK est renseigné */
     if (STRIPE_PAYMENT_LINK.trim().startsWith("http")) {
       const separator = STRIPE_PAYMENT_LINK.includes("?") ? "&" : "?";
       window.location.href = `${STRIPE_PAYMENT_LINK.trim()}${separator}prefilled_email=${encodeURIComponent(
@@ -272,14 +521,14 @@ export default function CartPage() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="helmet-receipt-box"
             style={{
-              maxWidth: "660px",
-              margin: "24px auto",
-              border: "1px solid rgba(255,255,255,0.32)",
+              maxWidth: "680px",
+              margin: "20px auto",
+              border: "1px solid rgba(255,255,255,0.34)",
               backgroundColor: "#080808",
-              padding: "38px 28px",
+              padding: "36px 26px",
               display: "flex",
               flexDirection: "column",
-              gap: "26px",
+              gap: "24px",
             }}
           >
             <div style={{ textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.2)", paddingBottom: "22px" }}>
@@ -288,7 +537,7 @@ export default function CartPage() {
                   fontSize: "12px",
                   letterSpacing: "0.26em",
                   textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.7)",
+                  color: "rgba(255,255,255,0.72)",
                   margin: "0 0 8px 0",
                 }}
               >
@@ -296,7 +545,7 @@ export default function CartPage() {
               </p>
               <h1
                 className="font-cancellaresca"
-                style={{ fontSize: "clamp(38px, 5vw, 52px)", margin: "0 0 12px 0", color: "#ffffff" }}
+                style={{ fontSize: "clamp(36px, 5vw, 52px)", margin: "0 0 12px 0", color: "#ffffff" }}
               >
                 Thanks For Your Purchase
               </h1>
@@ -304,7 +553,7 @@ export default function CartPage() {
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  gap: "20px",
+                  gap: "16px",
                   flexWrap: "wrap",
                   fontSize: "13px",
                   letterSpacing: "0.18em",
@@ -324,8 +573,8 @@ export default function CartPage() {
                 preparation at our Paris studio (please allow 2–3 weeks for bespoke atelier crafting and dispatch).
               </p>
               <p style={{ margin: 0 }}>
-                You will receive your shipping and tracking notification shortly. For any question or modification
-                regarding your order, please contact our{" "}
+                You will receive your shipping and tracking notification soon. If you have any question or issue
+                with your order, contact our{" "}
                 <Link
                   href="/service"
                   style={{ textDecoration: "underline", color: "#ffffff" }}
@@ -336,17 +585,23 @@ export default function CartPage() {
               </p>
             </div>
 
+            {/* Étiquette / Bordereau de Livraison & Résumé */}
             <div
               style={{
                 borderTop: "1px solid rgba(255,255,255,0.2)",
                 borderBottom: "1px solid rgba(255,255,255,0.2)",
                 padding: "22px 0",
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
                 gap: "24px",
               }}
             >
-              <div>
+              <div
+                style={{
+                  border: "1px dashed rgba(255,255,255,0.3)",
+                  padding: "16px",
+                }}
+              >
                 <span
                   style={{
                     display: "block",
@@ -357,10 +612,10 @@ export default function CartPage() {
                     marginBottom: "8px",
                   }}
                 >
-                  Delivery Destination
+                  Shipping Label — Destination
                 </span>
                 <p className="helmet-readable-text" style={{ margin: 0, textTransform: "uppercase" }}>
-                  {firstName} {lastName}
+                  <strong>{firstName} {lastName}</strong>
                   <br />
                   {streetAddress}
                   <br />
@@ -368,11 +623,11 @@ export default function CartPage() {
                   <br />
                   {country}
                   <br />
-                  Tel : {phone}
+                  Tel : {phonePrefix} {phone}
                 </p>
               </div>
 
-              <div>
+              <div style={{ padding: "16px 4px" }}>
                 <span
                   style={{
                     display: "block",
@@ -392,6 +647,17 @@ export default function CartPage() {
                 ))}
                 <p className="helmet-readable-text" style={{ margin: "12px 0 0 0", textTransform: "uppercase" }}>
                   Paid via {paymentMethod.toUpperCase()} : <strong>{purchasedTotal} €</strong>
+                </p>
+                <p
+                  style={{
+                    margin: "12px 0 0 0",
+                    fontSize: "11px",
+                    letterSpacing: "0.24em",
+                    color: "rgba(255,255,255,0.6)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Sender : Helmet Haute Couture — Paris, France
                 </p>
               </div>
             </div>
@@ -419,7 +685,7 @@ export default function CartPage() {
                   cursor: "pointer",
                 }}
               >
-                Print Receipt / Slip
+                Print Receipt / Shipping Slip
               </button>
 
               <Link href="/" className="helmet-btn-black">
@@ -578,6 +844,22 @@ export default function CartPage() {
                 </span>
               </div>
 
+              {formError && (
+                <div
+                  style={{
+                    border: "1px solid #ffffff",
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    padding: "12px 14px",
+                    marginBottom: "18px",
+                    fontSize: "13px",
+                    lineHeight: 1.5,
+                    color: "#ffffff",
+                  }}
+                >
+                  ! {formError}
+                </div>
+              )}
+
               <AnimatePresence mode="wait">
                 {checkoutStep === 1 && (
                   <motion.form
@@ -605,7 +887,10 @@ export default function CartPage() {
                         type="text"
                         required
                         value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        onChange={(e) => {
+                          setFirstName(e.target.value);
+                          setFormError("");
+                        }}
                         placeholder="FIRST NAME"
                         className="helmet-input"
                       />
@@ -613,46 +898,123 @@ export default function CartPage() {
                         type="text"
                         required
                         value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        onChange={(e) => {
+                          setLastName(e.target.value);
+                          setFormError("");
+                        }}
                         placeholder="LAST NAME"
                         className="helmet-input"
                       />
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                      <input
-                        type="email"
-                        required
-                        value={customerEmail}
-                        onChange={(e) => setCustomerEmail(e.target.value)}
-                        placeholder="EMAIL ADDRESS"
+                    <input
+                      type="email"
+                      required
+                      value={customerEmail}
+                      onChange={(e) => {
+                        setCustomerEmail(e.target.value);
+                        setFormError("");
+                      }}
+                      placeholder="EMAIL ADDRESS (EX: CLIENT@DOMAIN.COM)"
+                      className="helmet-input"
+                    />
+
+                    {/* INDICATIF INTERNATIONAL (+33, +1, +44...) + NUMÉRO DE TÉLÉPHONE */}
+                    <div style={{ display: "grid", gridTemplateColumns: "124px 1fr", gap: "10px" }}>
+                      <select
+                        value={phonePrefix}
+                        onChange={(e) => {
+                          const selected = COUNTRY_CODES.find((c) => c.code === e.target.value);
+                          setPhonePrefix(e.target.value);
+                          if (selected) setCountry(selected.country);
+                        }}
                         className="helmet-input"
-                      />
+                        style={{ padding: "14px 8px" }}
+                      >
+                        {COUNTRY_CODES.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.label}
+                          </option>
+                        ))}
+                      </select>
+
                       <input
                         type="tel"
                         required
+                        inputMode="numeric"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="PHONE NUMBER"
+                        onChange={(e) => {
+                          const digitsOnly = e.target.value.replace(/[^\d\s]/g, "");
+                          setPhone(digitsOnly);
+                          setFormError("");
+                        }}
+                        placeholder="PHONE NUMBER (DIGITS ONLY)"
                         className="helmet-input"
                       />
                     </div>
 
-                    <input
-                      type="text"
-                      required
-                      value={streetAddress}
-                      onChange={(e) => setStreetAddress(e.target.value)}
-                      placeholder="STREET ADDRESS & APARTMENT"
-                      className="helmet-input"
-                    />
+                    {/* RUE AVEC SUGGESTIONS D'ADRESSES RÉELLES EN DIRECT */}
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type="text"
+                        required
+                        autoComplete="off"
+                        value={streetAddress}
+                        onChange={(e) => handleStreetInput(e.target.value)}
+                        onBlur={() => setTimeout(() => setShowSuggestions(false), 220)}
+                        placeholder="STREET ADDRESS (EX: 18 RUE DES CHEMINOTS)"
+                        className="helmet-input"
+                      />
+
+                      {showSuggestions && addressSuggestions.length > 0 && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "100%",
+                            left: 0,
+                            right: 0,
+                            zIndex: 50,
+                            backgroundColor: "#111111",
+                            border: "1px solid #ffffff",
+                            borderTop: "none",
+                            maxHeight: "210px",
+                            overflowY: "auto",
+                          }}
+                        >
+                          {addressSuggestions.map((s) => (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onMouseDown={() => selectAddressSuggestion(s)}
+                              style={{
+                                display: "block",
+                                width: "100%",
+                                textAlign: "left",
+                                padding: "12px 14px",
+                                backgroundColor: "transparent",
+                                color: "#ffffff",
+                                border: "none",
+                                borderBottom: "1px solid rgba(255,255,255,0.14)",
+                                fontSize: "13px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {s.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
 
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                       <input
                         type="text"
                         required
                         value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
+                        onChange={(e) => {
+                          setPostalCode(e.target.value);
+                          setFormError("");
+                        }}
                         placeholder="POSTAL / ZIP CODE"
                         className="helmet-input"
                       />
@@ -660,7 +1022,10 @@ export default function CartPage() {
                         type="text"
                         required
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => {
+                          setCity(e.target.value);
+                          setFormError("");
+                        }}
                         placeholder="CITY"
                         className="helmet-input"
                       />
@@ -670,7 +1035,10 @@ export default function CartPage() {
                       type="text"
                       required
                       value={country}
-                      onChange={(e) => setCountry(e.target.value)}
+                      onChange={(e) => {
+                        setCountry(e.target.value);
+                        setFormError("");
+                      }}
                       placeholder="COUNTRY"
                       className="helmet-input"
                     />
@@ -721,7 +1089,10 @@ export default function CartPage() {
                       </span>
                       <button
                         type="button"
-                        onClick={() => setCheckoutStep(1)}
+                        onClick={() => {
+                          setCheckoutStep(1);
+                          setFormError("");
+                        }}
                         style={{
                           background: "transparent",
                           border: "none",
@@ -742,13 +1113,13 @@ export default function CartPage() {
                       style={{
                         padding: "12px 14px",
                         border: "1px solid rgba(255,255,255,0.2)",
-                        fontSize: "13px",
-                        letterSpacing: "0.06em",
-                        color: "rgba(255,255,255,0.88)",
+                        fontSize: "13.5px",
+                        letterSpacing: "0.04em",
+                        color: "rgba(255,255,255,0.9)",
                         lineHeight: 1.6,
                       }}
                     >
-                      {firstName} {lastName} — {streetAddress}, {postalCode} {city}, {country}
+                      {firstName} {lastName} — {streetAddress}, {postalCode} {city}, {country} ({phonePrefix} {phone})
                     </div>
 
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
@@ -762,7 +1133,10 @@ export default function CartPage() {
                           <button
                             key={m.id}
                             type="button"
-                            onClick={() => setPaymentMethod(m.id as any)}
+                            onClick={() => {
+                              setPaymentMethod(m.id as any);
+                              setFormError("");
+                            }}
                             style={{
                               padding: "13px 6px",
                               fontSize: "12px",
@@ -786,7 +1160,10 @@ export default function CartPage() {
                           type="text"
                           required
                           value={cardName}
-                          onChange={(e) => setCardName(e.target.value)}
+                          onChange={(e) => {
+                            setCardName(e.target.value);
+                            setFormError("");
+                          }}
                           placeholder="NAME ON CARD"
                           className="helmet-input"
                         />
@@ -796,7 +1173,7 @@ export default function CartPage() {
                           inputMode="numeric"
                           maxLength={19}
                           value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value)}
+                          onChange={(e) => handleCardNumberChange(e.target.value)}
                           placeholder="CARD NUMBER (0000 0000 0000 0000)"
                           className="helmet-input"
                         />
@@ -804,9 +1181,10 @@ export default function CartPage() {
                           <input
                             type="text"
                             required
+                            inputMode="numeric"
                             maxLength={5}
                             value={cardExpiry}
-                            onChange={(e) => setCardExpiry(e.target.value)}
+                            onChange={(e) => handleCardExpiryChange(e.target.value)}
                             placeholder="EXPIRY (MM/YY)"
                             className="helmet-input"
                           />
@@ -816,12 +1194,27 @@ export default function CartPage() {
                             inputMode="numeric"
                             maxLength={4}
                             value={cardCvc}
-                            onChange={(e) => setCardCvc(e.target.value)}
+                            onChange={(e) => {
+                              setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
+                              setFormError("");
+                            }}
                             placeholder="CVC (123)"
                             className="helmet-input"
                           />
                         </div>
                       </div>
+                    )}
+
+                    {paymentMethod === "applepay" && (
+                      <p className="helmet-readable-text" style={{ margin: 0, textAlign: "center", padding: "8px 0" }}>
+                        You will be redirected to Apple Pay / Express Checkout to authenticate with Face ID or Touch ID.
+                      </p>
+                    )}
+
+                    {paymentMethod === "paypal" && (
+                      <p className="helmet-readable-text" style={{ margin: 0, textAlign: "center", padding: "8px 0" }}>
+                        You will be redirected to PayPal to finalize your {subtotal} € payment securely.
+                      </p>
                     )}
 
                     <div
@@ -841,7 +1234,13 @@ export default function CartPage() {
                     </div>
 
                     <button type="submit" disabled={submitting} className="helmet-btn-black">
-                      {submitting ? "Processing Payment..." : `Confirm & Pay — ${subtotal} €`}
+                      {submitting
+                        ? "Verifying & Redirecting..."
+                        : paymentMethod === "paypal"
+                        ? `Continue With PayPal — ${subtotal} €`
+                        : paymentMethod === "applepay"
+                        ? `Pay With Apple Pay — ${subtotal} €`
+                        : `Confirm & Pay — ${subtotal} €`}
                     </button>
                   </motion.form>
                 )}
