@@ -32,7 +32,7 @@ const HELMET_FAQ_SECTIONS = [
     title: "ATELIER & PRODUCTION",
     paragraphs: [
       "Helmet Haute Couture is an independent label founded and directed in Paris, France. We have no corporate cosign, external investors, or third-party retailers.",
-      "Every garment is handcrafted in-house in France using premium Italian-woven 100% cotton fabrics. Because each piece is produced manually with strict attention to detail, please allow 2–3 weeks for your order to be prepared and shipped.",
+      "Every garment is handcrafted in-house in Paris using carefully selected premium fabrics. Because each piece is produced manually with strict attention to detail, please allow 2–3 weeks for your order to be prepared and shipped.",
       "We are happy to update you personally throughout the process or answer any questions about your piece via our Client Service.",
     ],
   },
@@ -58,10 +58,10 @@ const HELMET_FAQ_SECTIONS = [
     ],
   },
   {
-    title: "GARMENT CARE",
+    title: "GARMENTS CARE",
     paragraphs: [
-      "To preserve the structure of our 100% Italian cotton and handcrafted construction, we strongly recommend hand washing in cold water (inside out) or professional dry cleaning.",
-      "Always hang dry away from direct heat. Never machine dry, as high heat will alter the cotton fibers and distress the finish over time.",
+      "To preserve the structure, fabric texture, and handcrafted construction of our garments, we strongly recommend hand washing in cold water (inside out) or professional dry cleaning.",
+      "Always hang dry away from direct heat. Never machine dry, as high heat will alter the fibers and distress the finish over time.",
       "Wash dark black garments separately or with similar black pieces during the first cycles.",
     ],
   },
@@ -466,7 +466,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               <AnimatedEngravedRose x={84} y={86} scale={0.8} rotate={-8} delay={2.1} />
             </svg>
 
-            {/* LOGO HELMET HAUTE COUTURE CALIBRÉ POUR TENIR PILE AU MILIEU DU CADRAN */}
             <motion.div
               initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}

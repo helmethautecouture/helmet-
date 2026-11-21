@@ -6,14 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
 
 /* ============================================================================
-   CONFIGURATION DE TES ENCAISSEMENTS RÉELS (À RENSEIGNER QUAND TU ES PRÊT)
-   1. STRIPE_PAYMENT_LINK : Colle ici ton lien Stripe (ex: "https://buy.stripe.com/...")
-      -> Encaisse Carte Bancaire + Apple Pay + 3D Secure directement sur ton IBAN.
-   2. PAYPAL_ME_LINK      : Colle ici ton lien PayPal.me (ex: "https://paypal.me/tonpseudo")
-      -> Redirige directement vers PayPal avec le montant exact de la commande.
+   TON LIEN STRIPE CHECKOUT (CB + APPLE PAY + QR CODE + LINK)
+   Colle ton lien https://buy.stripe.com/... entre les guillemets ci-dessous :
    ============================================================================ */
-const STRIPE_PAYMENT_LINK: string = "https://buy.stripe.com/cNi6oG44y2Zw32B167co000";
-const PAYPAL_ME_LINK: string = "";
+const STRIPE_PAYMENT_LINK: string = "";
 
 const COUNTRY_CODES = [
   { code: "+33", label: "FR (+33)", country: "France" },
@@ -55,9 +51,6 @@ interface CartItem {
   image: string;
 }
 
-/* ============================================================================
-   FONCTIONS DE VALIDATION STRICTES (EMPÊCHE LES FAUSSES INFOS / FAUSSES CARTES)
-   ============================================================================ */
 function isValidHumanName(val: string): boolean {
   const clean = val.trim();
   if (clean.length < 2) return false;
@@ -75,43 +68,9 @@ function isValidPhoneDigits(phone: string): boolean {
   return digits.length >= 7 && digits.length <= 15 && !/^(\d)\1+$/.test(digits);
 }
 
-/* Algorithme officiel de Luhn utilisé par Visa / Mastercard / Amex */
-function isValidCardLuhn(cardNum: string): boolean {
-  const digits = cardNum.replace(/\D/g, "");
-  if (digits.length < 13 || digits.length > 19) return false;
-  if (/^(\d)\1+$/.test(digits)) return false;
-
-  let sum = 0;
-  let shouldDouble = false;
-  for (let i = digits.length - 1; i >= 0; i--) {
-    let digit = parseInt(digits.charAt(i), 10);
-    if (shouldDouble) {
-      digit *= 2;
-      if (digit > 9) digit -= 9;
-    }
-    sum += digit;
-    shouldDouble = !shouldDouble;
-  }
-  return sum % 10 === 0;
-}
-
-function isValidExpiry(exp: string): boolean {
-  const match = exp.trim().match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
-  if (!match) return false;
-  const month = parseInt(match[1], 10);
-  const year = 2000 + parseInt(match[2], 10);
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
-  if (year < currentYear || year > currentYear + 15) return false;
-  if (year === currentYear && month < currentMonth) return false;
-  return true;
-}
-
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "applepay" | "paypal">("card");
   const [formError, setFormError] = useState<string>("");
 
   /* Étape 1 : Livraison & Indicatif Téléphonique */
@@ -129,12 +88,7 @@ export default function CartPage() {
   const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  /* Étape 2 : Détails Carte */
-  const [cardName, setCardName] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvc, setCardCvc] = useState("");
+  const orderFormRef = useRef<HTMLFormElement | null>(null);
 
   /* Étape 3 : Bordereau d'expédition & Reçu officiel */
   const [orderReference, setOrderReference] = useState("");
@@ -176,7 +130,6 @@ export default function CartPage() {
             setPhone(o.phone || "");
             setPurchasedItems(o.items || []);
             setPurchasedTotal(o.total || 150);
-            setPaymentMethod(o.method || "card");
             setCheckoutStep(3);
             syncCart([]);
           }
@@ -187,7 +140,6 @@ export default function CartPage() {
     }
   }, []);
 
-  /* Recherche automatique d'adresses réelles (France & International) pendant la frappe */
   const handleStreetInput = (value: string) => {
     setStreetAddress(value);
     setFormError("");
@@ -206,7 +158,6 @@ export default function CartPage() {
       try {
         const results: AddressSuggestion[] = [];
 
-        /* 1. API Nationale Française (ultra-rapide et précise pour toutes les rues de France) */
         const frRes = await fetch(
           `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&limit=4`
         );
@@ -229,7 +180,6 @@ export default function CartPage() {
           }
         }
 
-        /* 2. API Internationale Photon (OpenStreetMap) pour l'étranger */
         if (results.length < 3) {
           const intlRes = await fetch(
             `https://photon.komoot.io/api/?q=${encodeURIComponent(value)}&limit=4`
@@ -289,7 +239,6 @@ export default function CartPage() {
     0
   );
 
-  /* Validation rigoureuse de l'Étape 1 avant de passer au paiement */
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
@@ -318,51 +267,9 @@ export default function CartPage() {
     setCheckoutStep(2);
   };
 
-  /* Formatage automatique du numéro de carte (0000 0000 0000 0000) */
-  const handleCardNumberChange = (val: string) => {
-    setFormError("");
-    const digits = val.replace(/\D/g, "").slice(0, 16);
-    const formatted = digits.replace(/(\d{4})(?=\d)/g, "$1 ");
-    setCardNumber(formatted);
-  };
-
-  /* Formatage automatique de la date d'expiration (MM/YY) */
-  const handleCardExpiryChange = (val: string) => {
-    setFormError("");
-    const digits = val.replace(/\D/g, "").slice(0, 4);
-    if (digits.length >= 3) {
-      setCardExpiry(`${digits.slice(0, 2)}/${digits.slice(2)}`);
-    } else {
-      setCardExpiry(digits);
-    }
-  };
-
-  /* Validation rigoureuse de l'Étape 2 + Encaissement + Génération du bordereau */
-  const handleCompletePayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError("");
-    if (items.length === 0) return;
-
-    if (paymentMethod === "card") {
-      if (!isValidHumanName(cardName)) {
-        setFormError("Please enter the full Cardholder Name as printed on your card.");
-        return;
-      }
-      if (!isValidCardLuhn(cardNumber)) {
-        setFormError("Invalid Card Number. Please verify the 16 digits of your card.");
-        return;
-      }
-      if (!isValidExpiry(cardExpiry)) {
-        setFormError("Invalid or expired card date. Use MM/YY format.");
-        return;
-      }
-      const cleanCvc = cardCvc.replace(/\D/g, "");
-      if (cleanCvc.length < 3 || cleanCvc.length > 4) {
-        setFormError("Invalid Security Code (CVC must be 3 or 4 digits).");
-        return;
-      }
-    }
-
+  /* Lancement immédiat du paiement Stripe (sans tourner dans le vide) + enregistrement commande */
+  const handleStripeCheckout = () => {
+    if (items.length === 0 || submitting) return;
     setSubmitting(true);
 
     const generatedRef = `HLM-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -372,78 +279,61 @@ export default function CartPage() {
       year: "numeric",
     });
 
-    const fullPhone = `${phonePrefix} ${phone.trim()}`;
-    const orderSummary = items
-      .map((i) => `${i.name} (Size ${i.size}) x${i.quantity} — ${i.price * i.quantity} €`)
-      .join("\n");
+    const newOrderRecord = {
+      ref: generatedRef,
+      date: todayStr,
+      firstName,
+      lastName,
+      email: customerEmail,
+      streetAddress,
+      postalCode,
+      city,
+      country,
+      phonePrefix,
+      phone,
+      items,
+      total: subtotal,
+      method: "STRIPE (CB / APPLE PAY)",
+      status: "Paid / Pending Dispatch",
+    };
 
-    const formattedAddress = `${firstName} ${lastName}\n${streetAddress}\n${postalCode} ${city}\n${country}\nTel: ${fullPhone}`;
-
-    localStorage.setItem(
-      "helmet_last_order",
-      JSON.stringify({
-        ref: generatedRef,
-        date: todayStr,
-        firstName,
-        lastName,
-        streetAddress,
-        postalCode,
-        city,
-        country,
-        phonePrefix,
-        phone,
-        items,
-        total: subtotal,
-        method: paymentMethod,
-      })
-    );
-
-    /* Envoi du bordereau complet sur helmetcothes@gmail.com */
+    /* 1. Sauvegarde dans le registre local des commandes (/atelier) */
     try {
-      await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          _subject: `[COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} € (${paymentMethod.toUpperCase()})`,
-          Numero_Commande: generatedRef,
-          Date: todayStr,
-          Client: `${firstName} ${lastName}`,
-          Email_Client: customerEmail,
-          Telephone: fullPhone,
-          Moyen_Paiement: paymentMethod.toUpperCase(),
-          Adresse_Livraison: formattedAddress,
-          Articles: orderSummary,
-          Total_Paye: `${subtotal} €`,
-        }),
-      });
+      localStorage.setItem("helmet_last_order", JSON.stringify(newOrderRecord));
+      const existingArchive = JSON.parse(localStorage.getItem("helmet_orders_archive") || "[]");
+      const updatedArchive = Array.isArray(existingArchive)
+        ? [newOrderRecord, ...existingArchive]
+        : [newOrderRecord];
+      localStorage.setItem("helmet_orders_archive", JSON.stringify(updatedArchive));
     } catch {}
 
-    /* Redirection vers PayPal si PAYPAL_ME_LINK est renseigné */
-    if (paymentMethod === "paypal" && PAYPAL_ME_LINK.trim().startsWith("http")) {
-      const cleanPaypal = PAYPAL_ME_LINK.trim().replace(/\/$/, "");
-      window.location.href = `${cleanPaypal}/${subtotal}EUR`;
-      return;
+    /* 2. Envoi du récapitulatif vers Gmail via le formulaire caché */
+    if (orderFormRef.current) {
+      const refInput = orderFormRef.current.elements.namedItem("Numero_Commande") as HTMLInputElement;
+      const subjInput = orderFormRef.current.elements.namedItem("_subject") as HTMLInputElement;
+      if (refInput) refInput.value = generatedRef;
+      if (subjInput) subjInput.value = `[NOUVELLE COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} €`;
+      orderFormRef.current.submit();
     }
 
-    /* Redirection vers Stripe (Carte Bancaire / Apple Pay) si STRIPE_PAYMENT_LINK est renseigné */
-    if (STRIPE_PAYMENT_LINK.trim().startsWith("http")) {
-      const separator = STRIPE_PAYMENT_LINK.includes("?") ? "&" : "?";
-      window.location.href = `${STRIPE_PAYMENT_LINK.trim()}${separator}prefilled_email=${encodeURIComponent(
-        customerEmail
-      )}&client_reference_id=${generatedRef}`;
-      return;
-    }
+    /* 3. Redirection vers ton lien Stripe Checkout (CB, Apple Pay, QR Code Apple Pay, Link) */
+    setTimeout(() => {
+      if (STRIPE_PAYMENT_LINK.trim().startsWith("http")) {
+        const separator = STRIPE_PAYMENT_LINK.includes("?") ? "&" : "?";
+        window.location.href = `${STRIPE_PAYMENT_LINK.trim()}${separator}prefilled_email=${encodeURIComponent(
+          customerEmail
+        )}&client_reference_id=${generatedRef}`;
+        return;
+      }
 
-    setOrderReference(generatedRef);
-    setOrderDate(todayStr);
-    setPurchasedItems([...items]);
-    setPurchasedTotal(subtotal);
-    setSubmitting(false);
-    setCheckoutStep(3);
-    syncCart([]);
+      setOrderReference(generatedRef);
+      setOrderDate(todayStr);
+      setPurchasedItems([...items]);
+      setPurchasedTotal(subtotal);
+      setSubmitting(false);
+      setCheckoutStep(3);
+      syncCart([]);
+    }, 350);
   };
 
   const handlePrintReceipt = () => {
@@ -451,9 +341,35 @@ export default function CartPage() {
   };
 
   const totalCount = items.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
+  const fullPhone = `${phonePrefix} ${phone.trim()}`;
+  const orderSummaryText = items
+    .map((i) => `${i.name} (Size ${i.size}) x${i.quantity} — ${i.price * i.quantity} €`)
+    .join(" | ");
+  const fullAddressText = `${firstName} ${lastName}, ${streetAddress}, ${postalCode} ${city}, ${country} (Tel: ${fullPhone})`;
 
   return (
     <div className="helmet-page-container">
+      {/* Iframe & Formulaire caché pour expédier la commande sur helmetcothes@gmail.com */}
+      <iframe name="helmet_order_iframe" title="Order Dispatch" style={{ display: "none" }} />
+      <form
+        ref={orderFormRef}
+        action="https://formsubmit.co/helmetcothes@gmail.com"
+        method="POST"
+        target="helmet_order_iframe"
+        style={{ display: "none" }}
+      >
+        <input type="hidden" name="_subject" defaultValue="[NOUVELLE COMMANDE HELMET]" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="Numero_Commande" defaultValue="" />
+        <input type="hidden" name="Client" value={`${firstName} ${lastName}`} />
+        <input type="hidden" name="Email_Client" value={customerEmail} />
+        <input type="hidden" name="Telephone" value={fullPhone} />
+        <input type="hidden" name="Adresse_Livraison" value={fullAddressText} />
+        <input type="hidden" name="Articles" value={orderSummaryText} />
+        <input type="hidden" name="Total" value={`${subtotal} €`} />
+      </form>
+
       <motion.header
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -573,7 +489,7 @@ export default function CartPage() {
                 preparation at our Paris studio (please allow 2–3 weeks for bespoke atelier crafting and dispatch).
               </p>
               <p style={{ margin: 0 }}>
-                You will receive your shipping and tracking notification soon. If you have any question or issue
+                You will receive your shipping and tracking notification shortly. If you have any question or issue
                 with your order, contact our{" "}
                 <Link
                   href="/service"
@@ -585,7 +501,6 @@ export default function CartPage() {
               </p>
             </div>
 
-            {/* Étiquette / Bordereau de Livraison & Résumé */}
             <div
               style={{
                 borderTop: "1px solid rgba(255,255,255,0.2)",
@@ -646,7 +561,7 @@ export default function CartPage() {
                   </p>
                 ))}
                 <p className="helmet-readable-text" style={{ margin: "12px 0 0 0", textTransform: "uppercase" }}>
-                  Paid via {paymentMethod.toUpperCase()} : <strong>{purchasedTotal} €</strong>
+                  Paid via Stripe : <strong>{purchasedTotal} €</strong>
                 </p>
                 <p
                   style={{
@@ -919,7 +834,6 @@ export default function CartPage() {
                       className="helmet-input"
                     />
 
-                    {/* INDICATIF INTERNATIONAL (+33, +1, +44...) + NUMÉRO DE TÉLÉPHONE */}
                     <div style={{ display: "grid", gridTemplateColumns: "124px 1fr", gap: "10px" }}>
                       <select
                         value={phonePrefix}
@@ -953,7 +867,6 @@ export default function CartPage() {
                       />
                     </div>
 
-                    {/* RUE AVEC SUGGESTIONS D'ADRESSES RÉELLES EN DIRECT */}
                     <div style={{ position: "relative" }}>
                       <input
                         type="text"
@@ -1066,15 +979,17 @@ export default function CartPage() {
                   </motion.form>
                 )}
 
+                {/* ============================================================
+                    ÉTAPE 2 : ENCAISSEMENT STRIPE OFFICIEL (CB + APPLE PAY QR + LINK)
+                    ============================================================ */}
                 {checkoutStep === 2 && (
-                  <motion.form
+                  <motion.div
                     key="step-2-payment"
                     initial={{ opacity: 0, x: 12 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 12 }}
                     transition={{ duration: 0.3 }}
-                    onSubmit={handleCompletePayment}
-                    style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+                    style={{ display: "flex", flexDirection: "column", gap: "18px" }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span
@@ -1085,7 +1000,7 @@ export default function CartPage() {
                           color: "rgba(255,255,255,0.75)",
                         }}
                       >
-                        2. Payment Method
+                        2. Secure Checkout
                       </span>
                       <button
                         type="button"
@@ -1111,111 +1026,66 @@ export default function CartPage() {
 
                     <div
                       style={{
-                        padding: "12px 14px",
+                        padding: "14px",
                         border: "1px solid rgba(255,255,255,0.2)",
                         fontSize: "13.5px",
                         letterSpacing: "0.04em",
-                        color: "rgba(255,255,255,0.9)",
-                        lineHeight: 1.6,
+                        color: "rgba(255,255,255,0.92)",
+                        lineHeight: 1.65,
                       }}
                     >
-                      {firstName} {lastName} — {streetAddress}, {postalCode} {city}, {country} ({phonePrefix} {phone})
+                      <strong>{firstName} {lastName}</strong>
+                      <br />
+                      {streetAddress}, {postalCode} {city}, {country}
+                      <br />
+                      {phonePrefix} {phone}
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
-                      {[
-                        { id: "card", label: "Card (CB)" },
-                        { id: "applepay", label: "Apple Pay" },
-                        { id: "paypal", label: "PayPal" },
-                      ].map((m) => {
-                        const active = paymentMethod === m.id;
-                        return (
-                          <button
-                            key={m.id}
-                            type="button"
-                            onClick={() => {
-                              setPaymentMethod(m.id as any);
-                              setFormError("");
-                            }}
-                            style={{
-                              padding: "13px 6px",
-                              fontSize: "12px",
-                              letterSpacing: "0.14em",
-                              textTransform: "uppercase",
-                              cursor: "pointer",
-                              backgroundColor: active ? "#ffffff" : "#050505",
-                              color: active ? "#000000" : "#ffffff",
-                              border: "1px solid #ffffff",
-                            }}
-                          >
-                            {m.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {paymentMethod === "card" && (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                        <input
-                          type="text"
-                          required
-                          value={cardName}
-                          onChange={(e) => {
-                            setCardName(e.target.value);
-                            setFormError("");
+                    {/* Encadré Stripe avec logo officiel + méthodes incluses (CB, Apple Pay & QR Code, Link) */}
+                    <div
+                      style={{
+                        border: "1px solid #ffffff",
+                        padding: "20px 16px",
+                        backgroundColor: "#0c0c0c",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "12px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        {/* Logo vectoriel Stripe */}
+                        <span
+                          style={{
+                            fontFamily: "system-ui, -apple-system, sans-serif",
+                            fontWeight: 800,
+                            fontSize: "22px",
+                            letterSpacing: "-0.03em",
+                            color: "#ffffff",
                           }}
-                          placeholder="NAME ON CARD"
-                          className="helmet-input"
-                        />
-                        <input
-                          type="text"
-                          required
-                          inputMode="numeric"
-                          maxLength={19}
-                          value={cardNumber}
-                          onChange={(e) => handleCardNumberChange(e.target.value)}
-                          placeholder="CARD NUMBER (0000 0000 0000 0000)"
-                          className="helmet-input"
-                        />
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                          <input
-                            type="text"
-                            required
-                            inputMode="numeric"
-                            maxLength={5}
-                            value={cardExpiry}
-                            onChange={(e) => handleCardExpiryChange(e.target.value)}
-                            placeholder="EXPIRY (MM/YY)"
-                            className="helmet-input"
-                          />
-                          <input
-                            type="text"
-                            required
-                            inputMode="numeric"
-                            maxLength={4}
-                            value={cardCvc}
-                            onChange={(e) => {
-                              setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
-                              setFormError("");
-                            }}
-                            placeholder="CVC (123)"
-                            className="helmet-input"
-                          />
-                        </div>
+                        >
+                          stripe
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "10px",
+                            letterSpacing: "0.2em",
+                            textTransform: "uppercase",
+                            border: "1px solid rgba(255,255,255,0.4)",
+                            padding: "3px 8px",
+                            color: "rgba(255,255,255,0.85)",
+                          }}
+                        >
+                          Encrypted Checkout
+                        </span>
                       </div>
-                    )}
 
-                    {paymentMethod === "applepay" && (
-                      <p className="helmet-readable-text" style={{ margin: 0, textAlign: "center", padding: "8px 0" }}>
-                        You will be redirected to Apple Pay / Express Checkout to authenticate with Face ID or Touch ID.
+                      <p className="helmet-readable-text" style={{ margin: 0, fontSize: "14px" }}>
+                        Pay securely via <strong>Credit / Debit Card</strong>, <strong>Apple Pay (Touch ID / QR Code)</strong>, or{" "}
+                        <strong>Link</strong> with 3D Secure bank verification.
                       </p>
-                    )}
-
-                    {paymentMethod === "paypal" && (
-                      <p className="helmet-readable-text" style={{ margin: 0, textAlign: "center", padding: "8px 0" }}>
-                        You will be redirected to PayPal to finalize your {subtotal} € payment securely.
-                      </p>
-                    )}
+                    </div>
 
                     <div
                       style={{
@@ -1233,16 +1103,15 @@ export default function CartPage() {
                       <span>{subtotal} €</span>
                     </div>
 
-                    <button type="submit" disabled={submitting} className="helmet-btn-black">
-                      {submitting
-                        ? "Verifying & Redirecting..."
-                        : paymentMethod === "paypal"
-                        ? `Continue With PayPal — ${subtotal} €`
-                        : paymentMethod === "applepay"
-                        ? `Pay With Apple Pay — ${subtotal} €`
-                        : `Confirm & Pay — ${subtotal} €`}
+                    <button
+                      type="button"
+                      disabled={submitting}
+                      onClick={handleStripeCheckout}
+                      className="helmet-btn-black"
+                    >
+                      {submitting ? "Opening Stripe Checkout..." : `Proceed To Stripe — ${subtotal} €`}
                     </button>
-                  </motion.form>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>

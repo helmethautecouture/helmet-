@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
@@ -10,9 +10,12 @@ export default function ClientServicePage() {
   const [cartCount, setCartCount] = useState(0);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("Order Inquiry — Overlayer Jogger -01");
+  const [orderNumber, setOrderNumber] = useState("");
+  const [subject, setSubject] = useState("Order Inquiry");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
     try {
@@ -26,50 +29,33 @@ export default function ClientServicePage() {
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !message) return;
+    if (!email.trim() || !message.trim() || !formRef.current) return;
 
     setStatus("sending");
+    /* Soumission HTML directe vers FormSubmit (déclenche la réception réelle sur helmetcothes@gmail.com) */
+    formRef.current.submit();
 
-    try {
-      const response = await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          _subject: `[HELMET HAUTE COUTURE] ${subject}`,
-          Name: name || "Client Atelier",
-          Email: email,
-          Subject: subject,
-          Message: message,
-        }),
-      });
-
-      if (response.ok) {
-        setStatus("sent");
-        setName("");
-        setEmail("");
-        setMessage("");
-      } else {
-        window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
-          `[HELMET HAUTE COUTURE] ${subject}`
-        )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
-        setStatus("sent");
-      }
-    } catch {
-      window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
-        `[HELMET HAUTE COUTURE] ${subject}`
-      )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+    setTimeout(() => {
       setStatus("sent");
-    }
+      setName("");
+      setEmail("");
+      setOrderNumber("");
+      setMessage("");
+    }, 900);
   };
 
   return (
     <div className="helmet-page-container">
       <AtelierAtmosphere mode="petals-only" inverted />
+
+      {/* Iframe invisible pour envoyer le formulaire vers Gmail sans quitter la page */}
+      <iframe
+        name="helmet_service_iframe"
+        title="Client Service Delivery"
+        style={{ display: "none" }}
+      />
 
       <motion.header
         initial={{ opacity: 0, y: 12 }}
@@ -83,9 +69,9 @@ export default function ClientServicePage() {
             href="/"
             className="helmet-zoom-link"
             style={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "uppercase",
-              letterSpacing: "0.22em",
+              letterSpacing: "0.18em",
               whiteSpace: "nowrap",
               color: "#ffffff",
             }}
@@ -100,7 +86,7 @@ export default function ClientServicePage() {
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(26px, 4.2vw, 44px)",
+                  fontSize: "clamp(28px, 4.2vw, 46px)",
                   lineHeight: 1,
                   display: "block",
                   whiteSpace: "nowrap",
@@ -118,9 +104,9 @@ export default function ClientServicePage() {
             href="/cart"
             className="helmet-zoom-link"
             style={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "uppercase",
-              letterSpacing: "0.22em",
+              letterSpacing: "0.2em",
               display: "inline-flex",
               alignItems: "center",
               gap: "6px",
@@ -128,8 +114,9 @@ export default function ClientServicePage() {
               color: "#ffffff",
             }}
           >
-            <svg width="16" height="16" style={{ width: "16px", height: "16px", minWidth: "16px" }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            <svg width="17" height="17" style={{ width: "17px", height: "17px", minWidth: "17px" }} fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2" />
             </svg>
             <span>[{cartCount}]</span>
           </Link>
@@ -145,10 +132,10 @@ export default function ClientServicePage() {
         >
           <p
             style={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "uppercase",
-              letterSpacing: "0.34em",
-              color: "rgba(255,255,255,0.68)",
+              letterSpacing: "0.28em",
+              color: "rgba(255,255,255,0.72)",
               margin: 0,
             }}
           >
@@ -157,19 +144,32 @@ export default function ClientServicePage() {
         </motion.div>
 
         <motion.form
+          ref={formRef}
+          action="https://formsubmit.co/helmetcothes@gmail.com"
+          method="POST"
+          target="helmet_service_iframe"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.14 }}
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
+          {/* Champs techniques cachés pour FormSubmit */}
+          <input
+            type="hidden"
+            name="_subject"
+            value={`[CLIENT SERVICE${orderNumber.trim() ? ` — ${orderNumber.trim().toUpperCase()}` : ""}] ${subject}`}
+          />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+
           <div>
             <label
               style={{
                 display: "block",
-                fontSize: "10.5px",
+                fontSize: "11.5px",
                 textTransform: "uppercase",
-                letterSpacing: "0.26em",
+                letterSpacing: "0.2em",
                 marginBottom: "8px",
               }}
             >
@@ -177,6 +177,7 @@ export default function ClientServicePage() {
             </label>
             <input
               type="text"
+              name="Full_Name"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -189,9 +190,9 @@ export default function ClientServicePage() {
             <label
               style={{
                 display: "block",
-                fontSize: "10.5px",
+                fontSize: "11.5px",
                 textTransform: "uppercase",
-                letterSpacing: "0.26em",
+                letterSpacing: "0.2em",
                 marginBottom: "8px",
               }}
             >
@@ -199,6 +200,7 @@ export default function ClientServicePage() {
             </label>
             <input
               type="email"
+              name="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -207,26 +209,48 @@ export default function ClientServicePage() {
             />
           </div>
 
+          {/* NOUVELLE CASE : NUMÉRO DE COMMANDE (OPTIONNEL) */}
           <div>
             <label
               style={{
                 display: "block",
-                fontSize: "10.5px",
+                fontSize: "11.5px",
                 textTransform: "uppercase",
-                letterSpacing: "0.26em",
+                letterSpacing: "0.2em",
+                marginBottom: "8px",
+              }}
+            >
+              Order Reference <span style={{ color: "rgba(255,255,255,0.55)" }}>(Optional)</span>
+            </label>
+            <input
+              type="text"
+              name="Order_Reference"
+              value={orderNumber}
+              onChange={(e) => setOrderNumber(e.target.value.toUpperCase())}
+              placeholder="EX: HLM-123456 (OPTIONAL)"
+              className="helmet-input"
+            />
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: "block",
+                fontSize: "11.5px",
+                textTransform: "uppercase",
+                letterSpacing: "0.2em",
                 marginBottom: "8px",
               }}
             >
               Subject
             </label>
             <select
+              name="Subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className="helmet-input"
             >
-              <option value="Order Inquiry — Overlayer Jogger -01">
-                ORDER INQUIRY — OVERLAYER JOGGER -01
-              </option>
+              <option value="Order Inquiry">ORDER INQUIRY</option>
               <option value="Sizing & Measurements (Size 1 / 2 / 3)">
                 SIZING & MEASUREMENTS (SIZE 1 / 2 / 3)
               </option>
@@ -241,15 +265,16 @@ export default function ClientServicePage() {
             <label
               style={{
                 display: "block",
-                fontSize: "10.5px",
+                fontSize: "11.5px",
                 textTransform: "uppercase",
-                letterSpacing: "0.26em",
+                letterSpacing: "0.2em",
                 marginBottom: "8px",
               }}
             >
               Message
             </label>
             <textarea
+              name="Message"
               rows={5}
               required
               value={message}
@@ -274,15 +299,15 @@ export default function ClientServicePage() {
           {status === "sent" && (
             <p
               style={{
-                fontSize: "11px",
-                letterSpacing: "0.2em",
+                fontSize: "12.5px",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 color: "#ffffff",
                 textAlign: "center",
                 marginTop: "6px",
               }}
             >
-              ✓ Your message has been transmitted.
+              ✓ Your message has been transmitted to our Paris studio.
             </p>
           )}
         </motion.form>
