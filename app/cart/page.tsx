@@ -5,6 +5,13 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
 
+/* ============================================================================
+   CONFIGURATION ENCAISSEMENT RÉEL (STRIPE PAYMENT LINK)
+   Colle ton lien Stripe Checkout (ex: "https://buy.stripe.com/...") ci-dessous
+   pour que le client soit redirigé vers Stripe et que l'argent arrive sur ton compte.
+   ============================================================================ */
+const STRIPE_PAYMENT_LINK: string = "";
+
 interface CartItem {
   id: string;
   name: string;
@@ -17,11 +24,10 @@ interface CartItem {
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  /* Tunnel en 3 étapes : 1 = Shipping Details, 2 = Payment Method, 3 = Order Confirmation */
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "applepay" | "paypal">("card");
 
-  /* Étape 1 : Coordonnées par cases */
+  /* Étape 1 : Coordonnées de livraison */
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -37,11 +43,19 @@ export default function CartPage() {
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
 
-  /* Étape 3 : Récapitulatif de commande enregistré après paiement */
+  /* Étape 3 : Reçu & Bordereau d'expédition */
   const [orderReference, setOrderReference] = useState("");
+  const [orderDate, setOrderDate] = useState("");
   const [purchasedItems, setPurchasedItems] = useState<CartItem[]>([]);
   const [purchasedTotal, setPurchasedTotal] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+
+  const syncCart = (updated: CartItem[]) => {
+    setItems(updated);
+    const serialized = JSON.stringify(updated);
+    localStorage.setItem("helmet_cart", serialized);
+    localStorage.setItem("cart", serialized);
+  };
 
   useEffect(() => {
     try {
@@ -50,17 +64,35 @@ export default function CartPage() {
       if (Array.isArray(parsed)) {
         setItems(parsed);
       }
+
+      /* Si le client revient depuis Stripe Checkout (?paid=1), on affiche automatiquement son reçu */
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("paid") === "1") {
+          const savedOrder = localStorage.getItem("helmet_last_order");
+          if (savedOrder) {
+            const o = JSON.parse(savedOrder);
+            setOrderReference(o.ref || "HLM-000001");
+            setOrderDate(o.date || new Date().toLocaleDateString("fr-FR"));
+            setFirstName(o.firstName || "");
+            setLastName(o.lastName || "");
+            setStreetAddress(o.streetAddress || "");
+            setPostalCode(o.postalCode || "");
+            setCity(o.city || "");
+            setCountry(o.country || "");
+            setPhone(o.phone || "");
+            setPurchasedItems(o.items || []);
+            setPurchasedTotal(o.total || 150);
+            setPaymentMethod(o.method || "card");
+            setCheckoutStep(3);
+            syncCart([]);
+          }
+        }
+      }
     } catch {
       setItems([]);
     }
   }, []);
-
-  const syncCart = (updated: CartItem[]) => {
-    setItems(updated);
-    const serialized = JSON.stringify(updated);
-    localStorage.setItem("helmet_cart", serialized);
-    localStorage.setItem("cart", serialized);
-  };
 
   const updateQty = (index: number, delta: number) => {
     const copy = [...items];
@@ -78,7 +110,6 @@ export default function CartPage() {
     0
   );
 
-  /* Passage de l'Étape 1 (Livraison) à l'Étape 2 (Moyen de paiement) */
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName || !lastName || !customerEmail || !phone || !streetAddress || !postalCode || !city || !country) {
@@ -87,7 +118,6 @@ export default function CartPage() {
     setCheckoutStep(2);
   };
 
-  /* Passage de l'Étape 2 (Paiement) à l'Étape 3 (Confirmation finale) */
   const handleCompletePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) return;
@@ -95,12 +125,38 @@ export default function CartPage() {
     setSubmitting(true);
 
     const generatedRef = `HLM-${Math.floor(100000 + Math.random() * 900000)}`;
+    const todayStr = new Date().toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
     const orderSummary = items
       .map((i) => `${i.name} (Size ${i.size}) x${i.quantity} — ${i.price * i.quantity} €`)
       .join("\n");
 
     const formattedAddress = `${firstName} ${lastName}\n${streetAddress}\n${postalCode} ${city}\n${country}\nTel: ${phone}`;
 
+    /* Sauvegarde locale du reçu pour l'impression et le retour Stripe */
+    localStorage.setItem(
+      "helmet_last_order",
+      JSON.stringify({
+        ref: generatedRef,
+        date: todayStr,
+        firstName,
+        lastName,
+        streetAddress,
+        postalCode,
+        city,
+        country,
+        phone,
+        items,
+        total: subtotal,
+        method: paymentMethod,
+      })
+    );
+
+    /* Envoi immédiat de la commande complète + bordereau sur ta boîte helmetcothes@gmail.com */
     try {
       await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
         method: "POST",
@@ -109,25 +165,40 @@ export default function CartPage() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          _subject: `[ORDER ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} € (${paymentMethod.toUpperCase()})`,
-          Order_Number: generatedRef,
+          _subject: `[NOUVELLE COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} €`,
+          Numero_Commande: generatedRef,
+          Date: todayStr,
           Client: `${firstName} ${lastName}`,
-          Email: customerEmail,
-          Phone: phone,
-          Payment_Method: paymentMethod.toUpperCase(),
-          Shipping_Address: formattedAddress,
-          Items: orderSummary,
-          Total: `${subtotal} €`,
+          Email_Client: customerEmail,
+          Telephone: phone,
+          Moyen_Paiement: paymentMethod.toUpperCase(),
+          Adresse_Livraison: formattedAddress,
+          Articles: orderSummary,
+          Total_Paye: `${subtotal} €`,
         }),
       });
     } catch {}
 
+    /* Si tu as renseigné ton lien Stripe en haut du fichier, redirige vers Stripe pour débiter le client */
+    if (STRIPE_PAYMENT_LINK.trim().startsWith("http")) {
+      const separator = STRIPE_PAYMENT_LINK.includes("?") ? "&" : "?";
+      window.location.href = `${STRIPE_PAYMENT_LINK.trim()}${separator}prefilled_email=${encodeURIComponent(
+        customerEmail
+      )}&client_reference_id=${generatedRef}`;
+      return;
+    }
+
     setOrderReference(generatedRef);
+    setOrderDate(todayStr);
     setPurchasedItems([...items]);
     setPurchasedTotal(subtotal);
     setSubmitting(false);
     setCheckoutStep(3);
     syncCart([]);
+  };
+
+  const handlePrintReceipt = () => {
+    window.print();
   };
 
   const totalCount = items.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
@@ -138,7 +209,7 @@ export default function CartPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
-        className="helmet-page-header"
+        className="helmet-page-header no-print"
         style={{ position: "relative", zIndex: 10 }}
       >
         <div style={{ justifySelf: "start" }}>
@@ -146,9 +217,9 @@ export default function CartPage() {
             href="/shop"
             className="helmet-zoom-link"
             style={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "uppercase",
-              letterSpacing: "0.22em",
+              letterSpacing: "0.18em",
               whiteSpace: "nowrap",
               color: "#ffffff",
             }}
@@ -163,7 +234,7 @@ export default function CartPage() {
               <span
                 className="font-cancellaresca"
                 style={{
-                  fontSize: "clamp(26px, 4.2vw, 44px)",
+                  fontSize: "clamp(28px, 4.2vw, 46px)",
                   lineHeight: 1,
                   display: "block",
                   whiteSpace: "nowrap",
@@ -179,9 +250,9 @@ export default function CartPage() {
         <div style={{ justifySelf: "end" }}>
           <span
             style={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "uppercase",
-              letterSpacing: "0.22em",
+              letterSpacing: "0.2em",
               color: "#ffffff",
             }}
           >
@@ -192,99 +263,103 @@ export default function CartPage() {
 
       <div style={{ position: "relative", zIndex: 10 }}>
         {/* ====================================================================
-            ÉTAPE 3 : PAGE FINALE APRÈS PAIEMENT (REÇU OFFICIEL & SUIVI)
+            ÉTAPE 3 : REÇU OFFICIEL & BORDEREAU D'EXPÉDITION IMPRIMABLE
             ==================================================================== */}
         {checkoutStep === 3 ? (
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="helmet-receipt-box"
             style={{
-              maxWidth: "620px",
-              margin: "32px auto",
-              border: "1px solid rgba(255,255,255,0.28)",
+              maxWidth: "660px",
+              margin: "24px auto",
+              border: "1px solid rgba(255,255,255,0.32)",
               backgroundColor: "#080808",
-              padding: "36px 26px",
+              padding: "38px 28px",
               display: "flex",
               flexDirection: "column",
-              gap: "24px",
+              gap: "26px",
             }}
           >
-            <div style={{ textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.16)", paddingBottom: "22px" }}>
-              <p
-                style={{
-                  fontSize: "10.5px",
-                  letterSpacing: "0.34em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.65)",
-                  margin: "0 0 10px 0",
-                }}
-              >
-                Paris — Atelier Official Receipt
-              </p>
-              <h1
-                className="font-cancellaresca"
-                style={{ fontSize: "clamp(36px, 5vw, 48px)", margin: "0 0 10px 0", color: "#ffffff" }}
-              >
-                Thanks For Your Purchase
-              </h1>
+            <div style={{ textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.2)", paddingBottom: "22px" }}>
               <p
                 style={{
                   fontSize: "12px",
                   letterSpacing: "0.26em",
                   textTransform: "uppercase",
-                  color: "#ffffff",
-                  margin: 0,
+                  color: "rgba(255,255,255,0.7)",
+                  margin: "0 0 8px 0",
                 }}
               >
-                Order Reference : {orderReference}
+                Helmet Haute Couture — Paris Atelier
               </p>
+              <h1
+                className="font-cancellaresca"
+                style={{ fontSize: "clamp(38px, 5vw, 52px)", margin: "0 0 12px 0", color: "#ffffff" }}
+              >
+                Thanks For Your Purchase
+              </h1>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "20px",
+                  flexWrap: "wrap",
+                  fontSize: "13px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#ffffff",
+                }}
+              >
+                <span>Order : {orderReference}</span>
+                <span>•</span>
+                <span>Date : {orderDate}</span>
+              </div>
             </div>
 
-            {/* Détails de confirmation & mail */}
-            <div style={{ fontSize: "13px", lineHeight: 1.8, color: "rgba(255,255,255,0.85)", textAlign: "center" }}>
-              <p style={{ margin: "0 0 10px 0" }}>
+            <div className="helmet-readable-text" style={{ textAlign: "center" }}>
+              <p style={{ margin: "0 0 14px 0" }}>
                 Thank you, <strong>{firstName} {lastName}</strong>. Your handcrafted piece is now scheduled for
-                preparation at our Paris studio (allow 2–3 weeks for bespoke atelier crafting & dispatch).
+                preparation at our Paris studio (please allow 2–3 weeks for bespoke atelier crafting and dispatch).
               </p>
-              <p style={{ margin: 0, color: "rgba(255,255,255,0.7)" }}>
-                You will receive a confirmation & tracking email soon at{" "}
-                <strong style={{ color: "#ffffff" }}>{customerEmail}</strong>. If you have any question or issue
-                with your order, contact our{" "}
-                <Link href="/service" style={{ textDecoration: "underline", color: "#ffffff" }}>
+              <p style={{ margin: 0 }}>
+                You will receive your shipping and tracking notification shortly. For any question or modification
+                regarding your order, please contact our{" "}
+                <Link
+                  href="/service"
+                  style={{ textDecoration: "underline", color: "#ffffff" }}
+                >
                   Client Service
                 </Link>{" "}
                 with your reference <strong>{orderReference}</strong>.
               </p>
             </div>
 
-            {/* Récapitulatif Articles & Adresse de Livraison */}
             <div
               style={{
-                borderTop: "1px solid rgba(255,255,255,0.16)",
-                borderBottom: "1px solid rgba(255,255,255,0.16)",
-                padding: "20px 0",
+                borderTop: "1px solid rgba(255,255,255,0.2)",
+                borderBottom: "1px solid rgba(255,255,255,0.2)",
+                padding: "22px 0",
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "20px",
-                fontSize: "11.5px",
-                letterSpacing: "0.14em",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: "24px",
               }}
             >
               <div>
                 <span
                   style={{
                     display: "block",
-                    fontSize: "9.5px",
-                    letterSpacing: "0.26em",
+                    fontSize: "11px",
+                    letterSpacing: "0.22em",
                     textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.55)",
+                    color: "rgba(255,255,255,0.6)",
                     marginBottom: "8px",
                   }}
                 >
                   Delivery Destination
                 </span>
-                <p style={{ margin: 0, lineHeight: 1.7, color: "#ffffff", textTransform: "uppercase" }}>
+                <p className="helmet-readable-text" style={{ margin: 0, textTransform: "uppercase" }}>
                   {firstName} {lastName}
                   <br />
                   {streetAddress}
@@ -293,7 +368,7 @@ export default function CartPage() {
                   <br />
                   {country}
                   <br />
-                  {phone}
+                  Tel : {phone}
                 </p>
               </div>
 
@@ -301,28 +376,53 @@ export default function CartPage() {
                 <span
                   style={{
                     display: "block",
-                    fontSize: "9.5px",
-                    letterSpacing: "0.26em",
+                    fontSize: "11px",
+                    letterSpacing: "0.22em",
                     textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.55)",
+                    color: "rgba(255,255,255,0.6)",
                     marginBottom: "8px",
                   }}
                 >
                   Order Summary
                 </span>
                 {purchasedItems.map((pi, i) => (
-                  <p key={i} style={{ margin: "0 0 6px 0", lineHeight: 1.6, color: "#ffffff" }}>
+                  <p key={i} className="helmet-readable-text" style={{ margin: "0 0 8px 0" }}>
                     {pi.name} — Size {pi.size} (x{pi.quantity})
                   </p>
                 ))}
-                <p style={{ margin: "10px 0 0 0", color: "rgba(255,255,255,0.75)", textTransform: "uppercase" }}>
+                <p className="helmet-readable-text" style={{ margin: "12px 0 0 0", textTransform: "uppercase" }}>
                   Paid via {paymentMethod.toUpperCase()} : <strong>{purchasedTotal} €</strong>
                 </p>
               </div>
             </div>
 
-            <div style={{ textAlign: "center", paddingTop: "6px" }}>
-              <Link href="/" className="helmet-btn-black" style={{ maxWidth: "280px" }}>
+            <div
+              className="no-print"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+                gap: "12px",
+                paddingTop: "4px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={handlePrintReceipt}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#ffffff",
+                  border: "1px solid #ffffff",
+                  padding: "15px 20px",
+                  fontSize: "12px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+              >
+                Print Receipt / Slip
+              </button>
+
+              <Link href="/" className="helmet-btn-black">
                 Return To Menu
               </Link>
             </div>
@@ -336,10 +436,10 @@ export default function CartPage() {
           >
             <p
               style={{
-                fontSize: "12px",
-                letterSpacing: "0.28em",
+                fontSize: "14px",
+                letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.65)",
+                color: "rgba(255,255,255,0.75)",
                 marginBottom: "28px",
               }}
             >
@@ -363,10 +463,10 @@ export default function CartPage() {
                   key={`${item.id}-${item.size}`}
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "92px 1fr auto",
+                    gridTemplateColumns: "96px 1fr auto",
                     gap: "18px",
                     alignItems: "center",
-                    borderBottom: "1px solid rgba(255,255,255,0.16)",
+                    borderBottom: "1px solid rgba(255,255,255,0.18)",
                     paddingBottom: "24px",
                   }}
                 >
@@ -374,7 +474,7 @@ export default function CartPage() {
                     src={item.image || "/product1.jpg"}
                     alt={item.name}
                     style={{
-                      width: "92px",
+                      width: "96px",
                       aspectRatio: "3 / 4",
                       objectFit: "cover",
                       border: "1px solid rgba(255,255,255,0.22)",
@@ -382,15 +482,15 @@ export default function CartPage() {
                   />
 
                   <div>
-                    <h3 className="font-cancellaresca" style={{ fontSize: "26px", margin: "0 0 6px 0", color: "#ffffff" }}>
+                    <h3 className="font-cancellaresca" style={{ fontSize: "28px", margin: "0 0 6px 0", color: "#ffffff" }}>
                       {item.name}
                     </h3>
                     <p
                       style={{
-                        fontSize: "11px",
-                        letterSpacing: "0.24em",
+                        fontSize: "13px",
+                        letterSpacing: "0.14em",
                         textTransform: "uppercase",
-                        color: "rgba(255,255,255,0.68)",
+                        color: "rgba(255,255,255,0.78)",
                         margin: "0 0 12px 0",
                       }}
                     >
@@ -402,24 +502,26 @@ export default function CartPage() {
                         type="button"
                         onClick={() => updateQty(idx, -1)}
                         style={{
-                          padding: "6px 12px",
+                          padding: "6px 14px",
                           background: "transparent",
                           border: "none",
                           color: "#ffffff",
+                          fontSize: "15px",
                           cursor: "pointer",
                         }}
                       >
                         -
                       </button>
-                      <span style={{ padding: "0 12px", fontSize: "12px", color: "#ffffff" }}>{item.quantity}</span>
+                      <span style={{ padding: "0 14px", fontSize: "14px", color: "#ffffff" }}>{item.quantity}</span>
                       <button
                         type="button"
                         onClick={() => updateQty(idx, 1)}
                         style={{
-                          padding: "6px 12px",
+                          padding: "6px 14px",
                           background: "transparent",
                           border: "none",
                           color: "#ffffff",
+                          fontSize: "15px",
                           cursor: "pointer",
                         }}
                       >
@@ -428,36 +530,35 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  <div style={{ textAlign: "right", fontSize: "14px", letterSpacing: "0.18em", color: "#ffffff" }}>
+                  <div style={{ textAlign: "right", fontSize: "16px", letterSpacing: "0.12em", color: "#ffffff" }}>
                     {item.price * item.quantity} €
                   </div>
                 </div>
               ))}
             </motion.div>
 
-            {/* COLONNE DROITE : TUNNEL CHECKOUT & PAYMENT EN 2 ÉTAPES AVANT CONFIRMATION */}
+            {/* COLONNE DROITE : TUNNEL CHECKOUT & PAYMENT */}
             <div
               style={{
-                border: "1px solid rgba(255,255,255,0.28)",
+                border: "1px solid rgba(255,255,255,0.3)",
                 padding: "28px 22px",
                 backgroundColor: "#080808",
               }}
             >
-              {/* En-tête Checkout & Payment + Indicateur d'étape */}
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  borderBottom: "1px solid rgba(255,255,255,0.16)",
+                  borderBottom: "1px solid rgba(255,255,255,0.18)",
                   paddingBottom: "14px",
                   marginBottom: "22px",
                 }}
               >
                 <h2
                   style={{
-                    fontSize: "12px",
-                    letterSpacing: "0.3em",
+                    fontSize: "14px",
+                    letterSpacing: "0.22em",
                     textTransform: "uppercase",
                     margin: 0,
                     color: "#ffffff",
@@ -467,10 +568,10 @@ export default function CartPage() {
                 </h2>
                 <span
                   style={{
-                    fontSize: "10px",
-                    letterSpacing: "0.24em",
+                    fontSize: "12px",
+                    letterSpacing: "0.18em",
                     textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.65)",
+                    color: "rgba(255,255,255,0.7)",
                   }}
                 >
                   Step {checkoutStep} / 2
@@ -478,9 +579,6 @@ export default function CartPage() {
               </div>
 
               <AnimatePresence mode="wait">
-                {/* ============================================================
-                    ÉTAPE 1 : COORDONNÉES & ADRESSE PAR CASES -> BOUTON NEXT
-                    ============================================================ */}
                 {checkoutStep === 1 && (
                   <motion.form
                     key="step-1-shipping"
@@ -493,10 +591,10 @@ export default function CartPage() {
                   >
                     <span
                       style={{
-                        fontSize: "10px",
-                        letterSpacing: "0.26em",
+                        fontSize: "12px",
+                        letterSpacing: "0.18em",
                         textTransform: "uppercase",
-                        color: "rgba(255,255,255,0.68)",
+                        color: "rgba(255,255,255,0.75)",
                       }}
                     >
                       1. Contact & Delivery Details
@@ -581,11 +679,11 @@ export default function CartPage() {
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        borderTop: "1px solid rgba(255,255,255,0.16)",
+                        borderTop: "1px solid rgba(255,255,255,0.18)",
                         paddingTop: "16px",
                         marginTop: "6px",
-                        fontSize: "13px",
-                        letterSpacing: "0.22em",
+                        fontSize: "15px",
+                        letterSpacing: "0.16em",
                         textTransform: "uppercase",
                         color: "#ffffff",
                       }}
@@ -600,9 +698,6 @@ export default function CartPage() {
                   </motion.form>
                 )}
 
-                {/* ============================================================
-                    ÉTAPE 2 : PAYMENT METHOD -> BOUTON CONFIRM & PAY
-                    ============================================================ */}
                 {checkoutStep === 2 && (
                   <motion.form
                     key="step-2-payment"
@@ -616,10 +711,10 @@ export default function CartPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span
                         style={{
-                          fontSize: "10px",
-                          letterSpacing: "0.26em",
+                          fontSize: "12px",
+                          letterSpacing: "0.18em",
                           textTransform: "uppercase",
-                          color: "rgba(255,255,255,0.68)",
+                          color: "rgba(255,255,255,0.75)",
                         }}
                       >
                         2. Payment Method
@@ -630,9 +725,9 @@ export default function CartPage() {
                         style={{
                           background: "transparent",
                           border: "none",
-                          color: "rgba(255,255,255,0.7)",
-                          fontSize: "10px",
-                          letterSpacing: "0.2em",
+                          color: "rgba(255,255,255,0.8)",
+                          fontSize: "11.5px",
+                          letterSpacing: "0.14em",
                           textTransform: "uppercase",
                           textDecoration: "underline",
                           cursor: "pointer",
@@ -643,14 +738,13 @@ export default function CartPage() {
                       </button>
                     </div>
 
-                    {/* Récapitulatif compact de l'adresse saisie à l'étape 1 */}
                     <div
                       style={{
-                        padding: "10px 12px",
-                        border: "1px solid rgba(255,255,255,0.16)",
-                        fontSize: "10.5px",
-                        letterSpacing: "0.14em",
-                        color: "rgba(255,255,255,0.78)",
+                        padding: "12px 14px",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        fontSize: "13px",
+                        letterSpacing: "0.06em",
+                        color: "rgba(255,255,255,0.88)",
                         lineHeight: 1.6,
                       }}
                     >
@@ -670,9 +764,9 @@ export default function CartPage() {
                             type="button"
                             onClick={() => setPaymentMethod(m.id as any)}
                             style={{
-                              padding: "12px 6px",
-                              fontSize: "10.5px",
-                              letterSpacing: "0.18em",
+                              padding: "13px 6px",
+                              fontSize: "12px",
+                              letterSpacing: "0.14em",
                               textTransform: "uppercase",
                               cursor: "pointer",
                               backgroundColor: active ? "#ffffff" : "#050505",
@@ -734,10 +828,10 @@ export default function CartPage() {
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        borderTop: "1px solid rgba(255,255,255,0.16)",
+                        borderTop: "1px solid rgba(255,255,255,0.18)",
                         paddingTop: "16px",
-                        fontSize: "13px",
-                        letterSpacing: "0.22em",
+                        fontSize: "15px",
+                        letterSpacing: "0.16em",
                         textTransform: "uppercase",
                         color: "#ffffff",
                       }}

@@ -33,7 +33,7 @@ const HELMET_FAQ_SECTIONS = [
     paragraphs: [
       "Helmet Haute Couture is an independent label founded and directed in Paris, France. We have no corporate cosign, external investors, or third-party retailers.",
       "Every garment is handcrafted in-house in France using premium Italian-woven 100% cotton fabrics. Because each piece is produced manually with strict attention to detail, please allow 2–3 weeks for your order to be prepared and shipped.",
-      "We are happy to update you personally throughout the process or answer any questions about your piece via our Client Service or by emailing helmetcothes@gmail.com.",
+      "We are happy to update you personally throughout the process or answer any questions about your piece via our Client Service.",
     ],
   },
   {
@@ -54,7 +54,7 @@ const HELMET_FAQ_SECTIONS = [
     title: "EU CUSTOMER RIGHT TO WITHDRAW",
     paragraphs: [
       "In accordance with European Union consumer protection laws, EU clients have a 14-day legal right to withdraw from a standard order after reception, provided the piece is strictly unworn, unwashed, and returned in its original packaging with all tags intact.",
-      "Return shipping costs to Paris remain the responsibility of the buyer. To contact us regarding an order, reach out via Client Service or at helmetcothes@gmail.com.",
+      "Return shipping costs to Paris remain the responsibility of the buyer. To contact us regarding an order, reach out directly through our Client Service.",
     ],
   },
   {
@@ -297,8 +297,8 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           transform: "translateX(-50%)",
           zIndex: 10,
           color: "#ffffff",
-          fontSize: "11px",
-          letterSpacing: "0.32em",
+          fontSize: "12px",
+          letterSpacing: "0.28em",
           textTransform: "uppercase",
           whiteSpace: "nowrap",
           textAlign: "center",
@@ -330,13 +330,13 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
           {phase === 0 && (
             <motion.div
               key="paris-atelier-intro"
-              initial={{ opacity: 0, letterSpacing: "0.6em", y: 8 }}
-              animate={{ opacity: 1, letterSpacing: "0.42em", y: 0 }}
+              initial={{ opacity: 0, letterSpacing: "0.5em", y: 8 }}
+              animate={{ opacity: 1, letterSpacing: "0.34em", y: 0 }}
               exit={{ opacity: 0, y: -10, transition: { duration: 0.4 } }}
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 color: "#ffffff",
-                fontSize: "clamp(12px, 1.4vw, 15px)",
+                fontSize: "clamp(13px, 1.5vw, 16px)",
                 textTransform: "uppercase",
                 textAlign: "center",
               }}
@@ -494,13 +494,13 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               </span>
 
               <motion.span
-                initial={{ opacity: 0, letterSpacing: "0.85em" }}
-                animate={{ opacity: 1, letterSpacing: "0.5em" }}
+                initial={{ opacity: 0, letterSpacing: "0.75em" }}
+                animate={{ opacity: 1, letterSpacing: "0.42em" }}
                 transition={{ duration: 1.6, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 style={{
                   display: "block",
-                  fontSize: "clamp(10px, 1.15vw, 13px)",
-                  color: "rgba(255, 255, 255, 0.88)",
+                  fontSize: "clamp(11px, 1.2vw, 14px)",
+                  color: "#ffffff",
                   marginTop: "8px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -513,7 +513,6 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
         )}
       </motion.div>
 
-      {/* BARRE INFÉRIEURE DE L'INTRO : "FLORAISON DES RONCES" VISIBLE SUR MOBILE + BOUTON COMPACT À DROITE */}
       {phase < 3 && (
         <motion.div
           animate={{ opacity: phase === 3 ? 0 : 1 }}
@@ -542,15 +541,15 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               overflow: "hidden",
             }}
           >
-            <span style={{ fontSize: "clamp(13px, 2.2vw, 24px)", letterSpacing: "0.1em", flexShrink: 0 }}>
+            <span style={{ fontSize: "clamp(14px, 2.2vw, 24px)", letterSpacing: "0.1em", flexShrink: 0 }}>
               [{formattedCounter}]
             </span>
             <span
               style={{
-                fontSize: "clamp(8.5px, 2.1vw, 10px)",
-                letterSpacing: "0.18em",
+                fontSize: "clamp(9.5px, 2.2vw, 11px)",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "rgba(255, 255, 255, 0.78)",
+                color: "rgba(255, 255, 255, 0.85)",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -572,8 +571,8 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
               border: "1px solid #ffffff",
               color: "#ffffff",
               padding: "6px 10px",
-              fontSize: "8.5px",
-              letterSpacing: "0.2em",
+              fontSize: "9.5px",
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
               cursor: "pointer",
               whiteSpace: "nowrap",
@@ -594,11 +593,11 @@ export default function Home() {
   const [cartCount, setCartCount] = useState(0);
   const [infoOpen, setInfoOpen] = useState(false);
   const [videoIdx, setVideoIdx] = useState(0);
+  const [audioIdx, setAudioIdx] = useState(0);
   const [mobileSlideIndex, setMobileSlideIndex] = useState(0);
 
-  const audioCtxRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const isMutedByUserRef = useRef(false);
-  const isInitializedRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const swipeTrackRef = useRef<HTMLDivElement | null>(null);
 
@@ -614,7 +613,6 @@ export default function Home() {
       setCartCount(0);
     }
 
-    /* Force la lecture automatique de la vidéo sur iOS / Android sans bouton Play */
     const startBgVideo = () => {
       const vid = videoRef.current;
       if (!vid) return;
@@ -627,90 +625,42 @@ export default function Home() {
     };
     startBgVideo();
 
-    let isMounted = true;
-
-    const initWebAudio = async () => {
-      if (isInitializedRef.current || !isMounted) return;
-      isInitializedRef.current = true;
-
-      try {
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        const ctx: AudioContext = new AudioCtx();
-        audioCtxRef.current = ctx;
-
-        let arrayBuffer: ArrayBuffer | null = null;
-        for (const path of AUDIO_PATHS) {
-          try {
-            const res = await fetch(path);
-            if (res.ok) {
-              arrayBuffer = await res.arrayBuffer();
-              break;
-            }
-          } catch {}
-        }
-
-        if (!arrayBuffer || !isMounted) return;
-
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-        if (!isMounted) return;
-
-        const source = ctx.createBufferSource();
-        source.buffer = audioBuffer;
-        source.loop = true;
-
-        const gainNode = ctx.createGain();
-        gainNode.gain.value = 0.7;
-
-        source.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        source.start(0);
-
-        if (ctx.state === "running" && !isMutedByUserRef.current) {
-          setIsPlaying(true);
-        } else {
-          setIsPlaying(false);
-        }
-      } catch {
-        setIsPlaying(false);
-      }
-    };
-
-    initWebAudio();
-
-    const unlockOnInteraction = async () => {
-      startBgVideo();
-      if (!audioCtxRef.current) {
-        await initWebAudio();
-      }
-      if (
-        audioCtxRef.current &&
-        audioCtxRef.current.state === "suspended" &&
-        !isMutedByUserRef.current
-      ) {
-        audioCtxRef.current
-          .resume()
-          .then(() => {
-            if (isMounted) setIsPlaying(true);
-          })
+    const tryPlayAudio = () => {
+      const aud = audioRef.current;
+      if (!aud || isMutedByUserRef.current) return;
+      aud.volume = 0.7;
+      aud.loop = true;
+      if (aud.paused) {
+        aud
+          .play()
+          .then(() => setIsPlaying(true))
           .catch(() => {});
       }
     };
+    tryPlayAudio();
 
-    window.addEventListener("click", unlockOnInteraction);
-    window.addEventListener("touchstart", unlockOnInteraction, { passive: true });
-    window.addEventListener("pointerdown", unlockOnInteraction);
+    /* Déblocage immédiat du son & vidéo au moindre toucher sur iPhone/Android */
+    const unlockOnGesture = () => {
+      startBgVideo();
+      tryPlayAudio();
+    };
+
+    window.addEventListener("touchstart", unlockOnGesture, { passive: true });
+    window.addEventListener("touchend", unlockOnGesture, { passive: true });
+    window.addEventListener("click", unlockOnGesture);
+    window.addEventListener("pointerdown", unlockOnGesture);
 
     const handleVisibility = () => {
-      const ctx = audioCtxRef.current;
-      if (!ctx) return;
+      const aud = audioRef.current;
+      if (!aud) return;
       if (document.hidden || document.visibilityState === "hidden") {
-        ctx.suspend().catch(() => {});
+        aud.pause();
         setIsPlaying(false);
       } else {
         startBgVideo();
         if (!isMutedByUserRef.current) {
-          ctx
-            .resume()
+          aud
+            .play()
             .then(() => setIsPlaying(true))
             .catch(() => {});
         }
@@ -720,27 +670,30 @@ export default function Home() {
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      isMounted = false;
-      window.removeEventListener("click", unlockOnInteraction);
-      window.removeEventListener("touchstart", unlockOnInteraction);
-      window.removeEventListener("pointerdown", unlockOnInteraction);
+      window.removeEventListener("touchstart", unlockOnGesture);
+      window.removeEventListener("touchend", unlockOnGesture);
+      window.removeEventListener("click", unlockOnGesture);
+      window.removeEventListener("pointerdown", unlockOnGesture);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 
-  const toggleAudio = async (e: React.MouseEvent) => {
+  const toggleAudio = (e: React.MouseEvent) => {
     e.stopPropagation();
-    let ctx = audioCtxRef.current;
-    if (!ctx) return;
+    const aud = audioRef.current;
+    if (!aud) return;
 
-    if (isPlaying) {
+    if (!aud.paused && isPlaying) {
       isMutedByUserRef.current = true;
-      await ctx.suspend();
+      aud.pause();
       setIsPlaying(false);
     } else {
       isMutedByUserRef.current = false;
-      await ctx.resume();
-      setIsPlaying(true);
+      aud.volume = 0.7;
+      aud
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
     }
   };
 
@@ -755,6 +708,12 @@ export default function Home() {
   const handleVideoError = () => {
     if (videoIdx < VIDEO_PATHS.length - 1) {
       setVideoIdx((prev) => prev + 1);
+    }
+  };
+
+  const handleAudioError = () => {
+    if (audioIdx < AUDIO_PATHS.length - 1) {
+      setAudioIdx((prev) => prev + 1);
     }
   };
 
@@ -792,9 +751,23 @@ export default function Home() {
         color: "#ffffff",
       }}
     >
+      {/* LECTEUR AUDIO HTML5 NATIF (100% COMPATIBLE SAFARI IOS & ANDROID) */}
+      <audio
+        ref={audioRef}
+        key={AUDIO_PATHS[audioIdx]}
+        src={AUDIO_PATHS[audioIdx]}
+        loop
+        preload="auto"
+        playsInline
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onError={handleAudioError}
+        style={{ display: "none" }}
+      />
+
       {showIntro && <HelmetCinemaIntro onComplete={handleIntroComplete} />}
 
-      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE CONTINUE (SANS CONTRÔLES NI BOUTON PAUSE SUR MOBILE) */}
+      {/* 1. VIDÉO PLEIN ÉCRAN EN BOUCLE */}
       <div
         style={{
           position: "fixed",
@@ -841,7 +814,7 @@ export default function Home() {
       {/* 2. ROSES BOTANIQUES EN BLANC PUR */}
       <AtelierAtmosphere mode="canopy-and-roses" inverted />
 
-      {/* 3. FENÊTRE HELMET INFO */}
+      {/* 3. FENÊTRE HELMET INFO (POLICE AGRANDIE & ULTRA-LISIBLE) */}
       <AnimatePresence>
         {infoOpen && (
           <motion.div
@@ -867,9 +840,9 @@ export default function Home() {
                     style={{
                       background: "transparent",
                       border: "none",
-                      fontSize: "11px",
+                      fontSize: "12px",
                       textTransform: "uppercase",
-                      letterSpacing: "0.22em",
+                      letterSpacing: "0.18em",
                       padding: 0,
                       color: "#ffffff",
                     }}
@@ -895,7 +868,7 @@ export default function Home() {
                       <span
                         className="font-cancellaresca"
                         style={{
-                          fontSize: "clamp(26px, 4.2vw, 44px)",
+                          fontSize: "clamp(28px, 4.2vw, 46px)",
                           lineHeight: 1,
                           display: "block",
                           color: "#ffffff",
@@ -915,9 +888,9 @@ export default function Home() {
                     style={{
                       background: "transparent",
                       border: "none",
-                      fontSize: "11px",
+                      fontSize: "12px",
                       textTransform: "uppercase",
-                      letterSpacing: "0.22em",
+                      letterSpacing: "0.18em",
                       padding: 0,
                       color: "#ffffff",
                     }}
@@ -935,10 +908,10 @@ export default function Home() {
               >
                 <p
                   style={{
-                    fontSize: "11px",
+                    fontSize: "13px",
                     textTransform: "uppercase",
-                    letterSpacing: "0.35em",
-                    color: "rgba(255,255,255,0.65)",
+                    letterSpacing: "0.24em",
+                    color: "rgba(255,255,255,0.75)",
                     marginBottom: "8px",
                   }}
                 >
@@ -946,9 +919,9 @@ export default function Home() {
                 </p>
                 <h1
                   style={{
-                    fontSize: "15px",
+                    fontSize: "19px",
                     textTransform: "uppercase",
-                    letterSpacing: "0.42em",
+                    letterSpacing: "0.28em",
                     margin: 0,
                     color: "#ffffff",
                   }}
@@ -957,7 +930,7 @@ export default function Home() {
                 </h1>
               </motion.div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "38px" }}>
                 {HELMET_FAQ_SECTIONS.map((sec, idx) => (
                   <motion.section
                     key={idx}
@@ -969,14 +942,14 @@ export default function Home() {
                       ease: [0.16, 1, 0.3, 1],
                     }}
                     style={{
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.16)",
-                      paddingBottom: "28px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
+                      paddingBottom: "30px",
                     }}
                   >
                     <h2
                       style={{
-                        fontSize: "13px",
-                        letterSpacing: "0.28em",
+                        fontSize: "16px",
+                        letterSpacing: "0.16em",
                         textTransform: "uppercase",
                         color: "#ffffff",
                         marginBottom: "14px",
@@ -984,18 +957,9 @@ export default function Home() {
                     >
                       {sec.title}
                     </h2>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                       {sec.paragraphs.map((p, pIdx) => (
-                        <p
-                          key={pIdx}
-                          style={{
-                            fontSize: "13.5px",
-                            lineHeight: 1.8,
-                            letterSpacing: "0.06em",
-                            color: "rgba(255, 255, 255, 0.82)",
-                            margin: 0,
-                          }}
-                        >
+                        <p key={pIdx} className="helmet-readable-text" style={{ margin: 0 }}>
                           {p}
                         </p>
                       ))}
@@ -1030,8 +994,8 @@ export default function Home() {
             display: "flex",
             flexDirection: "column",
             gap: "4px",
-            fontSize: "clamp(10px, 1.1vw, 11.5px)",
-            letterSpacing: "0.24em",
+            fontSize: "clamp(11px, 1.15vw, 12.5px)",
+            letterSpacing: "0.2em",
             color: "#ffffff",
             textTransform: "uppercase",
             justifySelf: "start",
@@ -1039,7 +1003,7 @@ export default function Home() {
           }}
         >
           <span>Paris — Atelier</span>
-          <span style={{ fontSize: "9.5px", letterSpacing: "0.22em", color: "rgba(255,255,255,0.8)" }}>
+          <span style={{ fontSize: "10.5px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.85)" }}>
             Edition -01
           </span>
           <button
@@ -1050,9 +1014,9 @@ export default function Home() {
               background: "transparent",
               border: "none",
               padding: "2px 0",
-              fontSize: "9px",
-              letterSpacing: "0.22em",
-              color: "rgba(255,255,255,0.68)",
+              fontSize: "10px",
+              letterSpacing: "0.18em",
+              color: "rgba(255,255,255,0.72)",
               textTransform: "uppercase",
               textDecoration: "underline",
               cursor: "pointer",
@@ -1074,8 +1038,8 @@ export default function Home() {
               background: "transparent",
               border: "none",
               padding: "8px 16px",
-              fontSize: "12px",
-              letterSpacing: "0.34em",
+              fontSize: "13px",
+              letterSpacing: "0.28em",
               color: "#ffffff",
               textTransform: "uppercase",
               cursor: "pointer",
@@ -1091,8 +1055,8 @@ export default function Home() {
             href="/cart"
             className="helmet-zoom-link"
             style={{
-              fontSize: "12px",
-              letterSpacing: "0.24em",
+              fontSize: "13px",
+              letterSpacing: "0.2em",
               color: "#ffffff",
               display: "inline-flex",
               alignItems: "center",
@@ -1103,9 +1067,9 @@ export default function Home() {
             }}
           >
             <svg
-              width="16"
-              height="16"
-              style={{ width: "16px", height: "16px", minWidth: "16px", color: "#ffffff" }}
+              width="17"
+              height="17"
+              style={{ width: "17px", height: "17px", minWidth: "17px", color: "#ffffff" }}
               fill="none"
               stroke="currentColor"
               strokeWidth="1.6"
@@ -1119,16 +1083,15 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 5. SCÈNE CENTRALE : PC CENTRÉ STRICT & MOBILE SWIPE */}
+      {/* 5. SCÈNE CENTRALE */}
       <div className="helmet-sketch-stage">
-        {/* A. NAVIGATION PC (>= 1060px) — LOGO CENTRÉ STRICTEMENT */}
         <nav className="helmet-desktop-nav">
           <div className="helmet-sketch-left">
             <Link
               href="/shop"
               style={{
-                fontSize: "clamp(14px, 1.45vw, 18px)",
-                letterSpacing: "0.28em",
+                fontSize: "clamp(15px, 1.5vw, 19px)",
+                letterSpacing: "0.24em",
                 textTransform: "uppercase",
                 color: "#ffffff",
               }}
@@ -1141,8 +1104,8 @@ export default function Home() {
             <Link
               href="/helmet"
               style={{
-                fontSize: "clamp(11px, 1.15vw, 13.5px)",
-                letterSpacing: "0.22em",
+                fontSize: "clamp(12px, 1.2vw, 14.5px)",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 color: "#ffffff",
               }}
@@ -1171,9 +1134,9 @@ export default function Home() {
               <span
                 style={{
                   display: "block",
-                  fontSize: "clamp(10.5px, 1vw, 13px)",
-                  letterSpacing: "0.46em",
-                  color: "rgba(255, 255, 255, 0.9)",
+                  fontSize: "clamp(11px, 1.05vw, 13.5px)",
+                  letterSpacing: "0.42em",
+                  color: "#ffffff",
                   marginTop: "6px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -1189,8 +1152,8 @@ export default function Home() {
             <Link
               href="/service"
               style={{
-                fontSize: "clamp(11px, 1.15vw, 13.5px)",
-                letterSpacing: "0.22em",
+                fontSize: "clamp(12px, 1.2vw, 14.5px)",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 color: "#ffffff",
               }}
@@ -1203,8 +1166,8 @@ export default function Home() {
             <Link
               href="/cart"
               style={{
-                fontSize: "clamp(11.5px, 1.2vw, 14px)",
-                letterSpacing: "0.26em",
+                fontSize: "clamp(12.5px, 1.25vw, 15px)",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "#ffffff",
               }}
@@ -1217,7 +1180,6 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* B. NAVIGATION MOBILE (< 1060px) */}
         <div className="helmet-mobile-nav">
           <div style={{ textAlign: "center", padding: "0 16px" }}>
             <Link href="/helmet" className="helmet-logo-zoom">
@@ -1238,8 +1200,8 @@ export default function Home() {
                 style={{
                   display: "block",
                   fontSize: "clamp(12px, 3.2vw, 15px)",
-                  letterSpacing: "0.48em",
-                  color: "rgba(255, 255, 255, 0.94)",
+                  letterSpacing: "0.44em",
+                  color: "#ffffff",
                   marginTop: "8px",
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
@@ -1262,8 +1224,8 @@ export default function Home() {
                   <Link
                     href={slide.href}
                     style={{
-                      fontSize: slide.isShop ? "22px" : "15.5px",
-                      letterSpacing: slide.isShop ? "0.34em" : "0.24em",
+                      fontSize: slide.isShop ? "22px" : "16px",
+                      letterSpacing: slide.isShop ? "0.3em" : "0.2em",
                       textTransform: "uppercase",
                       color: "#ffffff",
                     }}
@@ -1302,15 +1264,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 6. FOOTER BAS : LIEN YOUTUBE EXACT & CASQUE PARFAITEMENT CENTRÉ */}
+      {/* 6. FOOTER BAS */}
       <footer className="helmet-home-footer">
         <div
           style={{
             display: "flex",
             alignItems: "center",
             gap: "6px",
-            fontSize: "clamp(9px, 2.3vw, 11px)",
-            letterSpacing: "0.18em",
+            fontSize: "clamp(10px, 2.3vw, 11.5px)",
+            letterSpacing: "0.14em",
             color: "#ffffff",
             justifySelf: "start",
             textTransform: "uppercase",
@@ -1397,8 +1359,8 @@ export default function Home() {
         <div
           style={{
             textAlign: "right",
-            fontSize: "clamp(8.5px, 2.1vw, 11px)",
-            letterSpacing: "0.16em",
+            fontSize: "clamp(9.5px, 2.1vw, 11.5px)",
+            letterSpacing: "0.14em",
             color: "#ffffff",
             justifySelf: "end",
             textTransform: "uppercase",
