@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import LouisXVIFrame from "../LouisXVIFrame";
@@ -15,8 +15,6 @@ export default function ClientServicePage() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
 
-  const formRef = useRef<HTMLFormElement | null>(null);
-
   useEffect(() => {
     try {
       const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
@@ -29,33 +27,53 @@ export default function ClientServicePage() {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !message.trim() || !formRef.current) return;
+    if (!email.trim() || !message.trim()) return;
 
     setStatus("sending");
-    /* Soumission HTML directe vers FormSubmit (déclenche la réception réelle sur helmetcothes@gmail.com) */
-    formRef.current.submit();
 
-    setTimeout(() => {
-      setStatus("sent");
-      setName("");
-      setEmail("");
-      setOrderNumber("");
-      setMessage("");
-    }, 900);
+    const cleanRef = orderNumber.trim().toUpperCase();
+    const fullSubject = `[CLIENT SERVICE${cleanRef ? ` — ${cleanRef}` : ""}] ${subject}`;
+
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: fullSubject,
+          Full_Name: name,
+          Email: email,
+          Order_Reference: cleanRef || "N/A",
+          Subject: subject,
+          Message: message,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("FormSubmit activation required");
+      }
+    } catch {
+      /* Ouverture directe de la messagerie pré-remplie vers helmetcothes@gmail.com si le serveur bloque */
+      const bodyText = `Name: ${name}\nEmail: ${email}\nOrder Reference: ${cleanRef || "N/A"}\n\n${message}`;
+      window.location.href = `mailto:helmetcothes@gmail.com?subject=${encodeURIComponent(
+        fullSubject
+      )}&body=${encodeURIComponent(bodyText)}`;
+    }
+
+    setStatus("sent");
+    setName("");
+    setEmail("");
+    setOrderNumber("");
+    setMessage("");
   };
 
   return (
     <div className="helmet-page-container">
       <AtelierAtmosphere mode="petals-only" inverted />
-
-      {/* Iframe invisible pour envoyer le formulaire vers Gmail sans quitter la page */}
-      <iframe
-        name="helmet_service_iframe"
-        title="Client Service Delivery"
-        style={{ display: "none" }}
-      />
 
       <motion.header
         initial={{ opacity: 0, y: 12 }}
@@ -144,25 +162,12 @@ export default function ClientServicePage() {
         </motion.div>
 
         <motion.form
-          ref={formRef}
-          action="https://formsubmit.co/helmetcothes@gmail.com"
-          method="POST"
-          target="helmet_service_iframe"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.14 }}
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
-          {/* Champs techniques cachés pour FormSubmit */}
-          <input
-            type="hidden"
-            name="_subject"
-            value={`[CLIENT SERVICE${orderNumber.trim() ? ` — ${orderNumber.trim().toUpperCase()}` : ""}] ${subject}`}
-          />
-          <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_template" value="table" />
-
           <div>
             <label
               style={{
@@ -177,7 +182,6 @@ export default function ClientServicePage() {
             </label>
             <input
               type="text"
-              name="Full_Name"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -200,7 +204,6 @@ export default function ClientServicePage() {
             </label>
             <input
               type="email"
-              name="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -209,7 +212,6 @@ export default function ClientServicePage() {
             />
           </div>
 
-          {/* NOUVELLE CASE : NUMÉRO DE COMMANDE (OPTIONNEL) */}
           <div>
             <label
               style={{
@@ -224,7 +226,6 @@ export default function ClientServicePage() {
             </label>
             <input
               type="text"
-              name="Order_Reference"
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value.toUpperCase())}
               placeholder="EX: HLM-123456 (OPTIONAL)"
@@ -245,7 +246,6 @@ export default function ClientServicePage() {
               Subject
             </label>
             <select
-              name="Subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className="helmet-input"
@@ -274,7 +274,6 @@ export default function ClientServicePage() {
               Message
             </label>
             <textarea
-              name="Message"
               rows={5}
               required
               value={message}

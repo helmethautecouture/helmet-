@@ -25,8 +25,6 @@ const VIDEO_PATHS = [
 
 const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@HELMETPRODUCTION-s8c";
 
-let introPlayedInMemory = false;
-
 const HELMET_FAQ_SECTIONS = [
   {
     title: "ATELIER & PRODUCTION",
@@ -210,6 +208,9 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
   const finishIntro = () => {
     if (completedRef.current) return;
     completedRef.current = true;
+    try {
+      sessionStorage.setItem("helmet_intro_seen", "1");
+    } catch {}
     onComplete();
   };
 
@@ -590,7 +591,8 @@ function HelmetCinemaIntro({ onComplete }: { onComplete: () => void }) {
 }
 
 export default function Home() {
-  const [showIntro, setShowIntro] = useState(!introPlayedInMemory);
+  /* Vérifie sessionStorage : l'intro ne joue qu'une seule fois par session, jamais en revenant de Shop/Gallery/Service */
+  const [showIntro, setShowIntro] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -604,6 +606,13 @@ export default function Home() {
   const swipeTrackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    try {
+      const alreadySeen = sessionStorage.getItem("helmet_intro_seen");
+      if (!alreadySeen) {
+        setShowIntro(true);
+      }
+    } catch {}
+
     try {
       const raw = localStorage.getItem("helmet_cart") || localStorage.getItem("cart") || "[]";
       const saved = JSON.parse(raw);
@@ -699,7 +708,9 @@ export default function Home() {
   };
 
   const handleIntroComplete = () => {
-    introPlayedInMemory = true;
+    try {
+      sessionStorage.setItem("helmet_intro_seen", "1");
+    } catch {}
     setShowIntro(false);
     if (videoRef.current) {
       videoRef.current.play().catch(() => {});

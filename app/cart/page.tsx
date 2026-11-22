@@ -73,7 +73,6 @@ export default function CartPage() {
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(1);
   const [formError, setFormError] = useState<string>("");
 
-  /* Étape 1 : Livraison & Indicatif Téléphonique */
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -84,18 +83,16 @@ export default function CartPage() {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("France");
 
-  /* Autocomplétion d'adresse en direct */
   const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const orderFormRef = useRef<HTMLFormElement | null>(null);
 
-  /* Étape 3 : Bordereau d'expédition & Reçu officiel */
   const [orderReference, setOrderReference] = useState("");
   const [orderDate, setOrderDate] = useState("");
   const [purchasedItems, setPurchasedItems] = useState<CartItem[]>([]);
   const [purchasedTotal, setPurchasedTotal] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [copiedRef, setCopiedRef] = useState(false);
 
   const syncCart = (updated: CartItem[]) => {
     setItems(updated);
@@ -267,9 +264,18 @@ export default function CartPage() {
     setCheckoutStep(2);
   };
 
-  /* Lancement immédiat du paiement Stripe (sans tourner dans le vide) + enregistrement commande */
-  const handleStripeCheckout = () => {
+  const handleStripeCheckout = async () => {
     if (items.length === 0 || submitting) return;
+    setFormError("");
+
+    const stripeUrl = STRIPE_PAYMENT_LINK.trim();
+    if (!stripeUrl.startsWith("http")) {
+      setFormError(
+        "Stripe link missing: paste your https://buy.stripe.com/... URL into STRIPE_PAYMENT_LINK at line 11 of app/cart/page.tsx."
+      );
+      return;
+    }
+
     setSubmitting(true);
 
     const generatedRef = `HLM-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -278,6 +284,12 @@ export default function CartPage() {
       month: "2-digit",
       year: "numeric",
     });
+
+    const fullPhone = `${phonePrefix} ${phone.trim()}`;
+    const orderSummaryText = items
+      .map((i) => `${i.name} (Size ${i.size}) x${i.quantity} — ${i.price * i.quantity} €`)
+      .join(" | ");
+    const fullAddressText = `${firstName} ${lastName}, ${streetAddress}, ${postalCode} ${city}, ${country} (Tel: ${fullPhone})`;
 
     const newOrderRecord = {
       ref: generatedRef,
@@ -294,10 +306,9 @@ export default function CartPage() {
       items,
       total: subtotal,
       method: "STRIPE (CB / APPLE PAY)",
-      status: "Paid / Pending Dispatch",
+      status: "Redirected to Stripe",
     };
 
-    /* 1. Sauvegarde dans le registre local des commandes (/atelier) */
     try {
       localStorage.setItem("helmet_last_order", JSON.stringify(newOrderRecord));
       const existingArchive = JSON.parse(localStorage.getItem("helmet_orders_archive") || "[]");
@@ -307,33 +318,45 @@ export default function CartPage() {
       localStorage.setItem("helmet_orders_archive", JSON.stringify(updatedArchive));
     } catch {}
 
-    /* 2. Envoi du récapitulatif vers Gmail via le formulaire caché */
-    if (orderFormRef.current) {
-      const refInput = orderFormRef.current.elements.namedItem("Numero_Commande") as HTMLInputElement;
-      const subjInput = orderFormRef.current.elements.namedItem("_subject") as HTMLInputElement;
-      if (refInput) refInput.value = generatedRef;
-      if (subjInput) subjInput.value = `[NOUVELLE COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} €`;
-      orderFormRef.current.submit();
-    }
+    /* Notification rapide de la commande sur helmetcothes@gmail.com avant redirection Stripe */
+    try {
+      await Promise.race([
+        fetch("https://formsubmit.co/ajax/helmetcothes@gmail.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            _subject: `[COMMANDE ${generatedRef} — HELMET HAUTE COUTURE] ${subtotal} €`,
+            Numero_Commande: generatedRef,
+            Date: todayStr,
+            Client: `${firstName} ${lastName}`,
+            Email_Client: customerEmail,
+            Telephone: fullPhone,
+            Adresse_Livraison: fullAddressText,
+            Articles: orderSummaryText,
+            Total: `${subtotal} €`,
+          }),
+        }),
+        new Promise((resolve) => setTimeout(resolve, 1200)),
+      ]);
+    } catch {}
 
-    /* 3. Redirection vers ton lien Stripe Checkout (CB, Apple Pay, QR Code Apple Pay, Link) */
-    setTimeout(() => {
-      if (STRIPE_PAYMENT_LINK.trim().startsWith("http")) {
-        const separator = STRIPE_PAYMENT_LINK.includes("?") ? "&" : "?";
-        window.location.href = `${STRIPE_PAYMENT_LINK.trim()}${separator}prefilled_email=${encodeURIComponent(
-          customerEmail
-        )}&client_reference_id=${generatedRef}`;
-        return;
-      }
+    /* Redirection directe vers ta page Stripe Checkout */
+    const separator = stripeUrl.includes("?") ? "&" : "?";
+    window.location.assign(
+      `${stripeUrl}${separator}prefilled_email=${encodeURIComponent(
+        customerEmail
+      )}&client_reference_id=${generatedRef}`
+    );
+  };
 
-      setOrderReference(generatedRef);
-      setOrderDate(todayStr);
-      setPurchasedItems([...items]);
-      setPurchasedTotal(subtotal);
-      setSubmitting(false);
-      setCheckoutStep(3);
-      syncCart([]);
-    }, 350);
+  const handleCopyRef = () => {
+    if (!orderReference) return;
+    navigator.clipboard?.writeText(orderReference).catch(() => {});
+    setCopiedRef(true);
+    setTimeout(() => setCopiedRef(false), 2000);
   };
 
   const handlePrintReceipt = () => {
@@ -341,35 +364,9 @@ export default function CartPage() {
   };
 
   const totalCount = items.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
-  const fullPhone = `${phonePrefix} ${phone.trim()}`;
-  const orderSummaryText = items
-    .map((i) => `${i.name} (Size ${i.size}) x${i.quantity} — ${i.price * i.quantity} €`)
-    .join(" | ");
-  const fullAddressText = `${firstName} ${lastName}, ${streetAddress}, ${postalCode} ${city}, ${country} (Tel: ${fullPhone})`;
 
   return (
     <div className="helmet-page-container">
-      {/* Iframe & Formulaire caché pour expédier la commande sur helmetcothes@gmail.com */}
-      <iframe name="helmet_order_iframe" title="Order Dispatch" style={{ display: "none" }} />
-      <form
-        ref={orderFormRef}
-        action="https://formsubmit.co/helmetcothes@gmail.com"
-        method="POST"
-        target="helmet_order_iframe"
-        style={{ display: "none" }}
-      >
-        <input type="hidden" name="_subject" defaultValue="[NOUVELLE COMMANDE HELMET]" />
-        <input type="hidden" name="_captcha" value="false" />
-        <input type="hidden" name="_template" value="table" />
-        <input type="hidden" name="Numero_Commande" defaultValue="" />
-        <input type="hidden" name="Client" value={`${firstName} ${lastName}`} />
-        <input type="hidden" name="Email_Client" value={customerEmail} />
-        <input type="hidden" name="Telephone" value={fullPhone} />
-        <input type="hidden" name="Adresse_Livraison" value={fullAddressText} />
-        <input type="hidden" name="Articles" value={orderSummaryText} />
-        <input type="hidden" name="Total" value={`${subtotal} €`} />
-      </form>
-
       <motion.header
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -469,7 +466,8 @@ export default function CartPage() {
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  gap: "16px",
+                  alignItems: "center",
+                  gap: "14px",
                   flexWrap: "wrap",
                   fontSize: "13px",
                   letterSpacing: "0.18em",
@@ -478,6 +476,23 @@ export default function CartPage() {
                 }}
               >
                 <span>Order : {orderReference}</span>
+                <button
+                  type="button"
+                  onClick={handleCopyRef}
+                  className="no-print"
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.45)",
+                    background: "transparent",
+                    color: "#ffffff",
+                    padding: "3px 8px",
+                    fontSize: "10px",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                  }}
+                >
+                  {copiedRef ? "Copied ✓" : "Copy Ref"}
+                </button>
                 <span>•</span>
                 <span>Date : {orderDate}</span>
               </div>
@@ -979,9 +994,6 @@ export default function CartPage() {
                   </motion.form>
                 )}
 
-                {/* ============================================================
-                    ÉTAPE 2 : ENCAISSEMENT STRIPE OFFICIEL (CB + APPLE PAY QR + LINK)
-                    ============================================================ */}
                 {checkoutStep === 2 && (
                   <motion.div
                     key="step-2-payment"
@@ -1041,7 +1053,6 @@ export default function CartPage() {
                       {phonePrefix} {phone}
                     </div>
 
-                    {/* Encadré Stripe avec logo officiel + méthodes incluses (CB, Apple Pay & QR Code, Link) */}
                     <div
                       style={{
                         border: "1px solid #ffffff",
@@ -1055,7 +1066,6 @@ export default function CartPage() {
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        {/* Logo vectoriel Stripe */}
                         <span
                           style={{
                             fontFamily: "system-ui, -apple-system, sans-serif",
