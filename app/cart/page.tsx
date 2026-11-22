@@ -9,7 +9,7 @@ import LouisXVIFrame from "../LouisXVIFrame";
    TON LIEN STRIPE CHECKOUT (CB + APPLE PAY + QR CODE + LINK)
    Colle ton lien https://buy.stripe.com/... entre les guillemets ci-dessous :
    ============================================================================ */
-const STRIPE_PAYMENT_LINK: string = "";
+const STRIPE_PAYMENT_LINK: string = "https://buy.stripe.com/cNi6oG44y2Zw32B167co000";
 
 const COUNTRY_CODES = [
   { code: "+33", label: "FR (+33)", country: "France" },
